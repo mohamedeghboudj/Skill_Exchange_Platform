@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Land</title>
+    <!-- Main Css File -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Render All Elements Normally -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- The icon  -->
+    <link rel="icon" type="image/jpg" href="assets/icon.jpg">
+</head>
+
+<body>
+    <div class="container-card">
+        <div class="overlay hidden"></div>
+        <div class="card review-card">
+            <div class="title">
+                <h3>Student Request from Hadil Belhadri</h3>
+            </div>
+            <!-- Name  -->
+            <label  for="name">Student name</label>
+            <input type="text" id="name" name="student-name" readonly  >
+            <div class="information">
+                <!-- Skill  -->
+                <label for="skill">Skill</label>
+                <input type="text" id="skill" name="skill" readonly>
+                <!-- Level  -->
+                <label for="level">Current level</label>
+               <input type="text" id="level" name="current-level" readonly>
+                <!-- Days  -->
+                <label for="days">Available days</label>
+                <input type="text" id="days" name="availabe-days" readonly>
+                <!-- Time  -->
+                <label for="time">Available time</label>
+                <input type="text" id="time" name="available-time" readonly>
+            </div>
+            <!-- Message  -->
+            <label for="message">Message to teacher</label>
+            <textarea name="message-to-teacher" id="message" rows="4" cols="30" readonly></textarea>
+            <div class="decision">
+                <button class="accept"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    Accept Request</button>
+                <button class="refus">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-x-icon lucide-x">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>Decline Request</button>
+                
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
