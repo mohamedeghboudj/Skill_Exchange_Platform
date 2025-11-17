@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const mail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
         Result.innerText = "";
         if (Username === "" || Username.length < 3 || !charOnly.test(Username)) {
-            setErrorFor(UserName, "Name cannot be blank or less than 5 letters");
+            setErrorFor(UserName, "Name cannot be blank or shorter than 3 letters.");
             return;
         } else {
             setSuccessFor(UserName);

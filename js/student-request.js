@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let result = document.querySelector("#submissionResult");
     let submitBtn = document.querySelector("#SubmitButton");
     let para = document.querySelector("#default");
+    let PARA= document.querySelector("#DEFAULT");
     submitBtn.addEventListener("click", (event) => {
         event.preventDefault();
         CheckInputs();
@@ -45,13 +46,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const charOnly = /^[A-Za-z\s]+$/;
         result.innerText = "";
         if (NameValue === "" || NameValue.length < 3 || !charOnly.test(NameValue)) {
-            setErrorFor(StudentName, "Name cannot be blank or less than 3 letters");
+            setErrorFor(StudentName, "Name must be at least 3 characters.");
             return;
         } else {
             setSuccessFor(StudentName);
         }
         if (SkillValue === "" || SkillValue.length < 2) {
-            setErrorFor(Skill, "Skill cannot be blank or less than 2 char");
+            setErrorFor(Skill, "Skill must be at least 2 characters.");
             return;
         } else {
             setSuccessFor(Skill);
@@ -62,14 +63,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             setSuccessFor(Level);
         }
-        if (Days.textContent === "Select available days") {
-            setErrorFor(Days, "Select your availability days");
+        if (PARA.innerHTML === "Select available days") {
+            setErrorFor(Days, "Select the days you are available.");
             return;
         } else {
             setSuccessFor(Days);
         }
         if (!isTime(StartTime, EndTime)) {
-            setErrorFor(StartTime, "Start time must be less than end time by at least 1H");
+            setErrorFor(StartTime, "Start time must be at least 1 hour earlier than end time.");
             setErrorFor(EndTime, "");
             return;
         }
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
             setSuccessFor(EndTime);
         }
         if (MessageValue.length < 50) {
-            setErrorFor(Message, "the message must have at least 50 char length");
+            setErrorFor(Message, "Message must be at least 50 characters long.");
             return;
         } else {
             setSuccessFor(Message);

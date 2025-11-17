@@ -67,7 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
     //dropdown list select level student request
     const level = document.getElementById('selected');
     const list = document.getElementById('level-list');
-        let para = document.querySelector("#default");
+    let para = document.querySelector("#default");
+
     if (level && list) {
         level.addEventListener('click', () => {
             list.style.display = (list.style.display === "block") ? "none" : "block";
@@ -102,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const DayList = document.getElementById('days-list');
     const choice = document.querySelectorAll('.chosen-day');
     const Input = document.querySelectorAll('.Day');
+    let PARA = document.querySelector("#DEFAULT");
     if (days && DayList && choice && Input) {
         days.addEventListener('click', () => {
             DayList.style.display = (DayList.style.display === "block") ? "none" : "block";
@@ -115,18 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const selectedDays = Array.from(Input)
                     .filter(i => i.checked)
                     .map(i => i.value);
-
-
-                days.innerHTML = selectedDays.join('-');
-                days.style.color = "black";
+                PARA.innerHTML = selectedDays.join('-');
+                PARA.style.color = "black";
             });
         });
-
-
-
-
-
-
         document.addEventListener('click', (e) => {
             if (!DayList.contains(e.target) && !days.contains(e.target)) {
                 DayList.style.display = "none";
