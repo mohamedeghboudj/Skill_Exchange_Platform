@@ -1,0 +1,257 @@
+.courseinfo {
+    margin-top: 50px;
+    padding-inline: 7%;
+    padding-block: 50px;
+    background-color: rgba(131, 215, 254, 0.236);
+}
+
+.courseinfo h2,.courseinfo
+h3 {
+    font-size: 28px;
+    margin-top: 20px;
+}
+
+.info :nth-child(1) {
+    grid-column: span 2;
+}
+.teacher {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5%;
+    align-items: center;
+    background-color: white;
+    padding-inline: 8%;
+    padding-block: 3%;
+    box-shadow: 2px 2px 10px rgb(174, 173, 173);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.teacher img {
+    border-radius: 50%;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.teacher:hover img {
+    transform: scale(1.1);
+}
+
+.teacher:hover {
+    transform: translateY(-8px);
+    box-shadow: 2px 2px 15px rgb(110, 110, 110);
+}
+
+.teacher :nth-child(1) {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.teacherlinks,
+.teacherlinkslg {
+    display: flex;
+    gap: 20px;
+    padding-left: 0;
+    list-style: none;
+}
+
+.teacherlinkslg {
+    display: none;
+}
+
+.teacherlinks a,
+.teacherlinkslg a {
+    text-decoration: none;
+    color: inherit;
+    color: rgb(218, 110, 3);
+}
+
+.info #description {
+    grid-column: span 2;
+    padding-top: 10px;
+}
+
+.info p {
+    display: flex;
+    gap:15px;
+    color: #333;
+    margin: 5px;
+}
+
+.info {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding: 30px;
+    border: solid;
+    border-width: 2px;
+    border-color: rgb(222, 220, 220);
+    border-radius: 15px;
+    line-height: 30px;
+    font-size: 16px;
+    background-color: white;
+}
+
+.info button {
+    grid-column: span 2;
+    border-radius: 10px;
+    padding-block: 8px;
+    background-color: var(--secondary-color);
+    color: white;
+    border: solid;
+    border-width: 2px;
+    border-color: var(--secondary-color);
+    width: 100%;
+    margin-top: 20px;
+    font-size: 15px;
+}
+
+.info button:hover {
+    background-color: var(--hover-color);
+    border-color: var(--border-color);
+    color: var(--secondary-color);
+}
+
+#teachnav {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    color: rgb(102, 102, 102);
+}
+
+h2 {
+    font-size: 24px;
+    margin-top: 50px;
+}
+
+.videos {
+    padding-inline: 7%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.subcaption {
+    display: flex;
+    justify-content: space-between;
+}
+
+figure {
+    margin: 0;
+    padding: 20px;
+    border: solid;
+    border-width: 2px;
+    border-color: rgb(222, 220, 220);
+    background-color: rgba(254, 250, 176, 0.327);
+    border-radius: 20px;
+    box-shadow: 2px 2px 10px 2px rgb(228, 227, 227);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+figure:hover {
+    scale: 1.02;
+    box-shadow: 2px 2px 12px 2px rgb(200, 199, 199);
+}
+figure:hover img{
+    transform: scale(1.08);
+}
+figcaption {
+    position: relative;
+    padding-bottom: 30px;
+}
+
+figure img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+figure picture{
+    width: 100%;
+    height: 180px;
+    border-radius: 20px;
+    display: block;
+    overflow: hidden;
+}
+figcaption p {
+    margin: 0px 0px 2px;
+    color: rgb(88, 88, 88);
+    font-size: 14px;
+}
+
+figcaption h3 {
+    margin-block: 5px;
+    font-size: 16px;
+}
+
+figcaption button {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    border: solid;
+    border-width: 2px;
+    border-color: var(--primary-color);
+    padding-inline: 12px;
+    padding-block: 7px;
+    border-radius: 12px;
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+figcaption button:hover {
+    background-color: var(--hover-color);
+    border-color: var(--border-color);
+    color: var(--secondary-color);
+}
+
+#teachfooter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#teachfooter p {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgb(48, 48, 48);
+}
+
+#time {
+    font-size: 12px;
+}
+
+#locked {
+    background-color: red;
+    border-color: red;
+}
+#locked:hover {
+    color: white;
+}
+@media only screen and (min-width:768px) {
+    .courseinfo .info {
+        position: relative;
+    }
+    .courseinfo .info button {
+        width: 150px;
+    }
+    .teacher {
+        flex-direction: row;
+    }
+
+    .teacherlinks {
+        display: none;
+    }
+
+    .teacherlinkslg {
+        display: flex;
+    }
+}
+
+
