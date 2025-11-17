@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../assets/css/addcourse.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+            rel="stylesheet">
+        <title>LearnLand-Teach</title>
+    </head>
+
+    <body>
+        <div class="big_container">
+            <div class="container">
+                <div class="header">
+                    <div class="title">
+                        <i class="fa-regular fa-square-plus"></i>
+                        <h2>Add New Course</h2>
+                    </div>
+                </div>
+
+                <form class="course-form">
+                    <div class="inputs">
+
+                        <label>Course name</label>
+
+                        <input type="text" id="courseName"
+                            placeholder="e.g., Modern Algebra I" />
+
+                        <div class="row">
+                            <div class="sub-row">
+                                <label>Time to complete</label>
+                                <div class="col">
+                                    <input type="text" id="timeToComplete"
+                                        placeholder="In Hours : e.g., 6 " />
+                                </div>
+                            </div>
+                            <div class="sub-row">
+                                <label>Price</label>
+                                <div class="col">
+                                    <input type="text" id="price"
+                                        placeholder="e.g., $199" />
+                                </div>
+                            </div>
+                        </div>
+                        <label>Teacher</label>
+                        <input type="text" id="teacher"
+                            placeholder="Select a teacher" />
+                        <label>Description</label>
+                        <input type="text" id="description"
+                            placeholder="Describe your course" />
+                        <label for="category">Category:</label>
+                        <div class="droplist">
+                            <div class="select">
+                                <div class="select-txt">
+                                    select a category
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="lucide lucide-chevron-down-icon lucide-chevron-down "
+                                    id="category-btn"><path
+                                        d="m6 9 6 6 6-6" /></svg>
+                            </div>
+                            <ul id="droplist-ul">
+                                <li>AI</li>
+                                <li>Math</li>
+                                <li>Art</li>
+                                <li>Physics</li>
+                            </ul>
+
+                        </div>
+                        <label>Upload videos</label>
+                        <div class="upload-box" id="vdFiles">
+                            <div class="uplaod-btn">
+                                <i class="fa-solid fa-upload"></i>
+                                <button type="button">Browse files</button>
+                            </div>
+                            <p>Accepted: MP4, MOV, WEBM. Max 2GB each.</p>
+                        </div>
+                        <label>Add assignments</label>
+                        <div class="upload-box" id="assignment">
+                            <div class="upload-btn">
+                                <i class="fa-regular fa-file-circle-plus"></i>
+                                <button type="button">Add assignment</button>
+                            </div>
+                            <p>Attach PDFs, Docs, or links to external
+                                forms. (Not Required)</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="submit">
+                <button type="submit" id="submit">
+                    <i class="fa-regular fa-paper-plane"></i> Create course
+                </button>
+            </div>
+        </div>
+        <script src="/assets/js/droplist.js"></script>
+        <script src="/assets/js/addcourse.js"></script>
+    </body>
+
+</html> 
