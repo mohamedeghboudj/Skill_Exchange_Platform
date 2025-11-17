@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnLand- Edit Profile</title>
+    <link rel="icon" href="images/logo.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/editProfile.css">
+</head>
+
+<body>
+
+    <div class="overlay">
+        <div class="edit-page">
+
+            <header>
+                <i data-lucide="pencil-line" class="edit-icon"></i>
+
+                <h2>Edit Profile</h2>
+                <form action="profile.htm" target="_blank" method="get">
+
+                    <button class="close"> <i class="x-icon" data-lucide="x"></i>close</button>
+                </form>
+
+            </header>
+            <main>
+                <aside>
+                    <img src="images/profilePicture1.jpg" class="profile-pic">
+                    <label for="picture" class="change-pic">Change photo</label>
+                    <input type="file" id="picture" style="display:none;" name="profilePic" accept="image/*">
+                </aside>
+
+                <form action="profile.htm" target="_blank" id="my-form" method="get" class="edit-form">
+                    <span>
+                        <p>Personal infomation</p>
+                    </span>
+
+
+                    <div class="input">
+                        
+                        <div class="form-input"><input type="text" id="fullname" value=" "
+                                placeholder=" ">
+                            <label for="fullname">Fullname</label>
+                        </div>
+
+                        <div class="form-input">
+                            <input type="email" disabled id="email" value=" " placeholder=" ">
+                            <label for="email">Email</label>
+                        </div>
+
+
+
+                        <div class="form-input">
+                            <input type="text" value=" " id="age" placeholder=" ">
+                            <label for="age">Age</label>
+                        </div>
+
+                        <div class="form-input">
+                            <input type="text" id="skill" value=" " placeholder=" ">
+                            <label for="skill">Skill</label>
+                        </div>
+                        <div class="form-input"> <input type="text" id="role" value=" " placeholder=" ">
+                            <label for="role">Role</label>
+                        </div>
+
+
+                        <div class="form-input">
+                            <input type="text" id="subject" value=" " placeholder=" " disabled>
+                            <label for="subject">Subject</label>
+                        </div>
+
+                    </div>
+
+
+                    <div class="bio-section">
+                        <textarea id="bio" name="bio">
+                            </textarea>
+                    </div>
+
+
+                    <span>
+                        <p class="teaching-title">Teaching</p>
+                    </span>
+                    <div class="checkbox"> <input type="checkbox" id="teaching-option">
+                        <label for="teaching-option">Activate teaching option</label>
+                    </div>
+
+                    <small></small>
+
+                </form>
+
+
+            </main>
+            <div class="button-container">
+                <div> <button class="submit" form="my-form"> <i class="save" data-lucide="save"></i> save
+                    </button>
+
+                    <button class="reset" form="my-form"> <i class="undo" data-lucide="undo-2"></i>reset</button>
+                </div>
+
+
+                <p>Make updates to your personal info and availability to teach</p>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://unpkg.com/lucide"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="js/editProfile.js"></script>
+    <script src="js/user.js"></script>
+</body>
+</body>
+
+</html>

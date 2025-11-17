@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnLand-My profile</title>
+    <link rel="icon" href="images/logo.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/profile.css">
+</head>
+
+<body>
+
+    <main>
+
+
+        <header>
+            <h1 class="mainHeading"> Your profile</h1>
+            <form action="editProfile.htm" class="go-to-edit" target="_blank" method="get">
+                <button class="edit"> <i data-lucide="pencil-line" class="edit-icon"></i> Edit</button>
+            </form>
+        </header>
+
+        <div class="profile">
+            <figure>
+
+                <img class="profile-pic" src="images/profilePicture1.jpg" alt="profile picture"
+                    title="your profile picture" />
+                <div class="user-mode">
+                    <div class="student-mode">Student</div>
+                    <div class="teacher-mode">Teacher</div>
+                    <p> Manage you public profile details</p>
+                </div>
+
+            </figure>
+
+
+            <form action="EditProfile.htm" method="post">
+                <div class="personalInfo">
+                    <div class="form-input">
+                        <label for="FullnameV">Full name</label>
+                        <input type="text" id="FullnameV" value="" readonly />
+                    </div>
+                    <div>
+                        <label for="emailV">Email</label>
+                        <input type="email" id="emailV" value=" " readonly />
+                    </div>
+
+
+
+                    <div>
+                        <label for="Skill"> Skill</label>
+                        <input type="text" id="skillV" readonly value="" />
+                    </div>
+                    <div> <label for="AgeV"> Age</label>
+                        <input id="AgeV" value="" readonly />
+                    </div>
+                </div>
+                <div class="bio-section">
+                    <label class="bioV" for="BioV">Bio</label>
+                    <textarea id="bioV" name="bio" rows="5" readonly> 
+                    </textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="p-terms-align">
+            <h4>Privacy terms</h4>
+        </div>
+        <div class="privacy-terms">
+            <p>By continuing, you agree to our privacy policy and data processing</p>
+            <form action="privacyTerms.htm" target="_blank" method="get"><button class="view-privacy-terms">privacy
+                    terms</button>
+            </form>
+        </div>
+        <div class="certificates-align">
+            <h4>Certificates</h4>
+        </div>
+
+        <div class="certificate-section ">
+            <div class="certificate">
+                <a href="#popup1" class="certificate-object">
+                    <div>
+                        <i class="spreadsheet" data-lucide="file-spreadsheet"></i>
+                        <p> Google Professional Cloud Dev</p>
+                    </div>
+
+                    <form action="removeCertificate.htm" target="_blank" method="get">
+                        <button class="Remove" action="">Remove</button>
+                    </form>
+                </a>
+                <a href="#popup1" class="certificate-object" id="modal1">
+                    <div>
+                        <i class="spreadsheet" data-lucide="file-spreadsheet"></i>
+                        <p> Google Professional Cloud Dev</p>
+                    </div>
+                    <form action="removeCertificate.htm" target="_blank" method="get">
+                        <button class="Remove" action="">Remove</button>
+                    </form>
+                </a>
+            </div>
+
+
+            <label for="Certificate" class="Upload-button">Add certificate (PDF,PNG,JPG)</label>
+            <input type="file" id="Certificate" style="display:none;" name="certificate" accept="image/*">
+
+
+
+
+        </div>
+        <br>
+        <p class="note">Certificates are optional.You can add them anytime</p>
+        <br>
+
+    </main>
+    <div class="popup" id="popup1">
+        <a href="#" class="close-popup"> <i class="x-icon" data-lucide="x"></i></a>
+        <div class="inner-popup">
+
+            <img src="images/certificate.png" />
+
+        </div>
+    </div>
+
+    <script class="image1" src="https://unpkg.com/lucide"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="js/profile.js"></script>
+    <script src="js/user.js"></script>
+</body>
+
+</body>
+
+</html>
