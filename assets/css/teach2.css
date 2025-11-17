@@ -1,0 +1,89 @@
+
+.chat-course,
+.course-requests {
+    font-size: smaller;
+    color: grey;
+    margin-bottom: 1px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.name {
+    color: black;
+}
+
+.requests {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.addVd,
+.addAss {
+    background-color: rgba(124, 213, 148, 0.285);
+    border-radius: 10px;
+    padding: 10px;
+    width: fit-content;
+    color: darkolivegreen;
+    border: 1px solid darkolivegreen;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: scale 0.25s ease;
+    
+}
+.deletebtn {
+    background-color: #FEE2E2;
+    border-radius: 10px;
+    border: 1px solid #931414d1;
+    padding: 10px;
+    width: fit-content;
+    color: #931414d1;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: scale 0.25s ease;
+    display: flex;
+    gap: 3px;
+}
+.deletebtn:hover , .deletebtn:active {
+    color: white;
+    background-color:   #df2a2ab8;
+}
+.deletebtn:active {
+    transform: scale(1.040);
+}
+.edit-buttons {
+    display: flex;
+    gap: 10px;
+    
+}
+
+.addAss:hover 
+,.addVd:hover {
+transform: scale(1.040);
+}
+.coursename {
+    justify-content: space-between;
+}
+.coursename svg  {
+    cursor: pointer;
+    visibility: hidden;
+    transition: visibility o.5s linear;
+}
+.coursename svg:hover {
+    transform: scale(1.090);
+}
+.coursename:hover svg {
+    visibility: visible;
+}
+.one {
+    display: flex;
+}
+.video {
+    justify-content: space-between;
+    gap:5px;
+}
+#agree {
+    visibility: hidden;
+}
