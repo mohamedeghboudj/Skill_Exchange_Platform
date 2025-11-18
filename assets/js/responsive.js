@@ -12,8 +12,7 @@ window.addEventListener("resize", () => {
         content.classList.remove("hidden");
     } else {
 
-        chat.classList.add("hidden");
-        content.classList.remove("hidden");
+        ApplySavedState();
     }
 });
 
@@ -22,10 +21,16 @@ slider_btn.addEventListener("click", () => {
     if (window.innerWidth < 768) {
         chat.classList.toggle("hidden");
         content.classList.toggle("hidden");
+        SaveCurrentState();
     }
-    SaveCurrentState();
+
 
 });
+function InitializeState() {
+    if (window.innerWidth < 768) {
+        ApplySavedState();
+    }
+}
 function SaveCurrentState() {
     const state = chat.classList.contains("hidden") ? "content" : "chat";
     localStorage.setItem("viewState", state);
@@ -42,8 +47,4 @@ function ApplySavedState() {
     }
 }
 
-function InitializeState() {
-    if (window.innerWidth < 768) {
-        ApplySavedState();
-    }
-}
+
