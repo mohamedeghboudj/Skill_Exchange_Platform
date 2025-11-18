@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         bioValue = document.querySelector('#bioV'),
         teacherModeElement = document.querySelector('.teacher-mode'),
         certificateSection = document.querySelector('.certificate-section');
-   
+
 
     // Set form values
     NameValue.value = user.profile.name;
@@ -32,10 +32,10 @@ document.addEventListener('DOMContentLoaded', function () {
     skillValue.value = user.profile.skill;
     bioValue.value = user.profile.bio;
 
- 
 
 
- 
+
+
     function updateUIForUserRole() {
         const userRole = user.profile.role;
         const isTeacher = userRole.includes('Teacher');
@@ -53,27 +53,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateUIForUserRole();
 
-    
+
     let remove = document.getElementById("remove");
     let mydialog = document.getElementById("popup");
 
-    
-        remove.addEventListener('click', () => {
-            mydialog.showModal();
-        });
 
-        function closePop() {
-            mydialog.close();
-        }
+    remove.addEventListener('click', () => {
+        mydialog.showModal();
+    });
 
-        mydialog.addEventListener('click', () => {
-            mydialog.close();
-        });
-    
+    function closePop() {
+        mydialog.close();
+    }
+
+    mydialog.addEventListener('click', () => {
+        mydialog.close();
+    });
+
     let showTrems = document.querySelector("#vpt");
     let mydialog2 = document.getElementById("popup1");
 
-    showTrems.addEventListener('click', () => {
+    showTrems.addEventListener('click', (e) => {
+        e.preventDefault();
         mydialog2.showModal();
     });
 
@@ -81,7 +82,8 @@ document.addEventListener('DOMContentLoaded', function () {
         mydialog2.close();
     }
 
-    mydialog2.addEventListener('click', () => {
+    mydialog2.addEventListener('click', (e) => {
+        e.preventDefault();
         mydialog2.close();
     });
 });

@@ -1,8 +1,8 @@
 let ackBtn=document.querySelector(".acknowledge");
 let closeBtn=document.querySelector(".close");
-ackBtn.addEventListener("click",(e)=>{
+ackBtn.addEventListener("click",()=>{
     window.parent.closePop2();
 })
-closeBtn.addEventListener("click",(e)=>{
+closeBtn.addEventListener("click",()=>{
     window.parent.closePop2();
 })
