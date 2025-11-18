@@ -73,13 +73,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let showTrems = document.querySelector("#vpt");
     let mydialog2 = document.getElementById("popup1");
 
-    showTrems.addEventListener('click', () => {
+    showTrems.addEventListener('click', (e) => {
+        e.preventDefault();
         mydialog2.showModal();
     });
 
 
 
-    mydialog2.addEventListener('click', () => {
+    mydialog2.addEventListener('click', (e) => {
+        e.preventDefault();
         mydialog2.close();
     });
     let closeBtn = document.querySelector(".close");
