@@ -12,8 +12,11 @@ let result = document.querySelector("#result")
 result.style.display = "none";
 pay.addEventListener('click', (event) => {
     event.preventDefault();
-    checkInputs();
+    if (checkInputs()) {
+        window.parent.closePop2();
+    };
 });
+
 
 function setErrorFor(input, message) {
     result.style.display = "block";
@@ -44,7 +47,7 @@ function isCardNumber(number) {
     const regex = /^[0-9]{12}$/;
     return regex.test(number);
 }
-function isCVC(number){
+function isCVC(number) {
     const regex = /^[0-9]{3}$/;
     return regex.test(number);
 }
@@ -59,7 +62,7 @@ function checkInputs() {
 
     if (!namevalue || namevalue.length < 3) {
         setErrorFor(username, "Name must be at least 3 characters!");
-        return;
+        return false;
 
 
     } else {
@@ -68,10 +71,11 @@ function checkInputs() {
 
     if (numbervalue.length < 12) {
         setErrorFor(number, "Card number must be at least 12 characters!");
-        return;
+        return false;
 
     } else if (!isCardNumber(numbervalue)) {
         setErrorFor(number, "Invalid CardNumber!");
+        return false;
     }
     else {
         setSuccessFor(number);
@@ -80,11 +84,11 @@ function checkInputs() {
 
     if (!expiryMonthvalue) {
         setErrorFor(expiryMonth, "Please fill all field!");
-        return;
+        return false;
 
     } else if ((!isMonth(expiryMonthvalue)) || expiryMonthvalue > 12 || expiryMonthvalue <= 0) {
         setErrorFor(expiryMonth, "Invalid month!");
-        return;
+        return false;
 
     }
     else {
@@ -94,11 +98,11 @@ function checkInputs() {
     const currentYear = new Date().getFullYear();
     if (!expiryYearvalue) {
         setErrorFor(expiryYear, "Please fill all field!");
-        return;
+        return false;
 
     } else if ((!isYear(expiryYearvalue)) || expiryYearvalue < currentYear) {
         setErrorFor(expiryYear, "Invalid year!");
-        return;
+        return false;
 
     }
     else {
@@ -107,23 +111,23 @@ function checkInputs() {
 
     if (!cvcvalue || cvcvalue.length < 3) {
         setErrorFor(cvc, "CVC must be at least 3 characters!");
-        return;
+        return false;
 
-    }else if(!isCVC(cvcvalue)){
+    } else if (!isCVC(cvcvalue)) {
         setErrorFor(cvc, "Invalid CVC!");
-        return;
+        return false;
     }
-     else {
+    else {
         setSuccessFor(cvc);
     }
 
     if (!emailvalue) {
         setErrorFor(email, "Please fill all field!");
-        return;
+        return false;
 
     } else if (!isEmail(emailvalue)) {
         setErrorFor(email, "Invalid email!");
-        return;
+        return false;
 
     }
     else {
@@ -132,7 +136,7 @@ function checkInputs() {
 
     if (!addressvalue || addressvalue.length < 10) {
         setErrorFor(address, "Address must be at least 10 characters!");
-        return;
+        return false;
 
     } else {
         setSuccessFor(address);
@@ -140,7 +144,7 @@ function checkInputs() {
 
     if (!terms.checked) {
         result.innerHTML = "You must agree before continuing!";
-        return;
+        return false;
 
     }
 
@@ -154,6 +158,10 @@ function checkInputs() {
     email.value = "";
     address.value = "";
     terms.checked = false;
-
+    return true;
 }
+
+
+
+
 

@@ -182,37 +182,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
     function saveToLocalStorage() {
-        try {
-            const storedUsers = fromLocalStorage();
 
 
-            if (!storedUsers || !Array.isArray(storedUsers) || storedUsers.length === 0) {
-                console.error("Invalid user data structure");
-                return false;
-            }
+        let users = fromLocalStorage();
+        let user = users[0];
+        user.profile.name = Name.value;
+        user.profile.age = age.value;
+        user.profile.skill = skill.value;
+        user.profile.role = role.value;
+        user.profile.bio = bio.value;
+        user.profile.subject = subject.value;
+        localStorage.setItem("learnLandUsers", JSON.stringify(users))
 
-
-            const updatedUsers = [...storedUsers];
-            updatedUsers[0] = {
-                ...updatedUsers[0],
-                profile: {
-                    ...updatedUsers[0].profile,
-                    name: Name.value.trim(),
-                    age: age.value.trim(),
-                    skill: skill.value.trim(),
-                    role: role.value.trim(),
-                    bio: bio.value.trim(),
-                    subject: subject.value.trim()
-                }
-            };
-
-            localStorage.setItem("learnLandUsers", JSON.stringify(updatedUsers));
-            console.log("Data saved successfully!");
-            return true;
-
-        } catch (error) {
-            console.error("Error saving to localStorage:", error);
-            return false;
-        }
     }
+    
 })

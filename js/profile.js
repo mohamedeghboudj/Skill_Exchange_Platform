@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     function getUserFromArray() {
-        const users = fromLocalStorage(); // Added 'const'
+        const users = fromLocalStorage(); 
         return users[0];
     }
 
-    const user = getUserFromArray(); // Added 'const'
+    const user = getUserFromArray(); 
 
     let NameValue = document.querySelector('#FullnameV'),
         ageValue = document.querySelector('#AgeV'),
@@ -21,6 +21,22 @@ document.addEventListener('DOMContentLoaded', function () {
     emailValue.value = user.email;
     skillValue.value = user.profile.skill;
     bioValue.value = user.profile.bio;
+
+})
+let remove = document.getElementById("remove");
+let mydialog = document.getElementById("popup");
+remove.addEventListener('click', () => {
+    mydialog.showModal();
+});
+function closePop() {
+    mydialog.close();
+}
+mydialog.addEventListener('click', () => {
+
+    mydialog.close();
+
+
+
 
 
     function updateUIForUserRole() {

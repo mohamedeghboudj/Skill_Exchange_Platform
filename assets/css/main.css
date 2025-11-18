@@ -33,6 +33,8 @@ main {
     position: relative;
     flex: 1;
     padding-bottom: 80px;
+    padding-top: 80px;
+    
 }
 
 nav {

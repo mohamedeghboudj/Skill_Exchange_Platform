@@ -15,6 +15,13 @@ main {
     justify-content: flex-start;
     gap: 20px;
 }
+#popup::backdrop{
+    background-color: #7f7f7f92;
+}
+#popup{
+    background:transparent;
+
+}
 
 aside {
     background-color: white;

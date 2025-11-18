@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     SignInBTN.addEventListener("click", (event) => {
         event.preventDefault();
-        CheckInputs();
+        if(CheckInputs()){
+            window.location.href="/pages/home.html";
+        };
     });
     function setErrorFor(input, message) {
         Result.innerText += "\n" + message;
@@ -33,16 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!EmailSIGNIN || !mail.test(EmailSIGNIN)) {
             setErrorFor(EmailIn, "Invalid email");
-            return;
+            return false;
         } else {
             setSuccessFor(EmailIn);
         }
         if (!Pass || !passwordRegex.test(Pass)) {
             setErrorFor(PasswordIn, "Password must be 8 chars and include a letter, number, and one of: @$!%*?&");
-            return;
+            return false;
         } else {
             setSuccessFor(PasswordIn);
         }
+
+        return true;
 
     }
 

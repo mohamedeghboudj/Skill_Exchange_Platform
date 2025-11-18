@@ -17,6 +17,48 @@
 </head>
 
 <body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../assets/images/logo-removebg-preview.png" alt="learn-land" width="60px" height="50">
+                <h3>LearnLand</h3>
+            </div>
+            <ul>
+                <li><a href="/index.html">About</a></li>
+                <li><a href="/pages/home.html">Home</a></li>
+                <li><a href="/html/teach.html">Teach</a></li>
+                <li><a href="/html/learn.html">Learn</a></li>
+                <li><a href="/profile.htm">Profile</a></li>
+                <button><a href="/index.html"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-log-out-icon lucide-log-out">
+                            <path d="m16 17 5-5-5-5" />
+                            <path d="M21 12H9" />
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        </svg>Logout</a></button>
+            </ul>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menuIcon">
+                <path d="M4 5h16" />
+                <path d="M4 12h16" />
+                <path d="M4 19h16" />
+            </svg>
+        </nav>
+        <div class="navigation">
+            <a href="/index.html">About</a>
+            <hr>
+            <a href="/pages/home.html">Home</a>
+            <hr>
+            <a href="/html/teach.html">Teach</a>
+            <hr>
+            <a href="/html/learn.html">Learn</a>
+            <hr>
+            <a href="/profile.htm">Profile</a>
+            <hr>
+            <a href="/auth.html">LogOut</a>
+        </div>
+    </header>
     <div class="teachform">
         <h2><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -42,19 +84,21 @@
             </div>
             <label for="bio">Bio</label>
             <textarea name="bio" id="bio"></textarea>
+            <p id="result"></p>
             <div class="submition">
                 <p><input type="checkbox" id="term">You agree to our instructor terms and consent to verification of
                     your certificates
                 </p>
-            </div>
-            <p id="result"></p>
-            <button type="button" id="send"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                 <button type="button" id="send"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round" class="lucide lucide-send-icon lucide-send">
                     <path
                         d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
                     <path d="m21.854 2.147-10.94 10.939" />
                 </svg>Submit Request</button>
+            </div>
+            
+           
 
 
         </form>

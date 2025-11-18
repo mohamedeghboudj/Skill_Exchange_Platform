@@ -25,7 +25,9 @@ uploadDiv.addEventListener('click', () => {
 
 submit.addEventListener('click', (e) => {
     e.preventDefault();
-    checkInputs();
+    if (checkInputs()) {
+        window.location.href = "/html/teach.html";
+    };
 });
 
 function checkInputs() {
@@ -37,35 +39,35 @@ function checkInputs() {
 
     if (!skillvalue) {
         setErrorFor(skill, "Please fill your skills!");
-        return;
+        return false;
     } else if (skillvalue.length < 10) {
         setErrorFor(skill, "Please enter more skills!");
-        return;
+        return false;
     } else {
         setSuccessFor(skill);
     }
 
     if (fileInput.files.length == 0) {
         setErrorFor(fileInput, "Certificates are required for this process!");
-        return;
+        return false;
     } else {
         setSuccessFor(fileInput);
     }
 
     if (!biovalue) {
         setErrorFor(bio, "Please fill the bio area!");
-        return;
+        return false;
     } else if (biovalue.length < 10) {
         setErrorFor(bio, "Please let us know more about your experience!");
-        return;
+        return false;
     } else {
         setSuccessFor(bio);
     }
 
     if (!terms.checked) {
-        result.style.display="block";
+        result.style.display = "block";
         result.innerHTML = "You must agree before continuing!";
-        return;
+        return false;
 
     }
     result.innerHTML = "";
@@ -73,4 +75,5 @@ function checkInputs() {
     skill.value = "";
     bio.value = "";
     terms.checked = false;
+    return true;
 }
