@@ -10,10 +10,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     SignInBTN.addEventListener("click", (event) => {
         event.preventDefault();
-        if(CheckInputs()){
-            window.location.href="/pages/home.html";
+        // to verify the user exists in the array
+
+
+        if (CheckInputs()) {
+
+            if (authenticateUser(EmailIn.value, PasswordIn.value)) {
+                window.location.href = "/pages/home.html";
+            } else {
+                setErrorFor(EmailIn, "Invalid email or password.");
+                setErrorFor(PasswordIn, "");
+            }
         };
     });
+
+    function authenticateUser(email, password) {
+
+        const currentUsers = fromLocalStorage();
+        const user = currentUsers.find(user =>
+            user.email === email && user.password === password
+        );
+
+        if (user) {
+            console.log("User authenticated successfully:", user.profile.name);
+            sessionStorage.setItem("currentUserEmail", user.email);
+            localStorage.setItem("currentUser", JSON.stringify(user));
+
+            return true;
+        } else {
+            console.log("Authentication failed: Invalid credentials");
+            return false;
+        }
+    }
     function setErrorFor(input, message) {
         Result.innerText += "\n" + message;
         input.classList.add("error");
@@ -28,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const EmailSIGNIN = EmailIn.value.trim();
         const Pass = PasswordIn.value.trim();
-       const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/;
 
         const mail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
         Result.innerText = "";
