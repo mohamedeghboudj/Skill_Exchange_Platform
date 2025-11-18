@@ -9,6 +9,7 @@ const courses = [
     rating: 4.7,
     description: "Learn the basics of AI, including search algorithms, knowledge representation, and reasoning."
   },
+
   {
     id: 2,
     title: "Linear Algebra",
@@ -18,6 +19,16 @@ const courses = [
     price: 100,
     rating: 4.5,
     description: "Build dynamic and responsive web apps using React, JavaScript, and modern web technologies."
+  },
+  {
+    id: 8, // Make sure this matches the videos courseId
+    title: "UI/UX Design Fundamentals",
+    instructor: "Dr. John Smith",
+    category: "Design",
+    duration: "6 weeks",
+    price: 100,
+    rating: 4.5,
+    description: "Learn UI/UX design principles, wireframing, prototyping, and usability testing."
   },
   {
     id: 3,

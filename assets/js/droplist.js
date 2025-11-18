@@ -4,7 +4,7 @@ const btn = document.getElementById('category-btn');
 const droplist = document.querySelector('#droplist-ul');
 const select = document.querySelector('.select-txt');
 
-// toggle dropdown open/close
+// toggle dropdown 
 btn.addEventListener('click', () => {
     droplist.classList.toggle('show');
 });
