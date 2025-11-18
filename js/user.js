@@ -10,15 +10,11 @@ let users = fromLocalStorage() || [
             skill: "Mathematics",
             role: "Student",
             subject: "",
-<<<<<<< HEAD
+
             bio: "Passionate mathematics student with a love for problem-solving and analytical thinking."
         },
         teacherProfile: null // Not a teacher yet
-=======
-            bio: "Passionate mathematics student with a love for problem-solving and analytical thinking.",
-            picture:"images1/profilePicture1.jpg"
-        }
->>>>>>> ba7caf87fe92da27bd4e49b52a466c63a90ffa89
+
     },
     {
         id: 2,
@@ -30,7 +26,7 @@ let users = fromLocalStorage() || [
             skill: "Computer Science",
             role: "Student, Teacher",
             subject: "Programming",
-<<<<<<< HEAD
+
             bio: "Computer science major focusing on AI and machine learning."
         },
         teacherProfile: {
@@ -166,10 +162,7 @@ let users = fromLocalStorage() || [
             rating: 4.6,
             studentsCount: 18,
             verified: false // Pending verification
-=======
-            bio: "Computer science major focusing on AI and machine learning.",
-            picture:"images1/image3.png"
->>>>>>> ba7caf87fe92da27bd4e49b52a466c63a90ffa89
+
         }
     }
 ];
