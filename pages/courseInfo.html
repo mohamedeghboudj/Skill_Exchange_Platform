@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/assets/css/main.css">
     <script src="/assets/js/main.js" defer></script>
     <script src="/assets/js/courseInfo.js" defer></script>
+    <script src="/js/student-request.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -21,15 +22,15 @@
         <nav>
             <div class="logo">
                 <img src="../assets/images/logodone-removebg-preview.png" alt="learn-land" width="55px" height="40">
-                    
+
                 <h3>LearnLand</h3>
             </div>
             <ul>
-                <li><a href="about.html">About</a></li>
+                <li><a href="/index.html">About</a></li>
                 <li><a href="/pages/home.html">Home</a></li>
-                <li><a href="/pages/teach.html">Teach</a></li>
-                <li><a href="/pages/learn.html">Learn</a></li>
-                <li><a href="/pages/profile.html">Profile</a></li>
+                <li><a href="/html/teach.html">Teach</a></li>
+                <li><a href="/html/learn.html">Learn</a></li>
+                <li><a href="/profile.htm">Profile</a></li>
                 <button><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-log-out-icon lucide-log-out">
@@ -46,21 +47,21 @@
             </svg>
         </nav>
         <div class="navigation">
-            <a href="about.html">About</a>
+            <a href="/index.html">About</a>
             <hr>
             <a href="/pages/home.html">Home</a>
             <hr>
-            <a href="/pages/teach.html">Teach</a>
+            <a href="/html/teach.html">Teach</a>
             <hr>
-            <a href="/pages/learn.html">Learn</a>
+            <a href="/html/learn.html">Learn</a>
             <hr>
-            <a href="/pages/profile.html">Profile</a>
+            <a href="/profile.htm">Profile</a>
             <hr>
-            <a href="/pages/signin.html">LogOut</a>
+            <a href="/auth.html">LogOut</a>
         </div>
     </header>
     <main>
-        
+
         <section class="courseinfo">
             <h1>Course Details</h1>
             <div class="info">
@@ -75,7 +76,7 @@
                     complete beginner or looking to level up your skills, this hands-on program will guide you
                     through real-world projects, best practices, and the latest tools used by professionals in
                     the industry.</p>
-                <button>Send Request</button>
+                <button id="send">Send Request</button>
             </div>
             <h3>Instructor</h3>
             <div class="teacher">
@@ -196,13 +197,14 @@
                 </figcaption>
             </figure>
         </div>
-
+        <dialog id="popup" style="width: 500px; height: 800px; border: none; scrollbar-width: none; border-radius: 15px; padding: 0;">
+            <iframe src="/studentRequest.html" frameborder="0"  style="width: 100%; height: 100%; border: none;"></iframe>
+        </dialog>
     </main>
     <footer>
         <div class="footing">
             <div class="logo">
-                <img src="/assets/images/logowhite-removebg-preview.png" alt="logo" width="75px"
-                    height="60px">
+                <img src="/assets/images/logowhite-removebg-preview.png" alt="logo" width="75px" height="60px">
                 <h2>LearnLand</h2>
             </div>
             <div class="footercontent">
@@ -277,6 +279,8 @@
 
     </footer>
 
+   
 </body>
+
 
 </html>

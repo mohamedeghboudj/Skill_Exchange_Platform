@@ -1119,12 +1119,30 @@ body {
 
 /*End FAQ*/
 
+
+
 /*Start Student Request Window*/
 .container-card {
     position: relative;
     height: 100vh;
+
+    width: 500px;
+    margin: auto;
+
 }
 
+@media screen and (max-width:500px) {
+    .container-card {
+        width: 380px;
+    }
+}
+
+@media screen and (min-width:500px) {
+    .container-card {
+        width: 500px;
+    }
+
+}
 
 .card {
     border: 1px solid none;
@@ -1138,15 +1156,10 @@ body {
     box-shadow: 2px 2px 5px 1px rgb(195, 194, 194);
     z-index: 6;
     background-color: white;
-    width: 80%;
-
+    width: 100%;
 }
 
-@media(min-width:768px) {
-    .card {
-        width: 60%;
-    }
-}
+
 
 .card .title {
     padding-bottom: 15px;
@@ -1536,12 +1549,13 @@ body {
 }
 
 @media (max-width:768px) {
- .whole-container {
+    .whole-container {
 
-    
-    height: 120vh;
+
+        height: 120vh;
+    }
 }
-}
+
 .container-sign-page {
     display: flex;
     justify-content: center;

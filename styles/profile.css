@@ -1,13 +1,13 @@
 html,
 body {
     font-family: 'Mulish', sans-serif;
-    align-items: center;
+    
     margin: 0;
 
 }
 
 main {
-    margin: 0% 2%;
+    margin: auto;
     margin-bottom: 5%;
     background-color: #f3f9ff;
 
@@ -16,7 +16,7 @@ main {
 
 
 
-header {
+.header {
 
     display: flex;
     justify-content: space-between;
@@ -415,7 +415,8 @@ main {
 
     main {
 
-        margin: 0% 1%;
+       
+        width:90%;
     }
 
     input {
@@ -481,4 +482,11 @@ main {
     }
 
 
+}
+#popup::backdrop {
+    background-color: #7f7f7f92;
+}
+
+#popup {
+    background: transparent;
 }

@@ -25,4 +25,17 @@ document.addEventListener('DOMContentLoaded', function () {
     skillValue.value = user.profile.skill;
     bioValue.value = user.profile.bio;
 })
+let remove=document.getElementById("remove");
+let mydialog=document.getElementById("popup");
+remove.addEventListener('click',()=>{
+    mydialog.showModal();
+});
+function closePop(){
+    mydialog.close();
+}
+mydialog.addEventListener('click',()=>{
+    
+    mydialog.close();}
+    
+)
 

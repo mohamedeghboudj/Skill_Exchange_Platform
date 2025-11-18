@@ -1,4 +1,7 @@
+body{
+    background-image: linear-gradient(to right, rgba(247, 248, 196, 0.429), rgba(143, 201, 251, 0.301));
 
+}
 .teachform{
     font-family: "mulish", "arial", "sans";
     padding-inline: 30px;
@@ -130,7 +133,7 @@ border: 1px solid green !important;
 }
 @media only screen and (min-width: 1024px) {
     .teachform{
-        height: 600px;
+        height: fit-content;
         width: 700px;
     }
     .teachform form textarea{
@@ -139,13 +142,14 @@ border: 1px solid green !important;
     .teachform form button{
         width: 160px;
         border-radius:20px;
-        padding: 0;
+        padding: 5;
         margin-block: 12px;
     }
     .teachform form .submition{
         display: flex;
         justify-content: space-between;
-        margin-top: 20px;
+        
+        align-items: center;
     }
 
 }

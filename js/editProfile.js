@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function () {
         updateFormForTeacherMode();
     }
     function saveToLocalStorage() {
-        let users = fromLocalStorage();  
-    let user = users[0]; 
+        let users = fromLocalStorage();
+        let user = users[0];
         user.profile.name = Name.value;
         user.profile.age = age.value;
         user.profile.skill = skill.value;
@@ -169,4 +169,5 @@ document.addEventListener('DOMContentLoaded', function () {
         user.profile.subject = subject.value;
         localStorage.setItem("learnLandUsers", JSON.stringify(users))
     }
+    
 })
