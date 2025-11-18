@@ -1,155 +1,429 @@
-// teach.js - JavaScript functionality for the teach page
+// Import functions from courses.js and videos.js
+console.log("js is working..");
+import { getCourses, deleteCourse } from '../data/courseService.js';
+import {
+  getVideosByCourse,
+  deleteMultipleVideos,
+  addVideo,
+  getAssignmentsByCourse,
+  addAssignment,
+  deleteAssignment
+} from '../data/videos.js';
 
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // Delete Course Functionality - No confirmation, just delete
-    const deleteCourseBtns = document.querySelectorAll('.delete-course-btn');
-    deleteCourseBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const course = this.closest('.course');
-            course.style.transition = 'opacity 0.3s ease';
-            course.style.opacity = '0';
-            setTimeout(() => {
-                course.remove();
-            }, 300);
-        });
-    });
+// State management
+let deleteMode = {};
+let selectedVideos = {};
 
-    // Add Video Functionality - Opens add course window
-    const addVideoBtns = document.querySelectorAll('.add-video-btn');
-    addVideoBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Open the add course window (you'll need to implement this based on your existing code)
-            // For now, this is a placeholder that you can replace with your window opening logic
-            window.open('addcourse.html', '_blank', 'width=800,height=600');
-        });
-    });
-
-    // Delete Videos Functionality - Toggle checkboxes on first click, delete on second click
-    const deleteVideosBtns = document.querySelectorAll('.delete-videos-btn');
-    deleteVideosBtns.forEach(btn => {
-        let deleteMode = false;
-        
-        btn.addEventListener('click', function() {
-            const course = this.closest('.course');
-            const checkboxes = course.querySelectorAll('.video-checkbox');
-            
-            if (!deleteMode) {
-                // Enter delete mode - show checkboxes
-                deleteMode = true;
-                checkboxes.forEach(cb => {
-                    cb.style.visibility = 'visible';
-                    cb.checked = false;
-                });
-                this.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="m15 9-6 6" />
-                        <path d="m9 9 6 6" />
-                    </svg>
-                    remove selected
-                `;
-            } else {
-                // Confirm delete - remove checked videos without alert
-                const videosToDelete = [];
-                checkboxes.forEach(cb => {
-                    if (cb.checked) {
-                        videosToDelete.push(cb.closest('.video'));
-                    }
-                });
-                
-                // Delete selected videos
-                videosToDelete.forEach(video => {
-                    video.style.transition = 'opacity 0.3s ease';
-                    video.style.opacity = '0';
-                    setTimeout(() => {
-                        video.remove();
-                    }, 300);
-                });
-                
-                // Exit delete mode - hide remaining checkboxes
-                deleteMode = false;
-                checkboxes.forEach(cb => {
-                    cb.style.visibility = 'hidden';
-                    cb.checked = false;
-                });
-                this.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="m15 9-6 6" />
-                        <path d="m9 9 6 6" />
-                    </svg>
-                    delete
-                `;
-            }
-        });
-    });
-
-    // Delete Assignment Functionality - No confirmation, just delete
-    const deleteAssignmentBtns = document.querySelectorAll('.delete-assignment-btn');
-    deleteAssignmentBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const assignment = this.closest('.assignment');
-            const addBtn = assignment.querySelector('.add-assignment-btn');
-            const pdfDiv = assignment.querySelector('.pdf');
-            
-            pdfDiv.style.transition = 'opacity 0.3s ease';
-            pdfDiv.style.opacity = '0';
-            setTimeout(() => {
-                pdfDiv.remove();
-                this.classList.add('hide');
-                addBtn.classList.remove('hide');
-            }, 300);
-        });
-    });
-
-    // Add Assignment Functionality
-    const addAssignmentBtns = document.querySelectorAll('.add-assignment-btn');
-    addAssignmentBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const assignment = this.closest('.assignment');
-            const deleteBtn = assignment.querySelector('.delete-assignment-btn');
-            
-            const assignmentName = prompt('Enter assignment name:', 'Assignment 1');
-            if (!assignmentName) return;
-            
-            // Create new assignment PDF element
-            const newPdf = document.createElement('div');
-            newPdf.className = 'pdf';
-            newPdf.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="lucide lucide-file-icon lucide-file">
-                    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-                    <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-                </svg>
-                ${assignmentName}
-            `;
-            
-            assignment.insertBefore(newPdf, assignment.querySelector('.edit-buttons'));
-            
-            // Hide add button, show delete button
-            this.classList.add('hide');
-            deleteBtn.classList.remove('hide');
-        });
-    });
-
-    // Hover effect for delete course icon
-    deleteCourseBtns.forEach(btn => {
-        const coursename = btn.closest('.coursename');
-        
-        coursename.addEventListener('mouseenter', function() {
-            btn.style.stroke = '#dc2626';
-            btn.style.transition = 'stroke 0.2s ease';
-        });
-        
-        coursename.addEventListener('mouseleave', function() {
-            btn.style.stroke = '#b7b4b4';
-        });
-    });
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+  renderAllCourses();
+  setupAddCourseButton();
+  setupPreExistingCourses(); // NEW
 });
+
+// Attach event listeners to courses already in HTML
+function setupPreExistingCourses() {
+  const existingCourses = document.querySelectorAll('.content .course');
+  existingCourses.forEach(courseDiv => {
+    const courseId = parseInt(courseDiv.getAttribute('data-course-id')) || null;
+    if (courseId !== null) {
+      setupCourseEventListeners(courseDiv, courseId);
+    }
+  });
+}
+
+// Render all courses
+function renderAllCourses() {
+  const courses = getCourses();
+  const contentDiv = document.querySelector('.content');
+
+
+
+  courses.forEach(course => {
+    const courseElement = createCourseElement(course);
+    contentDiv.appendChild(courseElement);
+  });
+
+  // Add the "Add New Course" button at the end
+  if (!document.querySelector('.add-course-container')) {
+    const addCourseDiv = createAddCourseButton();
+    contentDiv.appendChild(addCourseDiv);
+  }
+}
+
+// Create course element
+function createCourseElement(course) {
+  const videos = getVideosByCourse(course.id);
+  const assignments = getAssignmentsByCourse(course.id);
+
+  const courseDiv = document.createElement('div');
+  courseDiv.className = 'course';
+  courseDiv.setAttribute('data-course-id', course.id);
+  courseDiv.style.animation = 'fadeIn 0.5s ease';
+
+  courseDiv.innerHTML = `
+    <div class="coursename">
+      <h3>${course.title}</h3>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+        viewBox="0 0 24 24" fill="none" stroke="#b7b4b4" 
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-trash2-icon lucide-trash-2 delete-course-btn">
+        <path d="M10 11v6" /><path d="M14 11v6" />
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+        <path d="M3 6h18" />
+        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      </svg>
+    </div>
+    
+    <div class="videos">
+      <div class="vdHead">
+        <p>Course videos</p>
+        <div class="edit-buttons">
+          <button class="deletebtn delete-videos-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-circle-x-icon lucide-circle-x">
+              <circle cx="12" cy="12" r="10" />
+              <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+            </svg>
+            delete
+          </button>
+          <button class="addVd add-video-btn">+ Add</button>
+        </div>
+      </div>
+      <div class="vdcards" data-course-id="${course.id}">
+        ${videos.map(video => createVideoCard(video, course.id)).join('')}
+      </div>
+    </div>
+    
+    <div class="assignments">
+      <p>Assignments</p>
+      ${assignments.map(assignment => createAssignmentCard(assignment, course.id)).join('')}
+      <div class="add-assignment-container" style="margin-top: 10px;">
+        <button class="addAss add-assignment-btn" data-course-id="${course.id}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          Add Assignment
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Setup event listeners
+  setupCourseEventListeners(courseDiv, course.id);
+
+  return courseDiv;
+}
+
+// Create video card HTML
+function createVideoCard(video, courseId) {
+  const isDeleteMode = deleteMode[courseId] || false;
+
+  return `
+    <div class="video" data-video-id="${video.id}" style="animation: slideIn 0.3s ease;">
+      <div class="one">
+        <div class="vd-background">
+          <img src="${video.thumbnail}" alt="${video.title}">
+        </div>
+        <div class="vd-info">
+          <div class="title">${video.title}</div>
+          <div class="duration">${video.duration}</div>
+        </div>
+      </div>
+      <div class="two">
+        <input type="checkbox" class="video-checkbox" 
+          style="display: ${isDeleteMode ? 'block' : 'none'};" 
+          data-video-id="${video.id}"/>
+      </div>
+    </div>
+  `;
+}
+
+// Create assignment card HTML
+function createAssignmentCard(assignment, courseId) {
+  return `
+    <div class="assignment" data-assignment-id="${assignment.id}" style="animation: slideIn 0.3s ease;">
+      <div class="pdf">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="lucide lucide-file-icon lucide-file">
+          <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+          <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+        </svg>
+        ${assignment.title}
+      </div>
+      <div class="edit-buttons">
+        <button class="deletebtn delete-assignment-btn" data-assignment-id="${assignment.id}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-circle-x-icon lucide-circle-x">
+            <circle cx="12" cy="12" r="10" />
+            <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+          </svg>
+          delete
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Setup event listeners for a course
+function setupCourseEventListeners(courseDiv, courseId) {
+  // Delete course button
+  const deleteCourseBtn = courseDiv.querySelector('.delete-course-btn');
+  deleteCourseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    handleDeleteCourse(courseId, courseDiv);
+  });
+
+  // Delete videos button
+  const deleteVideosBtn = courseDiv.querySelector('.delete-videos-btn');
+  deleteVideosBtn.addEventListener('click', () => handleDeleteVideos(courseId, courseDiv));
+
+  // Add video button
+  const addVideoBtn = courseDiv.querySelector('.add-video-btn');
+  addVideoBtn.addEventListener('click', () => handleAddVideo(courseId, courseDiv));
+
+  // Add assignment button
+  const addAssignmentBtn = courseDiv.querySelector('.add-assignment-btn');
+  addAssignmentBtn.addEventListener('click', () => handleAddAssignment(courseId, courseDiv));
+
+  // Delete assignment buttons
+  const deleteAssignmentBtns = courseDiv.querySelectorAll('.delete-assignment-btn');
+  deleteAssignmentBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const assignmentId = parseInt(btn.getAttribute('data-assignment-id'));
+      handleDeleteSingleAssignment(assignmentId, courseDiv);
+    });
+  });
+}
+
+// Handle delete course
+function handleDeleteCourse(courseId, courseDiv) {
+  if (confirm('Are you sure you want to delete this entire course? This action cannot be undone.')) {
+    courseDiv.style.animation = 'fadeOut 0.3s ease';
+    setTimeout(() => {
+      deleteCourse(courseId);
+      courseDiv.remove();
+    }, 300);
+  }
+}
+
+// Handle delete videos
+function handleDeleteVideos(courseId, courseDiv) {
+  const vdcards = courseDiv.querySelector('.vdcards');
+  const checkboxes = vdcards.querySelectorAll('.video-checkbox');
+
+  if (!deleteMode[courseId]) {
+    // Enter delete mode - show checkboxes
+    deleteMode[courseId] = true;
+    checkboxes.forEach(cb => {
+      cb.style.display = 'block';
+      cb.style.animation = 'fadeIn 0.2s ease';
+    });
+    courseDiv.querySelector('.delete-videos-btn').textContent = 'Remove Selected';
+  } else {
+    // Check if any videos are selected
+    const selectedIds = Array.from(checkboxes)
+      .filter(cb => cb.checked)
+      .map(cb => parseInt(cb.getAttribute('data-video-id')));
+
+    if (selectedIds.length > 0) {
+      // Delete selected videos
+      if (confirm(`Delete ${selectedIds.length} video(s)?`)) {
+        deleteMultipleVideos(selectedIds);
+
+        // Remove video cards with animation
+        selectedIds.forEach(id => {
+          const videoCard = vdcards.querySelector(`[data-video-id="${id}"]`);
+          if (videoCard) {
+            videoCard.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => videoCard.remove(), 300);
+          }
+        });
+
+        setTimeout(() => {
+          deleteMode[courseId] = false;
+          const remainingCheckboxes = vdcards.querySelectorAll('.video-checkbox');
+          remainingCheckboxes.forEach(cb => cb.style.display = 'none');
+          courseDiv.querySelector('.delete-videos-btn').innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-circle-x-icon lucide-circle-x">
+              <circle cx="12" cy="12" r="10" />
+              <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+            </svg>
+            delete
+          `;
+        }, 350);
+      }
+    } else {
+      // Exit delete mode
+      deleteMode[courseId] = false;
+      checkboxes.forEach(cb => {
+        cb.style.animation = 'fadeOut 0.2s ease';
+        setTimeout(() => cb.style.display = 'none', 200);
+      });
+      courseDiv.querySelector('.delete-videos-btn').innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="lucide lucide-circle-x-icon lucide-circle-x">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+        </svg>
+        delete
+      `;
+    }
+  }
+}
+
+// Handle add video
+function handleAddVideo(courseId, courseDiv) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'video/mp4,video/webm,video/mov';
+
+  input.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const videos = getVideosByCourse(courseId);
+      const nextOrder = videos.length + 1;
+
+      const newVideo = {
+        courseId: courseId,
+        title: `${String(nextOrder).padStart(2, '0')}.${file.name.replace(/\.[^/.]+$/, '')}`,
+        duration: "00:00:00", // Would need video processing to get real duration
+        thumbnail: "../assets/images/webdev.jpg", // Default thumbnail
+        videoUrl: URL.createObjectURL(file),
+        order: nextOrder
+      };
+
+      const addedVideo = addVideo(newVideo);
+
+      // Add new video card
+      const vdcards = courseDiv.querySelector('.vdcards');
+      const videoCard = document.createElement('div');
+      videoCard.innerHTML = createVideoCard(addedVideo, courseId);
+      videoCard.style.animation = 'slideIn 0.5s ease';
+      vdcards.appendChild(videoCard.firstElementChild);
+    }
+  });
+
+  input.click();
+}
+
+// Handle add assignment
+function handleAddAssignment(courseId, courseDiv) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.doc,.docx';
+
+  input.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const assignments = getAssignmentsByCourse(courseId);
+      const nextNumber = assignments.length + 1;
+
+      const newAssignment = {
+        courseId: courseId,
+        title: `Assignment ${nextNumber}`,
+        fileName: file.name,
+        fileUrl: URL.createObjectURL(file)
+      };
+
+      const addedAssignment = addAssignment(newAssignment);
+
+      // Add new assignment card before the add button
+      const assignmentsDiv = courseDiv.querySelector('.assignments');
+      const addButton = assignmentsDiv.querySelector('.add-assignment-container');
+
+      const assignmentCard = document.createElement('div');
+      assignmentCard.innerHTML = createAssignmentCard(addedAssignment, courseId);
+      assignmentCard.style.animation = 'slideIn 0.5s ease';
+
+      const newAssignmentElement = assignmentCard.firstElementChild;
+      assignmentsDiv.insertBefore(newAssignmentElement, addButton);
+
+      // Setup delete listener for new assignment
+      const deleteBtn = newAssignmentElement.querySelector('.delete-assignment-btn');
+      deleteBtn.addEventListener('click', () => {
+        handleDeleteSingleAssignment(addedAssignment.id, courseDiv);
+      });
+    }
+  });
+
+  input.click();
+}
+
+// Handle delete single assignment
+function handleDeleteSingleAssignment(assignmentId, courseDiv) {
+  if (confirm('Delete this assignment?')) {
+    const assignmentCard = courseDiv.querySelector(`[data-assignment-id="${assignmentId}"]`);
+    if (assignmentCard) {
+      assignmentCard.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        deleteAssignment(assignmentId);
+        assignmentCard.remove();
+      }, 300);
+    }
+  }
+}
+
+// Create "Add New Course" button
+function createAddCourseButton() {
+  const addCourseDiv = document.createElement('div');
+  addCourseDiv.className = 'add-course-container';
+  addCourseDiv.style.cssText = `
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    animation: fadeIn 0.5s ease;
+  `;
+
+  addCourseDiv.innerHTML = `
+    <button class="add-new-course-btn" style="
+      background: linear-gradient(-120deg, rgba(143, 201, 251, 0.301), 20%, #1976d2);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 97%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    ">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Add New Course
+    </button>
+  `;
+
+  return addCourseDiv;
+}
+
+// Setup add course button
+function setupAddCourseButton() {
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.add-new-course-btn')) {
+      // Redirect to add course page
+      window.location.href = 'addcourse.html';
+    }
+  });
+}
