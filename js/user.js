@@ -1,65 +1,105 @@
 
-let users = [
+localStorage.clear();
+users = [
     {
         id: 1,
-        email: "ava.stone@example.com",
-        password: "password123",
+        email: "avastone@gmail.com",
+        password: "pass123!",
         profile: {
             name: "Ava Stone",
             age: "19",
             skill: "Mathematics",
             role: "Student",
-            subject: "", 
+            subject: "",
             bio: "Passionate mathematics student with a love for problem-solving and analytical thinking."
         }
     },
     {
         id: 2,
-        email: "michael.chen@example.com",
-        password: "password456",
+        email: "michaelchen@gmail.com",
+        password: "pass456!",
         profile: {
             name: "Michael Chen",
             age: "21",
             skill: "Computer Science",
-            role: "Student, Teacher", 
-            subject: "Programming", 
+            role: "Student, Teacher",
+            subject: "Programming",
             bio: "Computer science major focusing on AI and machine learning."
         }
     },
-    {
-        id: 3,
-        email: "sophia.rodriguez@example.com",
-        password: "password789",
-        profile: {
-            name: "Sophia Rodriguez",
-            age: "20",
-            skill: "Physics",
-            role: "Student",
-            subject: "", 
-            bio: "Physics enthusiast with research experience in quantum mechanics."
-        }
-    }
+
 ];
 
-// addNewUser method 
-//inside should check for duplicates 
 function toLocalStorage() {
     try {
-        const arrayString = JSON.stringify(users);
+        arrayString = JSON.stringify(users);
         localStorage.setItem("learnLandUsers", arrayString);
     } catch (error) {
         console.error("Error saving to localStorage:", error);
     }
 }
-
 function fromLocalStorage() {
     try {
-        const storedData = localStorage.getItem("learnLandUsers");
+        storedData = localStorage.getItem("learnLandUsers");
         return storedData ? JSON.parse(storedData) : null;
     } catch (error) {
         console.error("Error loading from localStorage:", error);
         return null;
     }
 }
+function authenticateUser(email, password) {
+    const currentUsers = fromLocalStorage() || users;
+    const user = currentUsers.find(user =>
+        user.email === email && user.password === password
+    );
+
+    if (user) {
+        console.log("User authenticated successfully:", user.profile.name);
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        return true;
+    } else {
+        console.log("Authentication failed: Invalid credentials");
+        return false;
+    }
+}
+
+function addNewUser(name, email, password) {
+    // Always load from localStorage to get the latest data
+    const currentUsers = fromLocalStorage() || users;
+
+    const existingUser = currentUsers.find(user => user.email === email);
+    if (existingUser) {
+        console.error("User with this email already exists!");
+        return false;
+    }
+
+    const newId = currentUsers.length > 0 ? Math.max(...currentUsers.map(user => user.id)) + 1 : 1;
+
+    const newUser = {
+        id: newId,
+        email: email,
+        password: password,
+        profile: {
+            name: name,
+            age: "",
+            skill: "",
+            role: "Student",
+            subject: "",
+            bio: ""
+        }
+    };
+
+    // Add to both the array and update storage
+    currentUsers.push(newUser);
+    users = currentUsers; // Update global users array
+    toLocalStorage();
+
+    console.log("New user added successfully:", newUser);
+    return true;
+}
 toLocalStorage();
-console.log( fromLocalStorage());
+
+
+
+
+
