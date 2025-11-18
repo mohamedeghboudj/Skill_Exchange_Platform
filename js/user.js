@@ -1,5 +1,10 @@
 
+<<<<<<< HEAD
+localStorage.clear();
+users = [
+=======
 let users = fromLocalStorage() || [
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
     {
         id: 1,
         email: "avastone@gmail.com",
@@ -10,7 +15,10 @@ let users = fromLocalStorage() || [
             skill: "Mathematics",
             role: "Student",
             subject: "",
+<<<<<<< HEAD
+=======
 
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
             bio: "Passionate mathematics student with a love for problem-solving and analytical thinking."
         },
         teacherProfile: null // Not a teacher yet
@@ -26,7 +34,10 @@ let users = fromLocalStorage() || [
             skill: "Computer Science",
             role: "Student, Teacher",
             subject: "Programming",
+<<<<<<< HEAD
+=======
 
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
             bio: "Computer science major focusing on AI and machine learning."
         },
         teacherProfile: {
@@ -49,6 +60,11 @@ let users = fromLocalStorage() || [
             verified: true
         }
     },
+<<<<<<< HEAD
+
+];
+
+=======
     {
         id: 3,
         email: "sophiemartin@gmail.com",
@@ -172,29 +188,36 @@ if (!fromLocalStorage()) {
     toLocalStorage();
 }
 
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
 function toLocalStorage() {
     try {
-        const arrayString = JSON.stringify(users);
+        arrayString = JSON.stringify(users);
         localStorage.setItem("learnLandUsers", arrayString);
     } catch (error) {
         console.error("Error saving to localStorage:", error);
     }
 }
-
 function fromLocalStorage() {
     try {
-        const storedData = localStorage.getItem("learnLandUsers");
+        storedData = localStorage.getItem("learnLandUsers");
         return storedData ? JSON.parse(storedData) : null;
     } catch (error) {
         console.error("Error loading from localStorage:", error);
         return null;
     }
 }
+<<<<<<< HEAD
+function authenticateUser(email, password) {
+    const currentUsers = fromLocalStorage() || users;
+    const user = currentUsers.find(user =>
+        user.email === email && user.password === password
+=======
 
 function authenticateUser(email, password) {
     const currentUsers = fromLocalStorage() || users;
     const user = currentUsers.find(
         user => user.email === email && user.password === password
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
     );
 
     if (user) {
@@ -208,17 +231,28 @@ function authenticateUser(email, password) {
 }
 
 function addNewUser(name, email, password) {
+<<<<<<< HEAD
+    // Always load from localStorage to get the latest data
+    const currentUsers = fromLocalStorage() || users;
+
+    const existingUser = currentUsers.find(user => user.email === email);
+=======
     const currentUsers = fromLocalStorage() || users;
     const existingUser = currentUsers.find(user => user.email === email);
 
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
     if (existingUser) {
         console.error("User with this email already exists!");
         return false;
     }
 
+<<<<<<< HEAD
+    const newId = currentUsers.length > 0 ? Math.max(...currentUsers.map(user => user.id)) + 1 : 1;
+=======
     const newId = currentUsers.length > 0
         ? Math.max(...currentUsers.map(user => user.id)) + 1
         : 1;
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
 
     const newUser = {
         id: newId,
@@ -231,6 +265,19 @@ function addNewUser(name, email, password) {
             role: "Student",
             subject: "",
             bio: ""
+<<<<<<< HEAD
+        }
+    };
+
+    // Add to both the array and update storage
+    currentUsers.push(newUser);
+    users = currentUsers; // Update global users array
+    toLocalStorage();
+
+    console.log("New user added successfully:", newUser);
+    return true;
+}
+=======
         },
         teacherProfile: null // New users start without teacher profile
     };
@@ -298,7 +345,13 @@ function addCertificate(userId, certificate) {
 }
 
 // Initialize
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
 toLocalStorage();
 
 
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec

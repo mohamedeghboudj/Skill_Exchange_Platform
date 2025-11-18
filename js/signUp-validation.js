@@ -98,6 +98,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
     }
 });
+let showTrems = document.querySelector('#term');
+let mydialog2 = document.getElementById("popup1");
+
+showTrems.addEventListener('click', () => {
+    mydialog2.showModal();
+});
+
+function closePop() {
+    mydialog2.close();
+}
+
+mydialog2.addEventListener('click', () => {
+    mydialog2.close();
+});
+
+//for hadil to see because i did not know how to handle the a tag problem 
 
 
 
