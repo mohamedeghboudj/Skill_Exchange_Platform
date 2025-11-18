@@ -1541,6 +1541,13 @@ body {
 
 
 /*sign in sign up new one */
+#popup::backdrop {
+    background-color: #7f7f7f92;
+}
+
+#popup {
+    background: transparent;
+}
 .whole-container {
 
     padding-block: 110px;
@@ -1665,10 +1672,12 @@ body {
     padding-inline: 5px;
     margin-left: 5px;
     font-size: 12px;
+    
 }
 
 #term:hover {
     background-color: #dedede;
+    cursor: pointer;
 }
 
 .container-sign-page button {

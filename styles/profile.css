@@ -496,10 +496,10 @@ main {
 
 
 }
-#popup::backdrop {
+#popup::backdrop,#popup1::backdrop {
     background-color: #7f7f7f92;
 }
 
-#popup {
+#popup,#popup1 {
     background: transparent;
 }

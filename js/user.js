@@ -11,7 +11,8 @@ let users = fromLocalStorage() || [
             skill: "Mathematics",
             role: "Student",
             subject: "",
-            bio: "Passionate mathematics student with a love for problem-solving and analytical thinking."
+            bio: "Passionate mathematics student with a love for problem-solving and analytical thinking.",
+            picture:"images1/profilePicture1.jpg"
         }
     },
     {
@@ -24,7 +25,8 @@ let users = fromLocalStorage() || [
             skill: "Computer Science",
             role: "Student, Teacher",
             subject: "Programming",
-            bio: "Computer science major focusing on AI and machine learning."
+            bio: "Computer science major focusing on AI and machine learning.",
+            picture:"images1/image3.png"
         }
     }
 ];

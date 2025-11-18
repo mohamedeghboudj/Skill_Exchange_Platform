@@ -63,7 +63,7 @@
 
         <div class="header">
             <h1 class="mainHeading"> Your profile</h1>
-            <form action="editProfile.htm" class="go-to-edit"  method="get">
+            <form action="editProfile.htm" class="go-to-edit" method="get">
                 <button class="edit"> <i data-lucide="pencil-line" class="edit-icon"></i> Edit</button>
             </form>
         </div>
@@ -71,7 +71,7 @@
         <div class="profile">
             <figure>
 
-                <img class="profile-pic" src="images/profilePicture1.jpg" alt="profile picture"
+                <img class="profile-pic" src="images1/profilePicture1.jpg" alt="profile picture"
                     title="your profile picture" />
                 <div class="user-mode">
                     <div class="student-mode">Student</div>
@@ -106,10 +106,9 @@
                 <div class="bio-section">
 
                     <label class="bioV" for="bioV">Bio</label>
-                    <textarea id="bioV" name="bio" rows="5" readonly> 
-
-                    <label class="bioV" for="BioV">Bio</label>
                     <textarea id="bioV" name="bio" rows="5" readonly>
+
+
 
                     </textarea>
                 </div>
@@ -121,9 +120,9 @@
         </div>
         <div class="privacy-terms">
             <p>By continuing, you agree to our privacy policy and data processing</p>
-            <form action="privacyTerms.htm" target="_blank" method="get"><button class="view-privacy-terms">privacy
-                    terms</button>
-            </form>
+            <button class="view-privacy-terms" id="vpt">privacy
+                terms</button>
+
         </div>
         <div class="certificates-align">
             <h4>Certificates</h4>
@@ -165,7 +164,11 @@
                 <iframe src="/removeCertificate.htm" frameborder="0"
                     style="width: 100%; height: 100%; border: none; border-radius:15px; margin: auto;"></iframe>
             </dialog>
-
+            <dialog id="popup1"
+                style="width:  500px; height: 551px; border: none; scrollbar-width: none; border-radius: 15px; padding: 0;margin: auto;">
+                <iframe src="/privacyTerms.htm" frameborder="0"
+                    style="width: 100%; height: 100%; border: none; border-radius:15px; margin: auto;"></iframe>
+            </dialog>
 
         </div>
         <br>
@@ -186,12 +189,13 @@
     <script>
         lucide.createIcons();
     </script>
-      
+
     <script src="js/profile.js"></script>
 
     <script src="js/user.js"></script>
     <script src="js/removeCertificate.js"></script>
     <script src="/assets/js/main.js"></script>
+    <script src="js/privacyTerms.js"></script>
 
 </body>
 
