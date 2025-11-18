@@ -1434,6 +1434,7 @@ body {
 
 .card input.success,
 .card #selected.success,
+.card #selected-day.success,
 .card textarea.success {
     border: 1px solid green !important;
     
