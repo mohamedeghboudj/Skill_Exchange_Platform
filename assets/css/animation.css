@@ -1,0 +1,258 @@
+/* Add these animations to your teach2.css or create a separate animations.css file */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Smooth transitions for buttons */
+.addVd, .addAss, .deletebtn, .add-new-course-btn {
+    transition: all 0.3s ease;
+}
+
+.addVd:hover, .addAss:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(124, 213, 148, 0.3);
+}
+
+.deletebtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(223, 42, 42, 0.3);
+}
+
+.add-new-course-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+    background: linear-gradient(-120deg, #1976d2, 80%, rgba(143, 201, 251, 0.301));
+}
+
+/* Checkbox animations */
+.video-checkbox {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.video-checkbox:checked {
+    transform: scale(1.1);
+}
+
+/* Video card hover effects */
+.video {
+    transition: all 0.3s ease;
+}
+
+.video:hover {
+    transform: translateY(-2px);
+}
+
+/* Course card animations */
+.course {
+    transition: all 0.3s ease;
+}
+
+/* Assignment card hover */
+.assignment {
+    transition: all 0.2s ease;
+}
+
+.assignment:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Loading spinner for file uploads */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #1976d2;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+}
+
+/* Modal animations (if you want to add modals later) */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes modalFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Add hover effect to course name */
+.coursename {
+    transition: all 0.2s ease;
+}
+
+.coursename:hover {
+    background-color: #f9fafb;
+}
+
+/* Improve SVG icon transitions */
+.coursename svg {
+    transition: all 0.3s ease;
+}
+
+.coursename:hover svg {
+    visibility: visible;
+    stroke: #ff4444;
+}
+
+/* File info animations */
+.file-info {
+    transition: all 0.2s ease;
+}
+
+/* Success/Error message animations */
+@keyframes successPulse {
+    0%, 100% {
+        background-color: rgba(124, 213, 148, 0.285);
+    }
+    50% {
+        background-color: rgba(124, 213, 148, 0.5);
+    }
+}
+
+@keyframes errorPulse {
+    0%, 100% {
+        background-color: #FEE2E2;
+    }
+    50% {
+        background-color: #fca5a5;
+    }
+}
+
+/* Responsive animations */
+@media (max-width: 768px) {
+    @keyframes mobileSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .course {
+        animation: mobileSlideIn 0.4s ease;
+    }
+}

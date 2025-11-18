@@ -25,10 +25,10 @@ const categoryDroplist = document.getElementById('categoryDroplist');
 const videosList = document.getElementById('videosList');
 const assignmentFile = document.getElementById('assignmentFile');
 
-// Check empty fields
+// check empty fields
 const isEmptyStr = s => typeof s === 'string' && s.trim().length === 0;
 
-// Format file size
+// format file size
 const formatFileSize = (bytes) => {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
@@ -40,7 +40,7 @@ const formatFileSize = (bytes) => {
 const displayVideos = (files) => {
     videosList.innerHTML = '';
     Array.from(files).forEach((file, index) => {
-        const fileItem = document.createElement('div');
+        let fileItem = document.createElement('div');
         fileItem.className = 'file-item';
         fileItem.innerHTML = `
             <div class="file-info">
@@ -72,7 +72,7 @@ const displayAssignment = (file) => {
         assignmentFile.innerHTML = '';
         return;
     }
-    
+
     const fileItem = document.createElement('div');
     fileItem.className = 'file-item';
     fileItem.innerHTML = `
@@ -236,9 +236,9 @@ submitBtn.addEventListener("click", e => {
         console.log("Form has errors. Please fix them.");
         return;
     }
+    window.location.href = ""
+    
 
-    console.log("Form is valid! Ready to submit.");
-    alert("Course created successfully!");
 });
 
 // Dropdown functionality
