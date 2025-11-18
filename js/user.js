@@ -1,5 +1,7 @@
 
+
 let users = fromLocalStorage() || [
+
     {
         id: 1,
         email: "avastone@gmail.com",
@@ -49,6 +51,7 @@ let users = fromLocalStorage() || [
             verified: true
         }
     },
+
     {
         id: 3,
         email: "sophiemartin@gmail.com",
@@ -172,18 +175,18 @@ if (!fromLocalStorage()) {
     toLocalStorage();
 }
 
+
 function toLocalStorage() {
     try {
-        const arrayString = JSON.stringify(users);
+        arrayString = JSON.stringify(users);
         localStorage.setItem("learnLandUsers", arrayString);
     } catch (error) {
         console.error("Error saving to localStorage:", error);
     }
 }
-
 function fromLocalStorage() {
     try {
-        const storedData = localStorage.getItem("learnLandUsers");
+        storedData = localStorage.getItem("learnLandUsers");
         return storedData ? JSON.parse(storedData) : null;
     } catch (error) {
         console.error("Error loading from localStorage:", error);
@@ -191,10 +194,12 @@ function fromLocalStorage() {
     }
 }
 
+
 function authenticateUser(email, password) {
     const currentUsers = fromLocalStorage() || users;
     const user = currentUsers.find(
         user => user.email === email && user.password === password
+
     );
 
     if (user) {
@@ -208,17 +213,19 @@ function authenticateUser(email, password) {
 }
 
 function addNewUser(name, email, password) {
+
     const currentUsers = fromLocalStorage() || users;
     const existingUser = currentUsers.find(user => user.email === email);
+
 
     if (existingUser) {
         console.error("User with this email already exists!");
         return false;
     }
 
-    const newId = currentUsers.length > 0
-        ? Math.max(...currentUsers.map(user => user.id)) + 1
-        : 1;
+
+    const newId = currentUsers.length > 0 ? Math.max(...currentUsers.map(user => user.id)) + 1 : 1;
+
 
     const newUser = {
         id: newId,
@@ -231,6 +238,7 @@ function addNewUser(name, email, password) {
             role: "Student",
             subject: "",
             bio: ""
+
         },
         teacherProfile: null // New users start without teacher profile
     };
@@ -298,7 +306,9 @@ function addCertificate(userId, certificate) {
 }
 
 // Initialize
+
 toLocalStorage();
+
 
 
 
