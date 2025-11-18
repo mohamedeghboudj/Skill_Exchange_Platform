@@ -7,7 +7,7 @@
 }
 
 body {
-    
+
     background-color: white;
     display: flex;
     justify-content: center;
@@ -177,7 +177,7 @@ svg {
 }
 
 @media (max-width: 768px) {
-    
+
 
     .inputs {
         gap: 20px;

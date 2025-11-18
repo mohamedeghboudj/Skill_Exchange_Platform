@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-
+    
+    const currentUserEmail = sessionStorage.getItem("currentUserEmail");
 
     let Name = document.querySelector('#fullname');
     let age = document.querySelector('#age');
@@ -12,30 +12,52 @@ document.addEventListener('DOMContentLoaded', function () {
     let teachingCheckbox = document.querySelector('#teaching-option');
     let save_btn = document.querySelector('.submit');
     let small = document.querySelector("small");
+    const Image = document.querySelector(".profile-pic");
+    const imageLoad = document.querySelector(".chnage-pic");
+    let resetBtn=document.querySelector("#reset")
     let isTeacherModeActive = false;
+    
     loadUserData();
 
-    teachingCheckbox.addEventListener('change', function () {
-        isTeacherModeActive = this.checked;
-        updateFormForTeacherMode();
-    });
+    resetBtn.addEventListener('click',(event)=>{
+        event.preventDefault();
+        loadUserData();
+    })
+    // imageLoad.addEventListener('change', (e) => {
+    //     const file = e.target.files[0];
+    //     if (file) {
+    //         const objectURL = URL.createObjectURL(file);
+    //         Image.src = objectURL;
+    //     }
+    // })
 
     function updateFormForTeacherMode() {
         if (isTeacherModeActive) {
-            role.value += ',Teacher';
+            if (!role.value.includes('Teacher')) {
+                role.value = role.value === 'Student' ? 'Student,Teacher' : 'Teacher';
+            }
             subject.disabled = false;
         } else {
-
-            role.disabled = false;
+            if (role.value === 'Student,Teacher') {
+                role.value = 'Student';
+            } else if (role.value === 'Teacher') {
+                role.value = 'Student';
+            }
             subject.disabled = true;
             subject.value = '';
         }
     }
+    
     updateFormForTeacherMode();
-
+    
+    teachingCheckbox.addEventListener('change', function () {
+        isTeacherModeActive = this.checked;
+        updateFormForTeacherMode();
+    });
+    
     save_btn.addEventListener("click", (event) => {
         event.preventDefault();
-
+        checkInputs();
 
         if (checkInputs()) {
             saveToLocalStorage();
@@ -46,9 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function checkInputs() {
-
         small.innerText = "";
-
         let isValid = true;
 
         const nameValue = Name.value.trim();
@@ -57,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const roleValue = role.value.trim();
         const bioValue = bio.value.trim();
         const subjectValue = subject.value.trim();
-
 
         if (nameValue === "") {
             setErrorFor(Name, "Name can not be empty");
@@ -69,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
             setSuccessFor(Name);
         }
 
-        // Age validation
         if (ageValue === "") {
             setErrorFor(age, "Age cannot be blank");
             isValid = false;
@@ -80,14 +98,12 @@ document.addEventListener('DOMContentLoaded', function () {
             setSuccessFor(age);
         }
 
-
         if (skillValue === '') {
             setErrorFor(skill, "You should give your skills");
             isValid = false;
         } else {
             setSuccessFor(skill);
         }
-
 
         if (roleValue === "") {
             setErrorFor(role, "Role cannot be blank");
@@ -99,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
             setSuccessFor(role);
         }
 
-        // Subject validation for teachers
         if (isTeacherModeActive) {
             if (subjectValue === '') {
                 setErrorFor(subject, "Name the subject you will teach");
@@ -108,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 setSuccessFor(subject);
             }
         } else {
-
             if (subjectValue !== '') {
                 setErrorFor(subject, "Subject should be empty when not in teacher mode");
                 isValid = false;
@@ -142,11 +156,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadUserData() {
-        function getUserFromArray() {
-            const userArray = fromLocalStorage()[0];// out of default case it is index
-            return userArray;
+        function getCurrentUser() {
+            const users = fromLocalStorage();
+            return users.find(user => user.email === currentUserEmail);
         }
-        const user = getUserFromArray();
+        
+        const user = getCurrentUser();
+        
         Name.value = user.profile.name;
         age.value = user.profile.age;
         skill.value = user.profile.skill;
@@ -154,20 +170,21 @@ document.addEventListener('DOMContentLoaded', function () {
         role.value = user.profile.role || "Student";
         bio.value = user.profile.bio;
         subject.value = user.profile.subject;
-
         teachingCheckbox.checked = user.profile.role.includes('Teacher');
+        isTeacherModeActive = teachingCheckbox.checked;
         updateFormForTeacherMode();
     }
+    
     function saveToLocalStorage() {
         let users = fromLocalStorage();
-        let user = users[0];
-        user.profile.name = Name.value;
-        user.profile.age = age.value;
-        user.profile.skill = skill.value;
-        user.profile.role = role.value;
-        user.profile.bio = bio.value;
-        user.profile.subject = subject.value;
-        localStorage.setItem("learnLandUsers", JSON.stringify(users))
+        let userIndex = users.findIndex(user => user.email === currentUserEmail);
+        
+        users[userIndex].profile.name = Name.value;
+        users[userIndex].profile.age = age.value;
+        users[userIndex].profile.skill = skill.value;
+        users[userIndex].profile.role = role.value;
+        users[userIndex].profile.bio = bio.value;
+        users[userIndex].profile.subject = subject.value;
+        localStorage.setItem("learnLandUsers", JSON.stringify(users));
     }
-    
-})
+});

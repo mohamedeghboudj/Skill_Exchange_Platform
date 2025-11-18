@@ -29,6 +29,24 @@ body {
 
 }
 
+
+
+
+/*POPUP*/
+#popup::backdrop {
+    background-color: #7f7f7f92;
+}
+
+#popup {
+    background: transparent;
+
+}
+
+
+
+
+
+
 header {
     flex: 1;
     display: flex;

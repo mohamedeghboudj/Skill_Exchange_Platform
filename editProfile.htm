@@ -22,7 +22,11 @@
                 <i data-lucide="pencil-line" class="edit-icon"></i>
 
                 <h2>Edit Profile</h2>
+<<<<<<< HEAD
                 <form action="profile.htm"  method="get">
+=======
+                <form action="profile.htm" method="get">
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
 
                     <button class="close"> <i class="x-icon" data-lucide="x"></i>close</button>
                 </form>
@@ -35,21 +39,24 @@
                     <input type="file" id="picture" style="display:none;" name="profilePic" accept="image/*">
                 </aside>
 
+<<<<<<< HEAD
                 <form action="profile.htm"  id="my-form" method="get" class="edit-form">
+=======
+                <form action="profile.htm" t id="my-form" method="get" class="edit-form">
+>>>>>>> 4fd58cef90442404478d116f064a79eaf04b63ec
                     <span>
                         <p>Personal infomation</p>
                     </span>
 
 
                     <div class="input">
-                        
-                        <div class="form-input"><input type="text" id="fullname" value=" "
-                                placeholder=" ">
+
+                        <div class="form-input"><input type="text" id="fullname" value=" " placeholder=" ">
                             <label for="fullname">Fullname</label>
                         </div>
 
                         <div class="form-input">
-                            <input type="email" disabled id="email" value=" " placeholder=" ">
+                            <input type="email" readonly id="email" value=" " placeholder=" ">
                             <label for="email">Email</label>
                         </div>
 
@@ -100,7 +107,7 @@
                 <div> <button class="submit" form="my-form"> <i class="save" data-lucide="save"></i> save
                     </button>
 
-                    <button class="reset" form="my-form"> <i class="undo" data-lucide="undo-2"></i>reset</button>
+                    <button class="reset" id="reset" form="my-form"> <i class="undo" data-lucide="undo-2"></i>reset</button>
                 </div>
 
 
@@ -113,9 +120,13 @@
     <script>
         lucide.createIcons();
     </script>
-    <script src="js/editProfile.js"></script>
     <script src="js/user.js"></script>
-    <script src="js/profile.js"></script>
+
+    <script src="js/editProfile.js"></script>
+
+
+  
+
 </body>
 </body>
 

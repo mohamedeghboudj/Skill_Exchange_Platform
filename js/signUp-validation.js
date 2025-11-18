@@ -7,11 +7,18 @@ document.addEventListener("DOMContentLoaded", () => {
     let Result = document.querySelector("#Result");
     let SignUpBTN = document.querySelector("#SIGNUP");
 
-
     SignUpBTN.addEventListener("click", (event) => {
         event.preventDefault();
-        if(CheckInputs()){
-            window.location.href="/pages/home.html";
+
+        if (CheckInputs()) {
+
+            //  the function to add the user to the localstorage and when trying to test it i found and error in the consol from home4.html
+            if (addNewUser(UserName.value, EmailUp.value, PasswordUp.value)) {
+                sessionStorage.setItem("currentUserEmail", EmailUp.value);
+                window.location.href = "/pages/home.html";
+            } else {
+                setErrorFor(EmailUp, "This email is already registered.");
+            }
         };
 
     });
@@ -56,7 +63,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return true;
     }
+    function addNewUser(name, email, password) {
+        // Always load from localStorage to get the latest data
+        const currentUsers = fromLocalStorage() || users;
+
+        const existingUser = currentUsers.find(user => user.email === email);
+        if (existingUser) {
+            console.error("User with this email already exists!");
+            return false;
+        }
+
+        const newId = currentUsers.length > 0 ? Math.max(...currentUsers.map(user => user.id)) + 1 : 1;
+
+        const newUser = {
+            id: newId,
+            email: email,
+            password: password,
+            profile: {
+                name: name,
+                age: "",
+                skill: "",
+                role: "Student",
+                subject: "",
+                bio: ""
+            }
+        };
+
+        // Add to both the array and update storage
+        currentUsers.push(newUser);
+        users = currentUsers; // Update global users array
+        toLocalStorage();
+
+        console.log("New user added successfully:", newUser);
+        return true;
+    }
 });
+let showTrems = document.querySelector('#term');
+let mydialog2 = document.getElementById("popup1");
+
+showTrems.addEventListener('click', () => {
+    mydialog2.showModal();
+});
+
+function closePop() {
+    mydialog2.close();
+}
+
+mydialog2.addEventListener('click', () => {
+    mydialog2.close();
+});
+
+//for hadil to see because i did not know how to handle the a tag problem 
 
 
 

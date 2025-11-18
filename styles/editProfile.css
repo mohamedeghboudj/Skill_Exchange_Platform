@@ -12,7 +12,7 @@ html {
     /* to keep the element even in scrolling in its position */
     inset: 0;
     /* this is to make sure the overlay will stretch to cover all the page form all directions*/
-    background: rgba(158, 152, 152, 0.4);
+   background: rgb(208 205 205 / 40%);
     display: flex;
     align-items: center;
     /*center vertically*/
