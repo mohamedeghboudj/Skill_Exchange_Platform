@@ -11,7 +11,7 @@ let courses = [
     ]
   }
 ];
-let courses = [];
+
 let courseId = 1;
 let videoId = 1;
 let assignmentId = 1;

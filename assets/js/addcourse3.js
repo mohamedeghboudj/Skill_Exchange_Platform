@@ -1,86 +1,88 @@
 const CONFIG = {
-  COURSE_NAME_MAX: 100,         
-  DESCRIPTION_MIN: 20,          
-  DESCRIPTION_MAX: 2000,        
-  PRICE_MIN: 0,                 
+  COURSE_NAME_MAX: 100,
+  DESCRIPTION_MIN: 20,
+  DESCRIPTION_MAX: 2000,
+  PRICE_MIN: 0,
   FILE_MAX_BYTES: 2 * 1024 * 1024 * 1024, // 200 MB 
-  ALLOWED_VIDEO_MIMES: ['video/mp4','video/webm','video/mov'],
+  ALLOWED_VIDEO_MIMES: ['video/mp4', 'video/webm', 'video/mov'],
   ALLOWED_FILE_MIMES: null, // null = allow anything (on server tu peux restreindre)
 };
-const isEmptyStr = s => typeof s === 'string' && s.trim().length > 0 ;
-validateCourseName = name => { 
-    const errors= [];
-    if (isEmptyStr(name)) errors.push('Course name is not valid.')
-    if (typeof name === 'string' && name.length > CONFIG.COURSE_NAME_MAX)
-        errors.push(`course name cannot exceed ${CONFIG.COURSE_NAME_MAX} characters.`);
-    return errors;
+const isEmptyStr = s => typeof s === 'string' && s.trim().length > 0;
+validateCourseName = name => {
+  const errors = [];
+  if (isEmptyStr(name)) errors.push('Course name is not valid.')
+  if (typeof name === 'string' && name.length > CONFIG.COURSE_NAME_MAX)
+    errors.push(`course name cannot exceed ${CONFIG.COURSE_NAME_MAX} characters.`);
+  return errors;
 }
 const validatePrice = price => {
-    const errors = [];
-    if (isEmptyStr(price) && price !== 0) {
-        errors.push('Enter the price.')
-        return errors;
-    }
-    const n = Number(price);
-    if(Number.isInteger(n)){
-        errors.push('The price must be a number. (ex:50).')
-    }
-    if(n < CONFIG.PRICE_MIN) errors.push(`price must be at least ${CONFIG.PRICE_MIN}.`);
+  const errors = [];
+  if (isEmptyStr(price) && price !== 0) {
+    errors.push('Enter the price.')
     return errors;
+  }
+  const n = Number(price);
+  if (Number.isInteger(n)) {
+    errors.push('The price must be a number. (ex:50).')
+  }
+  if (n < CONFIG.PRICE_MIN) errors.push(`price must be at least ${CONFIG.PRICE_MIN}.`);
+  return errors;
 
 }
 const validateTeacherName = tname => {
-    const errors =[];
-    if (isEmptyStr(tname)) {
-        errors.push('Enter your name.') }
-    
-    const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/ug;
-    if (!isEmptyStr(tname) && !nameRegex.test(tname)) {
-            errors.push('Please enter your real name.');
-        }
-    return errors;
+  const errors = [];
+  if (isEmptyStr(tname)) {
+    errors.push('Enter your name.')
+  }
+
+  const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/ug;
+  if (!isEmptyStr(tname) && !nameRegex.test(tname)) {
+    errors.push('Please enter your real name.');
+  }
+  return errors;
 }
 const validateDescription = desc => {
-    const errors = [];
-    if (isEmptyStr(desc)) errors.push('The description is required.');
-    if (!isEmptyStr(desc) && desc.trim().length < CONFIG.DESCRIPTION_MIN)
-        errors.push(`The description must n=be at least ${CONFIG.DESCRIPTION_MIN} characters.`);
-    if (!isEmptyStr(desc) && desc.length > CONFIG.DESCRIPTION_MAX)
-        errors.push(`The description cannot exceed ${CONFIG.DESCRIPTION_MAX} characters.`);
-    return errors;
+  const errors = [];
+  if (isEmptyStr(desc)) errors.push('The description is required.');
+  if (!isEmptyStr(desc) && desc.trim().length < CONFIG.DESCRIPTION_MIN)
+    errors.push(`The description must n=be at least ${CONFIG.DESCRIPTION_MIN} characters.`);
+  if (!isEmptyStr(desc) && desc.length > CONFIG.DESCRIPTION_MAX)
+    errors.push(`The description cannot exceed ${CONFIG.DESCRIPTION_MAX} characters.`);
+  return errors;
 }
 const validateFiles = (filesList, { atLeastOneVideo = true } = {}) => {
-    const errors = [];
-    if (!filesList || filesList.length === 0) {
-        if (atLeastOneVideo) errors.push('At least one video is required.');
-        return errors;
-    }
-    let videoCount = 0;
-    for (let i = 0; i < filesList.length; i++) {
+  const errors = [];
+  if (!filesList || filesList.length === 0) {
+    if (atLeastOneVideo){errors.push('At least one video is required.');
+    return errors;}
+  }
+  let videoCount = 0;
+  for (let i = 0; i < filesList.length; i++) {
     const f = filesList[i];
     if (!f || !f.type) {
-    continue;
+      continue;
     }
     if (f.size > CONFIG.FILE_MAX_BYTES) {
-        errors.push(`The file "${f.name}" exceeds the maximal size (${CONFIG.FILE_MAX_BYTES / (1024*1024)}MB).`);
+      errors.push(`The file "${f.name}" exceeds the maximal size (${CONFIG.FILE_MAX_BYTES / (1024 * 1024)}MB).`);
     }
     if (CONFIG.ALLOWED_VIDEO_MIMES && !CONFIG.ALLOWED_VIDEO_MIMES.includes(f.type)) {
-        errors.push(`The format (${f.type}) is not supported.`);
+      errors.push(`The format (${f.type}) is not supported.`);
     }
     videoCount++;
-    } else {
-      // si CONFIG.ALLOWED_FILE_MIMES non null, valider les autres fichiers aussi
-    if (CONFIG.ALLOWED_FILE_MIMES && !CONFIG.ALLOWED_FILE_MIMES.includes(f.type)) {
-        errors.push(`Le fichier "${f.name}" a un type non autorisé (${f.type}).`);
-    }
-    }
+    else if (CONFIG.ALLOWED_FILE_MIMES && !CONFIG.ALLOWED_FILE_MIMES.includes(f.type)) {
+    errors.push(`Le fichier "${f.name}" a un type non autorisé (${f.type}).`);}
+  }
+  // si CONFIG.ALLOWED_FILE_MIMES non null, valider les autres fichiers auss
+
+}
+  
 
 
-    if (atLeastOneVideo && videoCount === 0) {
-    errors.push('Au moins une vidéo est requise (uploader un fichier .mp4 par exemple).');
-    }
+if (atLeastOneVideo && videoCount === 0) {
+  errors.push('Au moins une vidéo est requise (uploader un fichier .mp4 par exemple).');
+}
 
-    return errors;
+return errors;
 };
 // Course Form Validation
 class CourseFormValidator {
@@ -93,7 +95,7 @@ class CourseFormValidator {
   init() {
     // Add event listeners
     this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-    
+
     // Real-time validation on blur
     const inputs = this.form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
@@ -106,7 +108,7 @@ class CourseFormValidator {
     const name = field.name;
     let isValid = true;
 
-    switch(name) {
+    switch (name) {
       case 'courseName':
         isValid = this.validateCourseName(field.value);
         break;
@@ -134,14 +136,14 @@ class CourseFormValidator {
     return isValid;
   }
 
-    validateCourseName(value) {
+  validateCourseName(value) {
     if (!value || value.trim() === '') {
-        this.errors.courseName = 'Course name is required';
-        return false;
+      this.errors.courseName = 'Course name is required';
+      return false;
     }
     if (value.trim().length < 3) {
-        this.errors.courseName = 'Course name must be at least 3 characters';
-        return false;
+      this.errors.courseName = 'Course name must be at least 3 characters';
+      return false;
     }
     if (value.trim().length > 100) {
       this.errors.courseName = 'Course name must not exceed 100 characters';
@@ -169,15 +171,15 @@ class CourseFormValidator {
       this.errors.price = 'Price is required';
       return false;
     }
-    
+
     // Remove currency symbols and whitespace
     const cleanValue = value.replace(/[$,\s]/g, '');
-    
+
     if (isNaN(cleanValue) || cleanValue === '') {
       this.errors.price = 'Please enter a valid price';
       return false;
     }
-    
+
     const numValue = parseFloat(cleanValue);
     if (numValue < 0) {
       this.errors.price = 'Price cannot be negative';
@@ -187,7 +189,7 @@ class CourseFormValidator {
       this.errors.price = 'Price is too high';
       return false;
     }
-    
+
     delete this.errors.price;
     return true;
   }
@@ -230,10 +232,10 @@ class CourseFormValidator {
   showFieldError(field, message) {
     // Remove existing error
     this.clearFieldError(field);
-    
+
     // Add error styling
     field.classList.add('error');
-    
+
     // Create error message element
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
@@ -241,7 +243,7 @@ class CourseFormValidator {
     errorDiv.style.color = '#dc3545';
     errorDiv.style.fontSize = '0.875rem';
     errorDiv.style.marginTop = '0.25rem';
-    
+
     // Insert error after field
     field.parentNode.insertBefore(errorDiv, field.nextSibling);
   }
@@ -271,11 +273,11 @@ class CourseFormValidator {
 
   handleSubmit(e) {
     e.preventDefault();
-    
+
     // Clear all previous errors
     const errorMessages = this.form.querySelectorAll('.error-message');
     errorMessages.forEach(msg => msg.remove());
-    
+
     const fields = this.form.querySelectorAll('input, select, textarea');
     fields.forEach(field => field.classList.remove('error'));
 
@@ -283,15 +285,15 @@ class CourseFormValidator {
     if (this.validateAll()) {
       // Form is valid, you can submit
       console.log('Form is valid! Submitting...');
-      
+
       // Get form data
       const formData = new FormData(this.form);
       const data = Object.fromEntries(formData);
       console.log('Form Data:', data);
-      
+
       // Here you would typically send the data to your server
       // this.form.submit(); // or use fetch/axios
-      
+
       alert('Course created successfully!');
     } else {
       // Scroll to first error
@@ -300,7 +302,7 @@ class CourseFormValidator {
         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         firstError.focus();
       }
-      
+
       console.log('Form has errors:', this.errors);
     }
   }
@@ -325,7 +327,7 @@ class CourseFormValidator {
 // Initialize the validator when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   const validator = new CourseFormValidator('courseForm');
-  
+
   // Optional: Add custom styling for error state
   const style = document.createElement('style');
   style.textContent = `
