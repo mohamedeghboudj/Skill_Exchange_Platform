@@ -95,14 +95,17 @@ figure {
 }
 
 .user-mode {
+    
     display: block;
     width: 100%;
 }
 
 .student-mode {
+    font-size: 13px;
     margin-top: 30px;
     background-color: #f0f6fa;
-    width: 30%;
+   
+    min-width: fit-content;
     height: 30px;
     color: #555;
     margin-bottom: 7px;
@@ -113,9 +116,11 @@ figure {
 }
 
 .teacher-mode {
+    font-size: 13px;
     display: none;
+     min-width: fit-content;
     background-color: #f0f6fa;
-    width: 30%;
+  
     height: 30px;
     font-weight: 300px;
     color: #555;
@@ -461,6 +466,14 @@ main {
     * {
         font-size: 16px;
         ;
+    }
+    .teacher-mode{
+        font-size: 16px;
+        width: 30%;
+    }
+    .student-mode{
+         font-size: 16px;
+              width: 30%;
     }
 }
 

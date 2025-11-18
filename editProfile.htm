@@ -22,7 +22,7 @@
                 <i data-lucide="pencil-line" class="edit-icon"></i>
 
                 <h2>Edit Profile</h2>
-                <form action="profile.htm" target="_blank" method="get">
+                <form action="profile.htm" method="get">
 
                     <button class="close"> <i class="x-icon" data-lucide="x"></i>close</button>
                 </form>
@@ -42,14 +42,13 @@
 
 
                     <div class="input">
-                        
-                        <div class="form-input"><input type="text" id="fullname" value=" "
-                                placeholder=" ">
+
+                        <div class="form-input"><input type="text" id="fullname" value=" " placeholder=" ">
                             <label for="fullname">Fullname</label>
                         </div>
 
                         <div class="form-input">
-                            <input type="email" disabled id="email" value=" " placeholder=" ">
+                            <input type="email" readonly id="email" value=" " placeholder=" ">
                             <label for="email">Email</label>
                         </div>
 
@@ -113,8 +112,9 @@
     <script>
         lucide.createIcons();
     </script>
-    <script src="js/editProfile.js"></script>
     <script src="js/user.js"></script>
+    <script src="js/editProfile.js"></script>
+
 </body>
 </body>
 

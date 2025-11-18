@@ -20,7 +20,7 @@
 
         <header>
             <h1 class="mainHeading"> Your profile</h1>
-            <form action="editProfile.htm" class="go-to-edit" target="_blank" method="get">
+            <form action="editProfile.htm" class="go-to-edit"  method="get">
                 <button class="edit"> <i data-lucide="pencil-line" class="edit-icon"></i> Edit</button>
             </form>
         </header>
@@ -53,7 +53,7 @@
 
 
                     <div>
-                        <label for="Skill"> Skill</label>
+                        <label for="skillV"> Skill</label>
                         <input type="text" id="skillV" readonly value="" />
                     </div>
                     <div> <label for="AgeV"> Age</label>
@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <div class="bio-section">
-                    <label class="bioV" for="BioV">Bio</label>
+                    <label class="bioV" for="bioV">Bio</label>
                     <textarea id="bioV" name="bio" rows="5" readonly> 
                     </textarea>
                 </div>
@@ -89,7 +89,7 @@
                         <p> Google Professional Cloud Dev</p>
                     </div>
 
-                    <form action="removeCertificate.htm" target="_blank" method="get">
+                    <form action="removeCertificate.htm"  method="get">
                         <button class="Remove" action="">Remove</button>
                     </form>
                 </a>
@@ -130,8 +130,9 @@
     <script>
         lucide.createIcons();
     </script>
+      
     <script src="js/profile.js"></script>
-    <script src="js/user.js"></script>
+  <script src="js/user.js"></script>
 </body>
 
 </body>

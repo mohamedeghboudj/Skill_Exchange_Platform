@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-
-
     let Name = document.querySelector('#fullname');
     let age = document.querySelector('#age');
     let skill = document.querySelector('#skill');
@@ -12,30 +10,54 @@ document.addEventListener('DOMContentLoaded', function () {
     let teachingCheckbox = document.querySelector('#teaching-option');
     let save_btn = document.querySelector('.submit');
     let small = document.querySelector("small");
+    const Image = document.querySelector(".profile-pic");
+    const imageLoad = document.querySelector(".chnage-pic");
     let isTeacherModeActive = false;
     loadUserData();
 
-    teachingCheckbox.addEventListener('change', function () {
-        isTeacherModeActive = this.checked;
-        updateFormForTeacherMode();
-    });
+
+
+    imageLoad.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            
+            const objectURL = URL.createObjectURL(file);
+
+            Image.src = objectURL;
+
+
+        }
+
+    })
 
     function updateFormForTeacherMode() {
         if (isTeacherModeActive) {
-            role.value += ',Teacher';
+
+            if (!role.value.includes('Teacher')) {
+                role.value = role.value === 'Student' ? 'Student,Teacher' : 'Teacher';
+            }
             subject.disabled = false;
         } else {
 
-            role.disabled = false;
+            if (role.value === 'Student,Teacher') {
+                role.value = 'Student';
+            } else if (role.value === 'Teacher') {
+                role.value = 'Student';
+            }
+
+
             subject.disabled = true;
             subject.value = '';
         }
     }
     updateFormForTeacherMode();
-
+    teachingCheckbox.addEventListener('change', function () {
+        isTeacherModeActive = this.checked;
+        updateFormForTeacherMode();
+    });
     save_btn.addEventListener("click", (event) => {
         event.preventDefault();
-
+        checkInputs();
 
         if (checkInputs()) {
             saveToLocalStorage();
@@ -143,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadUserData() {
         function getUserFromArray() {
-            const userArray = fromLocalStorage()[0];// out of default case it is index
+            const userArray = fromLocalStorage()[0];
             return userArray;
         }
         const user = getUserFromArray();
@@ -154,19 +176,43 @@ document.addEventListener('DOMContentLoaded', function () {
         role.value = user.profile.role || "Student";
         bio.value = user.profile.bio;
         subject.value = user.profile.subject;
-
+        // Image.src=user.profile.picture;
         teachingCheckbox.checked = user.profile.role.includes('Teacher');
         updateFormForTeacherMode();
+
     }
     function saveToLocalStorage() {
-        let users = fromLocalStorage();  
-    let user = users[0]; 
-        user.profile.name = Name.value;
-        user.profile.age = age.value;
-        user.profile.skill = skill.value;
-        user.profile.role = role.value;
-        user.profile.bio = bio.value;
-        user.profile.subject = subject.value;
-        localStorage.setItem("learnLandUsers", JSON.stringify(users))
+        try {
+            const storedUsers = fromLocalStorage();
+
+
+            if (!storedUsers || !Array.isArray(storedUsers) || storedUsers.length === 0) {
+                console.error("Invalid user data structure");
+                return false;
+            }
+
+
+            const updatedUsers = [...storedUsers];
+            updatedUsers[0] = {
+                ...updatedUsers[0],
+                profile: {
+                    ...updatedUsers[0].profile,
+                    name: Name.value.trim(),
+                    age: age.value.trim(),
+                    skill: skill.value.trim(),
+                    role: role.value.trim(),
+                    bio: bio.value.trim(),
+                    subject: subject.value.trim()
+                }
+            };
+
+            localStorage.setItem("learnLandUsers", JSON.stringify(updatedUsers));
+            console.log("Data saved successfully!");
+            return true;
+
+        } catch (error) {
+            console.error("Error saving to localStorage:", error);
+            return false;
+        }
     }
 })
