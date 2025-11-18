@@ -23,12 +23,27 @@ slider_btn.addEventListener("click", () => {
         chat.classList.toggle("hidden");
         content.classList.toggle("hidden");
     }
-});
+    SaveCurrentState();
 
+});
+function SaveCurrentState() {
+    const state = chat.classList.contains("hidden") ? "content" : "chat";
+    localStorage.setItem("viewState", state);
+}
+function ApplySavedState() {
+    const savedState = localStorage.getItem("viewState") || "content";
+
+    if (savedState === "chat") {
+        chat.classList.remove("hidden");
+        content.classList.add("hidden");
+    } else {
+        chat.classList.add("hidden");
+        content.classList.remove("hidden");
+    }
+}
 
 function InitializeState() {
     if (window.innerWidth < 768) {
-        chat.classList.add("hidden");
-        content.classList.remove("hidden");
+        ApplySavedState();
     }
 }
