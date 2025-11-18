@@ -16,12 +16,13 @@ body {
     /*center vertically*/
     justify-content: center;
     /* center horizontally */
+    height: 100vh;
 }
 
 .window {
     background-color: white;
     height: max-content;
-
+    width: 380px;
     display: flex;
     flex-direction: column;
     gap: 15px;

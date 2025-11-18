@@ -9,15 +9,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let result = document.querySelector("#submissionResult");
     let submitBtn = document.querySelector("#SubmitButton");
     let para = document.querySelector("#default");
+    
+
     submitBtn.addEventListener("click", (event) => {
         event.preventDefault();
-        CheckInputs();
+      if( CheckInputs()) 
+      {
+        window.parent.closePop();
+      }
+
     });
+
     function setErrorFor(input, message) {
         if (message === "") {
             input.classList.add("error");
             input.classList.remove("success");
-            return;
+            return ;
         } else {
             result.innerText += "\n" + message;
             input.classList.add("error");
@@ -46,32 +53,32 @@ document.addEventListener("DOMContentLoaded", () => {
         result.innerText = "";
         if (NameValue === "" || NameValue.length < 3 || !charOnly.test(NameValue)) {
             setErrorFor(StudentName, "Name cannot be blank or less than 3 letters");
-            return;
+            return false;
         } else {
             setSuccessFor(StudentName);
         }
         if (SkillValue === "" || SkillValue.length < 2) {
             setErrorFor(Skill, "Skill cannot be blank or less than 2 char");
-            return;
+            return false;
         } else {
             setSuccessFor(Skill);
         }
         if (para.innerHTML=== "Select level") {
             setErrorFor(Level, "Select a level");
-            return;
+            return  false;
         } else {
             setSuccessFor(Level);
         }
         if (Days.textContent === "Select available days") {
             setErrorFor(Days, "Select your availability days");
-            return;
+            return false;
         } else {
             setSuccessFor(Days);
         }
         if (!isTime(StartTime, EndTime)) {
             setErrorFor(StartTime, "Start time must be less than end time by at least 1H");
             setErrorFor(EndTime, "");
-            return;
+            return false;
         }
         else {
             setSuccessFor(StartTime);
@@ -79,10 +86,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (MessageValue.length < 50) {
             setErrorFor(Message, "the message must have at least 50 char length");
-            return;
+            return false;
         } else {
             setSuccessFor(Message);
         }
+        return true;
     }
 
 

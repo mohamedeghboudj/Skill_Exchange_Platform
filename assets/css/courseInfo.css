@@ -1,5 +1,5 @@
 .courseinfo {
-    margin-top: 50px;
+   
     padding-inline: 7%;
     padding-block: 50px;
     background-color: rgba(131, 215, 254, 0.236);
@@ -233,6 +233,12 @@ figcaption button:hover {
 }
 #locked:hover {
     color: white;
+}
+#popup::backdrop{
+    background-color: #7f7f7f92;
+}
+#popup{
+    background:transparent;
 }
 @media only screen and (min-width:768px) {
     .courseinfo .info {
