@@ -2,10 +2,10 @@ const slider_btn = document.querySelector("#slider");
 const chat = document.querySelector("aside");
 const content = document.querySelector(".content");
 
-// Apply on page load
+//on page load
 InitializeState();
 
-// fix on resize 
+// on resize 
 window.addEventListener("resize", () => {
     if (window.innerWidth >= 768) {
         chat.classList.remove("hidden");
@@ -25,7 +25,7 @@ slider_btn.addEventListener("click", () => {
     }
 });
 
-// Initial state function
+
 function InitializeState() {
     if (window.innerWidth < 768) {
         chat.classList.add("hidden");
