@@ -135,6 +135,11 @@ document.addEventListener('DOMContentLoaded', function () {
         mydialog2.close();
     })
 
+ 
+function handleBecomeTeacherClick() {
+    const storedCurrentUser = localStorage.getItem("currentUser");
+
+
     let teachnav = document.querySelector(".teachnav")
     function handleBecomeTeacherClick() {
         const storedCurrentUser = localStorage.getItem("currentUser");
@@ -172,5 +177,35 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         handleBecomeTeacherClick();
     });
+
+
+    // Load the latest users array
+    const allUsers = fromLocalStorage() || users;
+
+    // Find the fresh user by ID
+    const freshUser = allUsers.find(u => u.id === currentUser.id);
+
+    if (!freshUser) {
+        console.error("User not found in database");
+        return;
+    }
+
+    // Check teacherProfile properly
+    if (freshUser.teacherProfile) {
+        // User is a teacher
+        window.location.href = "/html/teach.html";
+    } else {
+        // User is not yet a teacher
+        window.location.href = "/pages/teacherrequest.html";
+    }
+}
+
+
+
+document.querySelector(".teachnav").addEventListener("click", (e) => {
+    e.preventDefault();
+    handleBecomeTeacherClick();
+
+});
 
 });
