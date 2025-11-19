@@ -1124,24 +1124,30 @@ body {
 /*Start Student Request Window*/
 .container-card {
     position: relative;
-    height: 100vh;
-
-    width: 500px;
+    height: auto;
+    /*width: 500px;*/
     margin: auto;
 
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width:400px) {
     .container-card {
         width: 380px;
+        
     }
+    
 }
 
 @media screen and (min-width:500px) {
     .container-card {
         width: 500px;
+        height: 670px;
     }
+    
 
+}
+dialog::-webkit-scrollbar {
+    width: 0px;  
 }
 
 .card {
@@ -1227,9 +1233,9 @@ body {
 }
 
 .card .send {
-    padding: 30px;
-    border-top: 1px solid rgb(205, 205, 250);
-    margin-top: 20px;
+    padding: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 
 }
 
