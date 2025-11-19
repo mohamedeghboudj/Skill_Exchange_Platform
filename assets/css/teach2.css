@@ -35,7 +35,8 @@ dialog::-webkit-scrollbar {
 
 }
 
-.deletebtn {
+.delete-assignment-btn,
+.delete-videos-btn {
     background-color: #FEE2E2;
     border-radius: 10px;
     border: 1px solid #931414d1;
@@ -50,13 +51,14 @@ dialog::-webkit-scrollbar {
     gap: 3px;
 }
 
-.deletebtn:hover,
-.deletebtn:active {
+.delete-assignment-btn:hover,
+.delete-assignment-btn:active .delete-videos-btn:hover,
+.delete-videos-btn:active {
     color: white;
     background-color: #df2a2ab8;
 }
 
-.deletebtn:active {
+.delete-assignment-btn:active .delete-videos-btn:active {
     transform: scale(1.040);
 }
 
@@ -93,13 +95,20 @@ dialog::-webkit-scrollbar {
     display: flex;
 }
 
+
+.two {
+    display: flex;
+    align-items: center;
+}
+
 .video {
     justify-content: space-between;
     gap: 5px;
 }
 
-#agree {
-    visibility: hidden;
+/* NEW: Checkbox visibility */
+.video-checkbox {
+    cursor: pointer;
 }
 
 
@@ -128,4 +137,9 @@ dialog::-webkit-scrollbar {
     justify-content: center;
     gap: 10px;
     transition: all 0.3s ease;
+}
+
+.add-new-course-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
 }
