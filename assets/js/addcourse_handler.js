@@ -29,6 +29,7 @@ export function handleCourseSubmission() {
 
     // Add course to localStorage (this mutates newCourse to add the id)
     addCourse(newCourse);
+    
     const courseId = newCourse.id;
 
     console.log("Course created with ID:", courseId);

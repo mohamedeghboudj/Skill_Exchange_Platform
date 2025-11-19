@@ -1,6 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    const currentUserEmail = sessionStorage.getItem("currentUserEmail");
+
+    function fromLocalStorage() {
+        try {
+            const storedData = localStorage.getItem("learnLandUsers");
+            return storedData ? JSON.parse(storedData) : [];
+        } catch (error) {
+            console.error("Error loading from localStorage:", error);
+            return [];
+        }
+    }
+    const currentUserEmail = localStorage.getItem("currentUserEmail");
+
+
 
     function getUserFromArray() {
         const users = fromLocalStorage();
@@ -122,9 +134,11 @@ document.addEventListener('DOMContentLoaded', function () {
     closeBtn.addEventListener("click", () => {
         mydialog2.close();
     })
+
     let teachnav = document.querySelector(".teachnav")
     function handleBecomeTeacherClick() {
         const storedCurrentUser = localStorage.getItem("currentUser");
+
 
         if (!storedCurrentUser) {
             console.warn("No user logged in");

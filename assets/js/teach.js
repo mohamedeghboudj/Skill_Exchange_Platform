@@ -46,7 +46,7 @@ function renderAllCourses() {
 }
 
 // Create course element
-function createCourseElement(course) {
+export function createCourseElement(course) {
   const videos = getVideosByCourse(course.id);
   const assignments = getAssignmentsByCourse(course.id);
 
@@ -450,7 +450,6 @@ function setupAddCourseButton() {
     }
   });
 }
-let teachnav = document.querySelector(".teachnav")
 function handleBecomeTeacherClick() {
   const storedCurrentUser = localStorage.getItem("currentUser");
 

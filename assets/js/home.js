@@ -1,7 +1,6 @@
 const search = document.querySelector(".searching")
 let courses = document.querySelectorAll(".course")
 let category = document.querySelectorAll(".category")
-let teachnav = document.querySelector(".teachnav")
 import { getCourses } from "../data/courseService.js";
 import "../data/courses.js";
 
@@ -14,7 +13,7 @@ const mycourses = getCourses();
 
 mycourses.forEach(course => {
     const card = `
-                 <div class="course" data-category="${course.category}">
+                 <div class="course" data-category="${course.category}"  data-id="${course.id}">
                  <div class="skillicon">
                         <img src="/assets/images/${course.category}.png" alt="" height="50px">
                     </div>
@@ -95,6 +94,11 @@ search.addEventListener('input', () => {
     });
 });
 
+
+
+
+
+
 courses.forEach(course => {
     course.addEventListener('click', () => {
         window.location.href = 'courseInfo.html';
@@ -142,4 +146,5 @@ document.getElementById("becomeTeacher").addEventListener("click", handleBecomeT
 document.querySelector(".teachnav").addEventListener("click", (e) => {
     e.preventDefault();
     handleBecomeTeacherClick();
+
 });
