@@ -301,6 +301,7 @@ h4 {
     align-items: center;
     padding: 2%;
 }
+.certificate-visible { display: block; }
 
 .inner-popup {
 
@@ -478,24 +479,7 @@ main {
     }
 }
 
-@media print {
 
-    /* Hide everything except modal */
-    body>*:not(.modal) {
-        display: none !important;
-    }
-
-
-
-    .inner-popup {
-        max-width: 100% !important;
-        max-height: none !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-    }
-
-
-}
 #popup::backdrop,#popup1::backdrop {
     background-color: #7f7f7f92;
 }

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+
     function fromLocalStorage() {
         try {
             const storedData = localStorage.getItem("learnLandUsers");
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     const currentUserEmail = localStorage.getItem("currentUserEmail");
+
 
 
     function getUserFromArray() {
@@ -46,9 +48,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     profileImage.src = user.profile.picture;
 
+    // ADD UPLOAD FUNCTIONALITY HERE
+    const uploadButton = document.querySelector('.Upload-button');
+    const certificateInput = document.getElementById('Certificate');
+    const certificateObject = document.querySelector('.certificate-object');
 
+    
 
-
+    // When certificate is selected, show the certificate
+    if (certificateInput && certificateObject) {
+        certificateInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                certificateObject.style.display = 'block';
+                
+                // Update certificate text with file name
+                const fileName = e.target.files[0].name;
+                const certificateText = certificateObject.querySelector('p');
+                if (certificateText) {
+                    certificateText.textContent = fileName;
+                }
+            }
+        });
+    }
 
     function updateUIForUserRole() {
         const userRole = user.profile.role;
@@ -66,9 +87,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     updateUIForUserRole();
+    window.addEventListener('message', function (event) {
+        if (event.data === 'hideCertificate') {
+            const certificateObject = document.querySelector(".certificate-object");
+            if (certificateObject) {
+                certificateObject.style.display = 'none';
+            }
+        }
+    });
 
 
-    let remove = document.getElementById("remove");
+
+    let remove = document.querySelector(".Remove");
     let mydialog = document.getElementById("popup");
 
 
@@ -104,16 +134,50 @@ document.addEventListener('DOMContentLoaded', function () {
     closeBtn.addEventListener("click", () => {
         mydialog2.close();
     })
+
  
 function handleBecomeTeacherClick() {
     const storedCurrentUser = localStorage.getItem("currentUser");
 
-    if (!storedCurrentUser) {
-        console.warn("No user logged in");
-        return;
+
+    let teachnav = document.querySelector(".teachnav")
+    function handleBecomeTeacherClick() {
+        const storedCurrentUser = localStorage.getItem("currentUser");
+
+
+        if (!storedCurrentUser) {
+            console.warn("No user logged in");
+            return;
+        }
+
+        const currentUser = JSON.parse(storedCurrentUser);
+
+        // Load the latest users array
+        const allUsers = fromLocalStorage() || users;
+
+        // Find the fresh user by ID
+        const freshUser = allUsers.find(u => u.id === currentUser.id);
+
+        if (!freshUser) {
+            console.error("User not found in database");
+            return;
+        }
+
+        // Check teacherProfile properly
+        if (freshUser.teacherProfile) {
+            // User is a teacher
+            window.location.href = "/html/teach.html";
+        } else {
+            // User is not yet a teacher
+            window.location.href = "/pages/teacherrequest.html";
+        }
     }
 
-    const currentUser = JSON.parse(storedCurrentUser);
+    document.querySelector(".teachnav").addEventListener("click", (e) => {
+        e.preventDefault();
+        handleBecomeTeacherClick();
+    });
+
 
     // Load the latest users array
     const allUsers = fromLocalStorage() || users;
@@ -143,4 +207,5 @@ document.querySelector(".teachnav").addEventListener("click", (e) => {
     handleBecomeTeacherClick();
 
 });
+
 });

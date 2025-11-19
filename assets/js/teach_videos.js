@@ -94,83 +94,94 @@ const assignments = [
     }
 ];
 
-// Initialize localStorage
-if (!localStorage.getItem("videos")) {
-    localStorage.setItem("videos", JSON.stringify(videos));
+// Initialize localStorage for teach_videos and teach_assignments if empty
+if (!localStorage.getItem("teach_videos")) {
+    localStorage.setItem("teach_videos", JSON.stringify(videos));
 }
 
-if (!localStorage.getItem("assignments")) {
-    localStorage.setItem("assignments", JSON.stringify(assignments));
+if (!localStorage.getItem("teach_assignments")) {
+    localStorage.setItem("teach_assignments", JSON.stringify(assignments));
 }
 
 // Video management functions
+
 export function getVideosByCourse(courseId) {
-    const data = localStorage.getItem("videos");
+    const data = localStorage.getItem("teach_videos");
     const allVideos = data ? JSON.parse(data) : [];
     return allVideos.filter(video => video.courseId === courseId).sort((a, b) => a.order - b.order);
 }
 
+
 export function getAllVideos() {
-    const data = localStorage.getItem("videos");
+    const data = localStorage.getItem("teach_videos");
     return data ? JSON.parse(data) : [];
 }
+
 
 export function addVideo(newVideo) {
     const videos = getAllVideos();
     newVideo.id = Date.now();
     videos.push(newVideo);
-    localStorage.setItem("videos", JSON.stringify(videos));
+    localStorage.setItem("teach_videos", JSON.stringify(videos));
     return newVideo;
 }
+
 
 export function deleteVideo(videoId) {
     let videos = getAllVideos();
     videos = videos.filter(video => video.id !== videoId);
-    localStorage.setItem("videos", JSON.stringify(videos));
+    localStorage.setItem("teach_videos", JSON.stringify(videos));
 }
+
 
 export function deleteMultipleVideos(videoIds) {
     let videos = getAllVideos();
     videos = videos.filter(video => !videoIds.includes(video.id));
-    localStorage.setItem("videos", JSON.stringify(videos));
+    localStorage.setItem("teach_videos", JSON.stringify(videos));
 }
+
 
 export function updateVideo(updatedVideo) {
     const videos = getAllVideos().map(video =>
         video.id === updatedVideo.id ? updatedVideo : video
     );
-    localStorage.setItem("videos", JSON.stringify(videos));
+    localStorage.setItem("teach_videos", JSON.stringify(videos));
 }
 
 // Assignment management functions
+
 export function getAssignmentsByCourse(courseId) {
-    const data = localStorage.getItem("assignments");
+    const data = localStorage.getItem("teach_assignments");
     const allAssignments = data ? JSON.parse(data) : [];
     return allAssignments.filter(assignment => assignment.courseId === courseId);
 }
 
+
 export function getAllAssignments() {
-    const data = localStorage.getItem("assignments");
+    const data = localStorage.getItem("teach_assignments");
     return data ? JSON.parse(data) : [];
 }
+
 
 export function addAssignment(newAssignment) {
     const assignments = getAllAssignments();
     newAssignment.id = Date.now();
     assignments.push(newAssignment);
-    localStorage.setItem("assignments", JSON.stringify(assignments));
+    localStorage.setItem("teach_assignments", JSON.stringify(assignments));
     return newAssignment;
 }
+
 
 export function deleteAssignment(assignmentId) {
     let assignments = getAllAssignments();
     assignments = assignments.filter(assignment => assignment.id !== assignmentId);
-    localStorage.setItem("assignments", JSON.stringify(assignments));
+    localStorage.setItem("teach_assignments", JSON.stringify(assignments));
 }
+
 
 export function updateAssignment(updatedAssignment) {
     const assignments = getAllAssignments().map(assignment =>
         assignment.id === updatedAssignment.id ? updatedAssignment : assignment
     );
-    localStorage.setItem("assignments", JSON.stringify(assignments));
+    localStorage.setItem("teach_assignments", JSON.stringify(assignments));
 }
