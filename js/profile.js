@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         bioValue = document.querySelector('#bioV'),
         teacherModeElement = document.querySelector('.teacher-mode'),
         certificateSection = document.querySelector('.certificate-section');
+    profileImage = document.querySelector('.profile-pic');
 
 
     // Set form values
@@ -31,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
     emailValue.value = user.email;
     skillValue.value = user.profile.skill;
     bioValue.value = user.profile.bio;
+
+    profileImage.src = user.profile.picture;
 
 
 

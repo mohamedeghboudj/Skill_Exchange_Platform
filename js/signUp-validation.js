@@ -85,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 skill: "",
                 role: "Student",
                 subject: "",
-                bio: ""
+                bio: "",
+                 picture: "images1/Fotos de perfil 1_ are secciones.jpg"
             }
         };
 
