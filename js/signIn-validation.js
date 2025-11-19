@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (user) {
             console.log("User authenticated successfully:", user.profile.name);
-            sessionStorage.setItem("currentUserEmail", user.email);
+            localStorage.setItem("currentUserEmail", user.email);
             localStorage.setItem("currentUser", JSON.stringify(user));
 
             return true;

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             //  the function to add the user to the localstorage and when trying to test it i found and error in the consol from home4.html
             if (addNewUser(UserName.value, EmailUp.value, PasswordUp.value)) {
-                sessionStorage.setItem("currentUserEmail", EmailUp.value);
+                localStorage.setItem("currentUserEmail", EmailUp.value);
                 window.location.href = "/pages/home.html";
             } else {
                 setErrorFor(EmailUp, "This email is already registered.");
