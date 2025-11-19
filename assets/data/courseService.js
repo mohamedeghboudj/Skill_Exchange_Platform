@@ -1,7 +1,5 @@
 export function getCourses() {
   const data = localStorage.getItem("courses");
-  console.log(data);
-
   return data ? JSON.parse(data) : [];
 }
 

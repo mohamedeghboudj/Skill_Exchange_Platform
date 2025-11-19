@@ -1,5 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const currentUserEmail = sessionStorage.getItem("currentUserEmail");
+
+    function fromLocalStorage() {
+        try {
+            const storedData = localStorage.getItem("learnLandUsers");
+            return storedData ? JSON.parse(storedData) : [];
+        } catch (error) {
+            console.error("Error loading from localStorage:", error);
+            return [];
+        }
+    }
+    const currentUserEmail = localStorage.getItem("currentUserEmail");
+
 
     function getUserFromArray() {
         const users = fromLocalStorage();

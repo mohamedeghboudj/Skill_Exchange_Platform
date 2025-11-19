@@ -13,7 +13,7 @@ const mycourses = getCourses();
 
 mycourses.forEach(course => {
     const card = `
-                 <div class="course" data-category="${course.category}">
+                 <div class="course" data-category="${course.category}"  data-id="${course.id}">
                  <div class="skillicon">
                         <img src="/assets/images/${course.category}.png" alt="" height="50px">
                     </div>
@@ -94,9 +94,13 @@ search.addEventListener('input', () => {
     });
 });
 
-courses.forEach(course => {
-    course.addEventListener('click', () => {
-        window.location.href = 'courseInfo.html';
-    });
-});
 
+
+
+//courseInfo navigation
+courses.forEach(card => {
+  card.addEventListener("click", () => {
+    const id = card.dataset.id;
+    window.location.href = `/pages/courseInfo.html?id=${id}`;
+  });
+});

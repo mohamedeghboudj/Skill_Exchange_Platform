@@ -7,7 +7,21 @@ const courses = [
     duration: "8 weeks",
     price: 120,
     rating: 4.7,
-    description: "Learn the basics of AI, including search algorithms, knowledge representation, and reasoning."
+    description: "Learn the basics of AI, including search algorithms, knowledge representation, and reasoning.",
+    
+    videos: [
+      {
+        id: 1,
+        title: "01. Introduction to AI",
+        description: "Overview of AI history and concepts.",
+        thumbnailUrl: "/thumbnails/ai-course/video-1.jpg",
+        videoUrl: "/videos/ai-course/video-1.mp4"
+      }
+    ],
+    assignment: {
+      id: 1,
+      fileUrl: "/assignments/ai-course/assignment-1.pdf"
+    }
   },
 
   {
@@ -18,18 +32,13 @@ const courses = [
     duration: "10 weeks",
     price: 100,
     rating: 4.5,
-    description: "Build dynamic and responsive web apps using React, JavaScript, and modern web technologies."
+    description: "Build dynamic and responsive web apps using React, JavaScript, and modern web technologies.",
+
+    videos: [],
+    assignment: {}
   },
-  {
-    id: 8, // Make sure this matches the videos courseId
-    title: "UI/UX Design Fundamentals",
-    instructor: "Dr. John Smith",
-    category: "Design",
-    duration: "6 weeks",
-    price: 100,
-    rating: 4.5,
-    description: "Learn UI/UX design principles, wireframing, prototyping, and usability testing."
-  },
+
+
   {
     id: 3,
     title: "Data Structures and Algorithms",
@@ -38,8 +47,12 @@ const courses = [
     duration: "12 weeks",
     price: 90,
     rating: 4.8,
-    description: "Master the core data structures and algorithms used in software engineering and technical interviews."
+    description: "Master the core data structures and algorithms used in software engineering and technical interviews.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 5,
     title: "Machine Learning Fundamentals",
@@ -48,8 +61,47 @@ const courses = [
     duration: "9 weeks",
     price: 130,
     rating: 4.9,
-    description: "Understand supervised and unsupervised learning, model training, and evaluation techniques."
+    description: "Understand supervised and unsupervised learning, model training, and evaluation techniques.",
+
+    videos: [
+      {
+        id: 8,
+        title: "01. What is Machine Learning?",
+        description: "Introduction to ML and applications.",
+        duration: "18:25",
+        order: 1,
+        thumbnailUrl: "/thumbnails/ml-course/video-1.jpg",
+        videoUrl: "/videos/ml-course/video-1.mp4"
+      },
+      {
+        id: 9,
+        title: "02. Linear Regression",
+        description: "Understanding linear regression models.",
+        duration: "38:50",
+        order: 2,
+        thumbnailUrl: "/thumbnails/ml-course/video-2.jpg",
+        videoUrl: "/videos/ml-course/video-2.mp4"
+      },
+      {
+        id: 10,
+        title: "03. Classification Algorithms",
+        description: "Logistic regression and decision trees.",
+        duration: "52:15",
+        order: 3,
+        thumbnailUrl: "/thumbnails/ml-course/video-3.jpg",
+        videoUrl: "/videos/ml-course/video-3.mp4"
+      }
+    ],
+    assignment: {
+      id: 3,
+      title: "Build a Classification Model",
+      description: "Train and evaluate a model on dataset.",
+      fileUrl: "/assignments/ml-course/assignment-1.pdf",
+      dueWeek: 5,
+      points: 150
+    }
   },
+
   {
     id: 7,
     title: "Introduction to Databases with SQL",
@@ -58,18 +110,26 @@ const courses = [
     duration: "6 weeks",
     price: 65,
     rating: 4.5,
-    description: "Understand relational databases, learn SQL syntax, and practice writing real-world queries."
+    description: "Understand relational databases, learn SQL syntax, and practice writing real-world queries.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
-    id: 8,
+    id: 11,
     title: "Oil Painting",
     instructor: "Ikram Henniene",
     category: "Art",
     duration: "7 weeks",
     price: 95,
     rating: 4.6,
-    description: "Learn how to design beautiful, user-friendly interfaces and experiences using Figma and design theory."
+    description: "Learn how to design beautiful, user-friendly interfaces and experiences using Figma and design theory.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 9,
     title: "OOP",
@@ -78,8 +138,12 @@ const courses = [
     duration: "10 weeks",
     price: 140,
     rating: 4.8,
-    description: "Implement neural networks and deep learning models with TensorFlow and Keras frameworks."
+    description: "Implement neural networks and deep learning models with TensorFlow and Keras frameworks.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 10,
     title: "Cooking",
@@ -88,8 +152,12 @@ const courses = [
     duration: "8 weeks",
     price: 80,
     rating: 4.9,
-    description: "Learn C++ from scratch, covering OOP concepts, pointers, memory management, and STL basics."
+    description: "Learn C++ from scratch, covering OOP concepts, pointers, memory management, and STL basics.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 16,
     title: "Business Management Fundamentals",
@@ -98,8 +166,12 @@ const courses = [
     duration: "8 weeks",
     price: 100,
     rating: 4.5,
-    description: "Understand core business management principles including leadership, strategy, and operations."
+    description: "Understand core business management principles including leadership, strategy, and operations.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 17,
     title: "Digital Marketing Strategy",
@@ -108,8 +180,12 @@ const courses = [
     duration: "7 weeks",
     price: 90,
     rating: 4.6,
-    description: "Learn SEO, content marketing, social media strategy, and online advertising techniques."
+    description: "Learn SEO, content marketing, social media strategy, and online advertising techniques.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 18,
     title: "Entrepreneurship and Innovation",
@@ -118,10 +194,12 @@ const courses = [
     duration: "9 weeks",
     price: 110,
     rating: 4.7,
-    description: "Learn how to turn ideas into startups, build business models, and pitch to investors."
+    description: "Learn how to turn ideas into startups, build business models, and pitch to investors.",
+
+    videos: [],
+    assignment: {}
   },
 
-  // --- Health, Psychology & Lifestyle ---
   {
     id: 19,
     title: "Nutrition and Healthy Eating",
@@ -130,8 +208,12 @@ const courses = [
     duration: "6 weeks",
     price: 70,
     rating: 4.5,
-    description: "Understand nutritional science, balanced diets, and how to maintain a healthy lifestyle."
+    description: "Understand nutritional science, balanced diets, and how to maintain a healthy lifestyle.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 20,
     title: "Stress Management and Mindfulness",
@@ -140,8 +222,12 @@ const courses = [
     duration: "5 weeks",
     price: 60,
     rating: 4.8,
-    description: "Develop mindfulness techniques and stress reduction practices for a calmer daily life."
+    description: "Develop mindfulness techniques and stress reduction practices for a calmer daily life.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 21,
     title: "Yoga for Beginners",
@@ -150,10 +236,12 @@ const courses = [
     duration: "4 weeks",
     price: 50,
     rating: 4.6,
-    description: "Learn beginner yoga poses, breathing techniques, and flexibility training routines."
+    description: "Learn beginner yoga poses, breathing techniques, and flexibility training routines.",
+
+    videos: [],
+    assignment: {}
   },
 
-  // --- language & Culture ---
   {
     id: 22,
     title: "Arabic for Beginners",
@@ -162,8 +250,12 @@ const courses = [
     duration: "10 weeks",
     price: 80,
     rating: 4.7,
-    description: "Learn to read, write, and speak Modern Standard Arabic with simple grammar and daily vocabulary."
+    description: "Learn to read, write, and speak Modern Standard Arabic with simple grammar and daily vocabulary.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 23,
     title: "French Conversation Skills",
@@ -172,8 +264,12 @@ const courses = [
     duration: "6 weeks",
     price: 75,
     rating: 4.5,
-    description: "Improve your spoken French and pronunciation through dialogues, role plays, and listening exercises."
+    description: "Improve your spoken French and pronunciation through dialogues, role plays, and listening exercises.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 24,
     title: "Japanese language and Culture",
@@ -182,11 +278,12 @@ const courses = [
     duration: "12 weeks",
     price: 95,
     rating: 4.8,
-    image: "images/japanese-course.jpg",
-    description: "Discover Japanese grammar, writing systems, and traditions through interactive lessons."
+    description: "Discover Japanese grammar, writing systems, and traditions through interactive lessons.",
+
+    videos: [],
+    assignment: {}
   },
 
-  // --- Engineering & Science ---
   {
     id: 25,
     title: "Civil Engineering Basics",
@@ -195,9 +292,12 @@ const courses = [
     duration: "8 weeks",
     price: 110,
     rating: 4.5,
-    image: "images/civil-course.jpg",
-    description: "Learn about structural design, materials, and construction fundamentals for civil projects."
+    description: "Learn about structural design, materials, and construction fundamentals for civil projects.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 26,
     title: "Electrical Circuits and Systems",
@@ -206,9 +306,12 @@ const courses = [
     duration: "9 weeks",
     price: 120,
     rating: 4.7,
-    image: "images/electrical-course.jpg",
-    description: "Understand the basics of electrical circuits, Ohm’s law, and system analysis techniques."
+    description: "Understand the basics of electrical circuits, Ohm’s law, and system analysis techniques.",
+
+    videos: [],
+    assignment: {}
   },
+
   {
     id: 27,
     title: "Renewable Energy Systems",
@@ -217,11 +320,11 @@ const courses = [
     duration: "10 weeks",
     price: 130,
     rating: 4.8,
-    image: "images/renewable-course.jpg",
-    description: "Explore solar, wind, and hydro energy technologies and their environmental impact."
-  }
+    description: "Explore solar, wind, and hydro energy technologies and their environmental impact.",
 
+    videos: [],
+    assignment: {}
+  }
 ];
 
-// Always overwrite localStorage during development
 localStorage.setItem("courses", JSON.stringify(courses));

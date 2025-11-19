@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="/assets/css/courseInfo.css">
     <link rel="stylesheet" href="/assets/css/main.css">
     <script src="/assets/js/main.js" defer></script>
-    <script src="/assets/js/courseInfo.js" defer></script>
-    <script src="/js/student-request.js"></script>
+    <script type="module" src="/assets/js/courseInfo.js"></script>
+    <script src="/js/student-request.js" defer></script>
+    <script src="/assets/js/home.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -65,10 +66,10 @@
         <section class="courseinfo">
             <h1>Course Details</h1>
             <div class="info">
-                <p><strong>Course name</strong>Web Development</p>
-                <p><strong>Teacher</strong>Dr. Carter</p><br>
-                <p><strong>Price</strong>$49</p><br>
-                <p><strong>Duration</strong>6h 30m</p>
+                <p><strong>Course name</strong><span id="course-name">Web Development</span></p>
+                <p><strong>Teacher</strong><span class="teacher-name">Dr. Carter</span></p><br>
+                <p><strong>Price</strong><span id="price">$49</span></p><br>
+                <p><strong>Duration</strong><span id="duration">6h 30m</span></p>
                 <p id="description">Master the fundamentals of modern web development and learn to build dynamic,
                     responsive websites from scratch. This course covers everything from HTML, CSS, and JavaScript to
                     advanced front-end frameworks and back-end integration. You’ll design visually appealing
@@ -81,7 +82,7 @@
             <h3>Instructor</h3>
             <div class="teacher">
                 <div id="teachnav">
-                    <p>Dr.Mahmoudi</p>
+                    <p id="teacher-name">Dr.Mahmoudi</p>
                     <img src="/assets/images/person.webp" alt="teacher" height="150px" width="150px">
                     <ul class="teacherlinkslg">
                         <li><a href=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
