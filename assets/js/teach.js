@@ -46,7 +46,7 @@ function renderAllCourses() {
 }
 
 // Create course element
-function createCourseElement(course) {
+export function createCourseElement(course) {
   const videos = getVideosByCourse(course.id);
   const assignments = getAssignmentsByCourse(course.id);
 
