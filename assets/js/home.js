@@ -1,6 +1,7 @@
 const search = document.querySelector(".searching")
 let courses = document.querySelectorAll(".course")
 let category = document.querySelectorAll(".category")
+let teachnav = document.querySelector(".teachnav")
 import { getCourses } from "../data/courseService.js";
 import "../data/courses.js";
 
@@ -67,7 +68,7 @@ category.forEach(catEl => {
         const currentCourses = document.querySelectorAll(".course");
 
         currentCourses.forEach(course => {
-        const courseCategory = course.getAttribute("data-category");
+            const courseCategory = course.getAttribute("data-category");
 
             if (courseCategory.toLowerCase() === categoryName) {
                 course.style.display = "block";
@@ -94,6 +95,7 @@ search.addEventListener('input', () => {
     });
 });
 
+<<<<<<< HEAD
 
 
 
@@ -103,4 +105,53 @@ courses.forEach(card => {
     const id = card.dataset.id;
     window.location.href = `/pages/courseInfo.html?id=${id}`;
   });
+=======
+courses.forEach(course => {
+    course.addEventListener('click', () => {
+        window.location.href = 'courseInfo.html';
+    });
+});
+//
+function handleBecomeTeacherClick() {
+    const storedCurrentUser = localStorage.getItem("currentUser");
+
+    if (!storedCurrentUser) {
+        console.warn("No user logged in");
+        return;
+    }
+
+    const currentUser = JSON.parse(storedCurrentUser);
+
+    // Load the latest users array
+    const allUsers = fromLocalStorage() || users;
+
+    // Find the fresh user by ID
+    const freshUser = allUsers.find(u => u.id === currentUser.id);
+
+    if (!freshUser) {
+        console.error("User not found in database");
+        return;
+    }
+
+    // Check teacherProfile properly
+    if (freshUser.teacherProfile) {
+        // User is a teacher
+        window.location.href = "/html/teach.html";
+    } else {
+        // User is not yet a teacher
+        window.location.href = "/pages/teacherrequest.html";
+    }
+}
+
+// Attach to button
+document.getElementById("becomeTeacher")
+    .addEventListener("click", handleBecomeTeacherClick);
+
+
+document.getElementById("becomeTeacher").addEventListener("click", handleBecomeTeacherClick);
+
+document.querySelector(".teachnav").addEventListener("click", (e) => {
+    e.preventDefault();
+    handleBecomeTeacherClick();
+>>>>>>> bf10997e8a4043e993726ffd7c4a1a65f2d4c65c
 });
