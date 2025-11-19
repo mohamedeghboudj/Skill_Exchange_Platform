@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
         bioValue = document.querySelector('#bioV'),
         teacherModeElement = document.querySelector('.teacher-mode'),
         certificateSection = document.querySelector('.certificate-section');
-   
+    profileImage = document.querySelector('.profile-pic');
+
 
     // Set form values
     NameValue.value = user.profile.name;
@@ -32,10 +33,12 @@ document.addEventListener('DOMContentLoaded', function () {
     skillValue.value = user.profile.skill;
     bioValue.value = user.profile.bio;
 
- 
+    profileImage.src = user.profile.picture;
 
 
- 
+
+
+
     function updateUIForUserRole() {
         const userRole = user.profile.role;
         const isTeacher = userRole.includes('Teacher');
@@ -53,35 +56,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateUIForUserRole();
 
-    
+
     let remove = document.getElementById("remove");
     let mydialog = document.getElementById("popup");
 
-    
-        remove.addEventListener('click', () => {
-            mydialog.showModal();
-        });
 
-        function closePop() {
-            mydialog.close();
-        }
+    remove.addEventListener('click', () => {
+        mydialog.showModal();
+    });
 
-        mydialog.addEventListener('click', () => {
-            mydialog.close();
-        });
-    
+    window.closePop = function () {
+        mydialog.close();
+    };
+
+    mydialog.addEventListener('click', () => {
+        mydialog.close();
+    });
+
     let showTrems = document.querySelector("#vpt");
     let mydialog2 = document.getElementById("popup1");
 
-    showTrems.addEventListener('click', () => {
+    showTrems.addEventListener('click', (e) => {
+        e.preventDefault();
         mydialog2.showModal();
     });
 
-    function closePop2() {
-        mydialog2.close();
-    }
 
-    mydialog2.addEventListener('click', () => {
+
+    mydialog2.addEventListener('click', (e) => {
+        e.preventDefault();
         mydialog2.close();
     });
+    let closeBtn = document.querySelector(".close");
+
+
+    closeBtn.addEventListener("click", () => {
+        mydialog2.close();
+    })
 });

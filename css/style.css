@@ -27,6 +27,22 @@ body {
 
 }
 
+
+    html,
+    body {
+        overflow-y: scroll;
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Edge */
+    }
+
+
+
 .container {
 
     margin: auto;
@@ -111,11 +127,12 @@ body {
 }
 
 .introduction .container .content {
-    padding-top: 40px;
+    padding-top: 90px;
     font-size: 19px;
     padding-bottom: 30px;
     padding-inline: 8%;
     overflow: hidden;
+    
 }
 
 @media(min-width:768px) {
@@ -241,7 +258,7 @@ body {
     margin: 0;
     padding-top: 50px;
     padding-bottom: 25px;
-    font-family: 'Marcellus', serif;
+   
     font-size: 3rem;
     font-weight: 800;
     letter-spacing: 0.5px;
@@ -1124,25 +1141,31 @@ body {
 /*Start Student Request Window*/
 .container-card {
     position: relative;
-    height: 100vh;
-
-    width: 500px;
+    height: 700px;
+    /*width: 500px;*/
     margin: auto;
 
 }
 
-@media screen and (max-width:500px) {
+@media screen and (min-width:400px) {
     .container-card {
         width: 380px;
+        height: 800px !important;
+        /*i changed here */
     }
+
 }
 
 @media screen and (min-width:500px) {
     .container-card {
         width: 500px;
+        height: 670px;
     }
 
+
 }
+
+
 
 .card {
     border: 1px solid none;
@@ -1227,9 +1250,9 @@ body {
 }
 
 .card .send {
-    padding: 30px;
-    border-top: 1px solid rgb(205, 205, 250);
-    margin-top: 20px;
+    padding: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 
 }
 
@@ -1278,7 +1301,7 @@ body {
     display: none;
     position: absolute;
     transform: translate(-50%, -50%);
-    top: 76vh;
+    top: 455px;
     left: 50%;
     width: 100%;
     background-color: white;
@@ -1345,7 +1368,7 @@ body {
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
-    top: 44vh;
+    top: 270px;
     background-color: white;
     width: 100%;
     display: none;
@@ -1548,11 +1571,17 @@ body {
 #popup {
     background: transparent;
 }
+
 .whole-container {
 
-    padding-block: 110px;
+    
     background-image: var(--fourth-color);
-    height: 100vh;
+   min-height:100vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position:relative;
 }
 
 @media (max-width:768px) {
@@ -1573,7 +1602,8 @@ body {
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
         0 10px 10px rgba(0, 0, 0, 0.22);
-    position: relative;
+   position: relative;
+ 
     overflow: hidden;
     width: 750px;
     max-width: 100%;
@@ -1657,9 +1687,10 @@ body {
 
 
 
+.container-sign-page span,
 .container-sign-page a {
     color: #787878;
-    ;
+
     font-size: 14px;
     text-decoration: none;
     margin: 15px 0;
@@ -1672,7 +1703,7 @@ body {
     padding-inline: 5px;
     margin-left: 5px;
     font-size: 12px;
-    
+
 }
 
 #term:hover {
@@ -2087,10 +2118,9 @@ body {
 }
 
 
-/*button to send the missage remove the blue */
-/*sign in sign up the height of the page ml ta7t*/
-/*index font */
-/*the nav bar of ikram in the index nav */
-/*insta of lasla and mahmoudi and sami */
-/*remove the scroll from the student request*/
-/*the bluuur of the student request */
+
+
+
+
+
+

@@ -2,6 +2,10 @@ body{
     background-image: linear-gradient(to right, rgba(247, 248, 196, 0.429), rgba(143, 201, 251, 0.301));
 
 }
+main{
+    height:100vh !important;
+    margin-top:40px;
+}
 .teachform{
     font-family: "mulish", "arial", "sans";
     padding-inline: 30px;

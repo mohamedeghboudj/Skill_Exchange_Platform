@@ -85,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 skill: "",
                 role: "Student",
                 subject: "",
-                bio: ""
+                bio: "",
+                 picture: "images1/Fotos de perfil 1_ are secciones.jpg"
             }
         };
 
@@ -97,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("New user added successfully:", newUser);
         return true;
     }
+    
 });
 let showTrems = document.querySelector('#term');
 let mydialog2 = document.getElementById("popup1");
@@ -113,7 +115,7 @@ mydialog2.addEventListener('click', () => {
     mydialog2.close();
 });
 
-//for hadil to see because i did not know how to handle the a tag problem 
+
 
 
 
