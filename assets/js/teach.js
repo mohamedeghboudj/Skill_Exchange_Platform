@@ -1,6 +1,6 @@
 // Import functions from courses.js and videos.js
 console.log("js is working..");
-import { getCourses, deleteCourse } from '../data/courseService.js';
+import { getCourses, deleteCourse, addCourse } from './teach_courses.js';
 import {
   getVideosByCourse,
   deleteMultipleVideos,
@@ -8,27 +8,23 @@ import {
   getAssignmentsByCourse,
   addAssignment,
   deleteAssignment
-} from '../data/videos.js';
+} from './teach_videos.js';
 
 // State management
 let deleteMode = {};
-let selectedVideos = {};
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
+  setupPreExistingCourses();
   renderAllCourses();
   setupAddCourseButton();
-  setupPreExistingCourses(); // NEW
 });
 
-// Attach event listeners to courses already in HTML
+// Remove all static HTML courses
 function setupPreExistingCourses() {
   const existingCourses = document.querySelectorAll('.content .course');
   existingCourses.forEach(courseDiv => {
-    const courseId = parseInt(courseDiv.getAttribute('data-course-id')) || null;
-    if (courseId !== null) {
-      setupCourseEventListeners(courseDiv, courseId);
-    }
+    courseDiv.remove();
   });
 }
 
@@ -36,8 +32,6 @@ function setupPreExistingCourses() {
 function renderAllCourses() {
   const courses = getCourses();
   const contentDiv = document.querySelector('.content');
-
-
 
   courses.forEach(course => {
     const courseElement = createCourseElement(course);
@@ -143,11 +137,11 @@ function createVideoCard(video, courseId) {
   `;
 }
 
-// Create assignment card HTML
+// Create assignment card HTML - FIXED: Added click event to show PDF
 function createAssignmentCard(assignment, courseId) {
   return `
     <div class="assignment" data-assignment-id="${assignment.id}" style="animation: slideIn 0.3s ease;">
-      <div class="pdf">
+      <div class="pdf assignment-file" data-file-url="${assignment.fileUrl}" style="cursor: pointer;">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
           viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -184,7 +178,10 @@ function setupCourseEventListeners(courseDiv, courseId) {
 
   // Delete videos button
   const deleteVideosBtn = courseDiv.querySelector('.delete-videos-btn');
-  deleteVideosBtn.addEventListener('click', () => handleDeleteVideos(courseId, courseDiv));
+  deleteVideosBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // CRITICAL: Prevent event bubbling
+    handleDeleteVideos(courseId, courseDiv);
+  });
 
   // Add video button
   const addVideoBtn = courseDiv.querySelector('.add-video-btn');
@@ -194,10 +191,25 @@ function setupCourseEventListeners(courseDiv, courseId) {
   const addAssignmentBtn = courseDiv.querySelector('.add-assignment-btn');
   addAssignmentBtn.addEventListener('click', () => handleAddAssignment(courseId, courseDiv));
 
+  // FIXED: Add click event to view assignment files
+  const assignmentFiles = courseDiv.querySelectorAll('.assignment-file');
+  assignmentFiles.forEach(fileDiv => {
+    fileDiv.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const fileUrl = fileDiv.getAttribute('data-file-url');
+      if (fileUrl && fileUrl !== '') {
+        window.open(fileUrl, '_blank');
+      } else {
+        alert('No file available for this assignment');
+      }
+    });
+  });
+
   // Delete assignment buttons
   const deleteAssignmentBtns = courseDiv.querySelectorAll('.delete-assignment-btn');
   deleteAssignmentBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent triggering file view
       const assignmentId = parseInt(btn.getAttribute('data-assignment-id'));
       handleDeleteSingleAssignment(assignmentId, courseDiv);
     });
@@ -206,72 +218,76 @@ function setupCourseEventListeners(courseDiv, courseId) {
 
 // Handle delete course
 function handleDeleteCourse(courseId, courseDiv) {
-  if (confirm('Are you sure you want to delete this entire course? This action cannot be undone.')) {
-    courseDiv.style.animation = 'fadeOut 0.3s ease';
-    setTimeout(() => {
-      deleteCourse(courseId);
-      courseDiv.remove();
-    }, 300);
-  }
+  courseDiv.style.animation = 'fadeOut 0.3s ease';
+  setTimeout(() => {
+    deleteCourse(courseId);
+    courseDiv.remove();
+  }, 300);
 }
 
-// Handle delete videos
+// FIXED: Handle delete videos - Prevent immediate toggle
 function handleDeleteVideos(courseId, courseDiv) {
   const vdcards = courseDiv.querySelector('.vdcards');
   const checkboxes = vdcards.querySelectorAll('.video-checkbox');
+  const deleteBtn = courseDiv.querySelector('.delete-videos-btn');
 
   if (!deleteMode[courseId]) {
-    // Enter delete mode - show checkboxes
+    // ENTER delete mode - show checkboxes
     deleteMode[courseId] = true;
+    
     checkboxes.forEach(cb => {
       cb.style.display = 'block';
-      cb.style.animation = 'fadeIn 0.2s ease';
     });
-    courseDiv.querySelector('.delete-videos-btn').textContent = 'Remove Selected';
+    
+    deleteBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-circle-x-icon lucide-circle-x">
+        <circle cx="12" cy="12" r="10" />
+        <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+      </svg>
+      Remove Selected
+    `;
   } else {
-    // Check if any videos are selected
+    // IN delete mode - check for selections
     const selectedIds = Array.from(checkboxes)
       .filter(cb => cb.checked)
       .map(cb => parseInt(cb.getAttribute('data-video-id')));
 
     if (selectedIds.length > 0) {
-      // Delete selected videos
-      if (confirm(`Delete ${selectedIds.length} video(s)?`)) {
-        deleteMultipleVideos(selectedIds);
+      // DELETE selected videos
+      deleteMultipleVideos(selectedIds);
 
-        // Remove video cards with animation
-        selectedIds.forEach(id => {
-          const videoCard = vdcards.querySelector(`[data-video-id="${id}"]`);
-          if (videoCard) {
-            videoCard.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => videoCard.remove(), 300);
-          }
-        });
-
-        setTimeout(() => {
-          deleteMode[courseId] = false;
-          const remainingCheckboxes = vdcards.querySelectorAll('.video-checkbox');
-          remainingCheckboxes.forEach(cb => cb.style.display = 'none');
-          courseDiv.querySelector('.delete-videos-btn').innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              class="lucide lucide-circle-x-icon lucide-circle-x">
-              <circle cx="12" cy="12" r="10" />
-              <path d="m15 9-6 6" /><path d="m9 9 6 6" />
-            </svg>
-            delete
-          `;
-        }, 350);
-      }
-    } else {
-      // Exit delete mode
-      deleteMode[courseId] = false;
-      checkboxes.forEach(cb => {
-        cb.style.animation = 'fadeOut 0.2s ease';
-        setTimeout(() => cb.style.display = 'none', 200);
+      selectedIds.forEach(id => {
+        const videoCard = vdcards.querySelector(`[data-video-id="${id}"]`);
+        if (videoCard) {
+          videoCard.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => videoCard.remove(), 300);
+        }
       });
-      courseDiv.querySelector('.delete-videos-btn').innerHTML = `
+
+      // EXIT delete mode after deletion
+      setTimeout(() => {
+        deleteMode[courseId] = false;
+        const remainingCheckboxes = vdcards.querySelectorAll('.video-checkbox');
+        remainingCheckboxes.forEach(cb => cb.style.display = 'none');
+        deleteBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-circle-x-icon lucide-circle-x">
+            <circle cx="12" cy="12" r="10" />
+            <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+          </svg>
+          delete
+        `;
+      }, 350);
+    } else {
+      // EXIT delete mode without deleting
+      deleteMode[courseId] = false;
+      checkboxes.forEach(cb => cb.style.display = 'none');
+      deleteBtn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
           viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -300,19 +316,17 @@ function handleAddVideo(courseId, courseDiv) {
       const newVideo = {
         courseId: courseId,
         title: `${String(nextOrder).padStart(2, '0')}.${file.name.replace(/\.[^/.]+$/, '')}`,
-        duration: "00:00:00", // Would need video processing to get real duration
-        thumbnail: "../assets/images/webdev.jpg", // Default thumbnail
+        duration: "00:00:00",
+        thumbnail: "../assets/images/webdev.jpg",
         videoUrl: URL.createObjectURL(file),
         order: nextOrder
       };
 
       const addedVideo = addVideo(newVideo);
 
-      // Add new video card
       const vdcards = courseDiv.querySelector('.vdcards');
       const videoCard = document.createElement('div');
       videoCard.innerHTML = createVideoCard(addedVideo, courseId);
-      videoCard.style.animation = 'slideIn 0.5s ease';
       vdcards.appendChild(videoCard.firstElementChild);
     }
   });
@@ -320,8 +334,15 @@ function handleAddVideo(courseId, courseDiv) {
   input.click();
 }
 
-// Handle add assignment
+// Handle add assignment - FIXED: Only allow one assignment
 function handleAddAssignment(courseId, courseDiv) {
+  const assignments = getAssignmentsByCourse(courseId);
+  
+  if (assignments.length >= 1) {
+    // alert('You can only add one assignment per course. Please delete the existing assignment first.');
+    return;
+  }
+
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.pdf,.doc,.docx';
@@ -329,32 +350,37 @@ function handleAddAssignment(courseId, courseDiv) {
   input.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-      const assignments = getAssignmentsByCourse(courseId);
-      const nextNumber = assignments.length + 1;
-
       const newAssignment = {
         courseId: courseId,
-        title: `Assignment ${nextNumber}`,
+        title: `Assignment 1`,
         fileName: file.name,
         fileUrl: URL.createObjectURL(file)
       };
 
       const addedAssignment = addAssignment(newAssignment);
 
-      // Add new assignment card before the add button
       const assignmentsDiv = courseDiv.querySelector('.assignments');
-      const addButton = assignmentsDiv.querySelector('.add-assignment-container');
+      const addButtonContainer = assignmentsDiv.querySelector('.add-assignment-container');
 
       const assignmentCard = document.createElement('div');
       assignmentCard.innerHTML = createAssignmentCard(addedAssignment, courseId);
-      assignmentCard.style.animation = 'slideIn 0.5s ease';
 
       const newAssignmentElement = assignmentCard.firstElementChild;
-      assignmentsDiv.insertBefore(newAssignmentElement, addButton);
+      assignmentsDiv.insertBefore(newAssignmentElement, addButtonContainer);
 
-      // Setup delete listener for new assignment
+      // Setup listeners for new assignment
+      const fileDiv = newAssignmentElement.querySelector('.assignment-file');
+      fileDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const fileUrl = fileDiv.getAttribute('data-file-url');
+        if (fileUrl && fileUrl !== '') {
+          window.open(fileUrl, '_blank');
+        }
+      });
+
       const deleteBtn = newAssignmentElement.querySelector('.delete-assignment-btn');
-      deleteBtn.addEventListener('click', () => {
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         handleDeleteSingleAssignment(addedAssignment.id, courseDiv);
       });
     }
@@ -365,15 +391,13 @@ function handleAddAssignment(courseId, courseDiv) {
 
 // Handle delete single assignment
 function handleDeleteSingleAssignment(assignmentId, courseDiv) {
-  if (confirm('Delete this assignment?')) {
-    const assignmentCard = courseDiv.querySelector(`[data-assignment-id="${assignmentId}"]`);
-    if (assignmentCard) {
-      assignmentCard.style.animation = 'slideOut 0.3s ease';
-      setTimeout(() => {
-        deleteAssignment(assignmentId);
-        assignmentCard.remove();
-      }, 300);
-    }
+  const assignmentCard = courseDiv.querySelector(`[data-assignment-id="${assignmentId}"]`);
+  if (assignmentCard) {
+    assignmentCard.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => {
+      deleteAssignment(assignmentId);
+      assignmentCard.remove();
+    }, 300);
   }
 }
 
@@ -418,11 +442,10 @@ function createAddCourseButton() {
   return addCourseDiv;
 }
 
-// Setup add course button
+// FIXED: Setup add course button - Redirect to addcourse.html
 function setupAddCourseButton() {
   document.addEventListener('click', (e) => {
     if (e.target.closest('.add-new-course-btn')) {
-      // Redirect to add course page
       window.location.href = 'addcourse.html';
     }
   });
