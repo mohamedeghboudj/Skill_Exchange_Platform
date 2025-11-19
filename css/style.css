@@ -127,11 +127,12 @@ body {
 }
 
 .introduction .container .content {
-    padding-top: 40px;
+    padding-top: 90px;
     font-size: 19px;
     padding-bottom: 30px;
     padding-inline: 8%;
     overflow: hidden;
+    
 }
 
 @media(min-width:768px) {
@@ -257,7 +258,7 @@ body {
     margin: 0;
     padding-top: 50px;
     padding-bottom: 25px;
-    font-family: 'Marcellus', serif;
+   
     font-size: 3rem;
     font-weight: 800;
     letter-spacing: 0.5px;
@@ -1573,9 +1574,14 @@ body {
 
 .whole-container {
 
-    padding-block: 110px;
+    
     background-image: var(--fourth-color);
-    height: 100vh;
+   min-height:100vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position:relative;
 }
 
 @media (max-width:768px) {
@@ -1596,7 +1602,8 @@ body {
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
         0 10px 10px rgba(0, 0, 0, 0.22);
-    position: relative;
+   position: relative;
+ 
     overflow: hidden;
     width: 750px;
     max-width: 100%;
@@ -2111,10 +2118,9 @@ body {
 }
 
 
-/*button to send the missage remove the blue */
-/*sign in sign up the height of the page ml ta7t*/
-/*index font */
-/*the nav bar of ikram in the index nav */
-/*insta of lasla and mahmoudi and sami */
-/*remove the scroll from the student request*/
-/*the bluuur of the student request */
+
+
+
+
+
+
