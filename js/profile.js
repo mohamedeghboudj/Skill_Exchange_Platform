@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
     closeBtn.addEventListener("click", () => {
         mydialog2.close();
     })
-    
+ 
 function handleBecomeTeacherClick() {
     const storedCurrentUser = localStorage.getItem("currentUser");
 
@@ -138,11 +138,9 @@ function handleBecomeTeacherClick() {
 
 
 
-
-
 document.querySelector(".teachnav").addEventListener("click", (e) => {
     e.preventDefault();
     handleBecomeTeacherClick();
-});
 
+});
 });
