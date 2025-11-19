@@ -1,4 +1,4 @@
-// import { handleCourseSubmission } from './addcourse_handler.js';
+import { handleCourseSubmission } from './addcourse_handler.js';
 const CONFIG = {
     COURSE_NAME_MAX: 100,
     DESCRIPTION_MIN: 20,
@@ -237,7 +237,7 @@ submitBtn.addEventListener("click", e => {
         console.log("Form has errors. Please fix them.");
         return;
     }
-    // handleCourseSubmission();
+    handleCourseSubmission();
     window.location.href = "teach.html";
 
 
