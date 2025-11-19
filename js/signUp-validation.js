@@ -85,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 skill: "",
                 role: "Student",
                 subject: "",
-                bio: ""
+                bio: "",
+                 picture: "images1/Fotos de perfil 1_ are secciones.jpg"
             }
         };
 
@@ -97,7 +98,23 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("New user added successfully:", newUser);
         return true;
     }
+    
 });
+let showTrems = document.querySelector('#term');
+let mydialog2 = document.getElementById("popup1");
+
+showTrems.addEventListener('click', () => {
+    mydialog2.showModal();
+});
+
+function closePop() {
+    mydialog2.close();
+}
+
+mydialog2.addEventListener('click', () => {
+    mydialog2.close();
+});
+
 
 
 

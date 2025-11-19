@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    
+
     const currentUserEmail = sessionStorage.getItem("currentUserEmail");
 
     let Name = document.querySelector('#fullname');
@@ -12,24 +12,38 @@ document.addEventListener('DOMContentLoaded', function () {
     let teachingCheckbox = document.querySelector('#teaching-option');
     let save_btn = document.querySelector('.submit');
     let small = document.querySelector("small");
-    const Image = document.querySelector(".profile-pic");
-    const imageLoad = document.querySelector(".chnage-pic");
-    let resetBtn=document.querySelector("#reset")
+
+
+    const profileImage = document.querySelector('.profile-pic');
+    const fileInput = document.getElementById('picture');
+
+    let resetBtn = document.querySelector("#reset")
     let isTeacherModeActive = false;
-    
+
+
+
+
     loadUserData();
 
-    resetBtn.addEventListener('click',(event)=>{
+    resetBtn.addEventListener('click', (event) => {
         event.preventDefault();
+
         loadUserData();
-    })
-    // imageLoad.addEventListener('change', (e) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
-    //         const objectURL = URL.createObjectURL(file);
-    //         Image.src = objectURL;
-    //     }
-    // })
+
+        const user = getCurrentUser();
+        if (user) {
+            profileImage.src = user.profile.picture;
+        }
+    });
+    
+    fileInput.addEventListener('change', function (e) {
+        profileImage.src = URL.createObjectURL(e.target.files[0]);
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            updateProfilePicture(currentUserEmail, event.target.result);
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    });
 
     function updateFormForTeacherMode() {
         if (isTeacherModeActive) {
@@ -47,14 +61,14 @@ document.addEventListener('DOMContentLoaded', function () {
             subject.value = '';
         }
     }
-    
+
     updateFormForTeacherMode();
-    
+
     teachingCheckbox.addEventListener('change', function () {
         isTeacherModeActive = this.checked;
         updateFormForTeacherMode();
     });
-    
+
     save_btn.addEventListener("click", (event) => {
         event.preventDefault();
         checkInputs();
@@ -62,8 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (checkInputs()) {
             saveToLocalStorage();
             window.location.href = "profile.htm";
-        } else {
-            alert('Please fix the errors before saving.');
         }
     });
 
@@ -160,9 +172,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const users = fromLocalStorage();
             return users.find(user => user.email === currentUserEmail);
         }
-        
+
         const user = getCurrentUser();
-        
+
         Name.value = user.profile.name;
         age.value = user.profile.age;
         skill.value = user.profile.skill;
@@ -170,21 +182,24 @@ document.addEventListener('DOMContentLoaded', function () {
         role.value = user.profile.role || "Student";
         bio.value = user.profile.bio;
         subject.value = user.profile.subject;
+        profileImage.src = user.profile.picture;
         teachingCheckbox.checked = user.profile.role.includes('Teacher');
         isTeacherModeActive = teachingCheckbox.checked;
         updateFormForTeacherMode();
     }
-    
+
     function saveToLocalStorage() {
         let users = fromLocalStorage();
         let userIndex = users.findIndex(user => user.email === currentUserEmail);
-        
+
         users[userIndex].profile.name = Name.value;
         users[userIndex].profile.age = age.value;
         users[userIndex].profile.skill = skill.value;
         users[userIndex].profile.role = role.value;
         users[userIndex].profile.bio = bio.value;
         users[userIndex].profile.subject = subject.value;
+        users[userIndex].profile.picture = profileImage.src;
+
         localStorage.setItem("learnLandUsers", JSON.stringify(users));
     }
 });

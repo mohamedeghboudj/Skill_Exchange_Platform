@@ -13,7 +13,8 @@ let users = fromLocalStorage() || [
             role: "Student",
             subject: "",
 
-            bio: "Passionate mathematics student with a love for problem-solving and analytical thinking."
+            bio: "Passionate mathematics student with a love for problem-solving and analytical thinking.",
+            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
         },
         teacherProfile: null // Not a teacher yet
 
@@ -29,7 +30,8 @@ let users = fromLocalStorage() || [
             role: "Student, Teacher",
             subject: "Programming",
 
-            bio: "Computer science major focusing on AI and machine learning."
+            bio: "Computer science major focusing on AI and machine learning.",
+            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
         },
         teacherProfile: {
             primarySkill: "Programming",
@@ -62,7 +64,8 @@ let users = fromLocalStorage() || [
             skill: "French Language",
             role: "Teacher",
             subject: "French",
-            bio: "Native French speaker passionate about teaching."
+            bio: "Native French speaker passionate about teaching.",
+            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
         },
         teacherProfile: {
             primarySkill: "French Language",
@@ -101,7 +104,8 @@ let users = fromLocalStorage() || [
             skill: "Physics",
             role: "Student",
             subject: "",
-            bio: "Physics enthusiast exploring quantum mechanics."
+            bio: "Physics enthusiast exploring quantum mechanics.",
+            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
         },
         teacherProfile: null
     },
@@ -115,7 +119,8 @@ let users = fromLocalStorage() || [
             skill: "Graphic Design",
             role: "Teacher",
             subject: "Design",
-            bio: "Creative designer with studio experience."
+            bio: "Creative designer with studio experience.",
+            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
         },
         teacherProfile: {
             primarySkill: "Graphic Design",
@@ -149,7 +154,8 @@ let users = fromLocalStorage() || [
             skill: "Guitar",
             role: "Student, Teacher",
             subject: "Music",
-            bio: "Musician sharing my passion for guitar."
+            bio: "Musician sharing my passion for guitar.",
+            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
         },
         teacherProfile: {
             primarySkill: "Guitar",
@@ -237,7 +243,8 @@ function addNewUser(name, email, password) {
             skill: "",
             role: "Student",
             subject: "",
-            bio: ""
+            bio: "",
+            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
 
         },
         teacherProfile: null // New users start without teacher profile
@@ -303,6 +310,49 @@ function addCertificate(userId, certificate) {
     toLocalStorage();
     console.log("Certificate added:", newCert);
     return true;
+}
+// Function to update profile picture
+function updateProfilePicture(userEmail, base64Image) {
+    const currentUsers = fromLocalStorage() || users;
+    const userIndex = currentUsers.findIndex(user => user.email === userEmail);
+
+    if (userIndex !== -1) {
+        currentUsers[userIndex].profile.picture = base64Image;
+        users = currentUsers;
+        toLocalStorage();
+        console.log("Profile picture updated for:", currentUsers[userIndex].profile.name);
+        return true;
+    } else {
+        console.error("User not found for email:", userEmail);
+        return false;
+    }
+}
+
+// Function to get user by email
+function getUserByEmail(email) {
+    const currentUsers = fromLocalStorage() || users;
+    return currentUsers.find(user => user.email === email);
+}
+
+// Function to handle file upload and conversion
+function handleProfilePictureUpload(file, userEmail) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            if (updateProfilePicture(userEmail, e.target.result)) {
+                resolve(e.target.result);
+            } else {
+                reject("Failed to update profile picture");
+            }
+        };
+
+        reader.onerror = function () {
+            reject("Failed to read file");
+        };
+
+        reader.readAsDataURL(file);
+    });
 }
 
 // Initialize

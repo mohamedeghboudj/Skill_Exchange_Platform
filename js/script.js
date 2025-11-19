@@ -146,8 +146,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.log({ Container, signUpRotate, signInRotate });
     }
-
-    //2-form validation
-    // 3-moc data manipulation 
-    //ربي ما فيه غير الخير 
+    
+    // Asking question in the FAQ part 
+    let textBTN=document.querySelector("#oumayma");
+    let text=document.querySelector("#question");
+    textBTN.addEventListener("click",()=>{
+        text.value="";
+    })
+   
 });

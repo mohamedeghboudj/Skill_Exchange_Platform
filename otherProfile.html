@@ -10,10 +10,53 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="styles/profile.css">
+    <link rel="stylesheet" href="styles/other.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
 </head>
 
 <body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../assets/images/logo-removebg-preview.png" alt="learn-land" width="60px" height="50">
+                <h3>LearnLand</h3>
+            </div>
+            <ul>
+                <li><a href="/index.html">About</a></li>
+                <li><a href="/pages/home.html">Home</a></li>
+                <li><a href="/html/teach.html">Teach</a></li>
+                <li><a href="/html/learn.html">Learn</a></li>
+                <li><a href="/profile.htm">Profile</a></li>
+                <button><a href="/index.html"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-log-out-icon lucide-log-out">
+                            <path d="m16 17 5-5-5-5" />
+                            <path d="M21 12H9" />
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        </svg>Logout</a></button>
+            </ul>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menuIcon">
+                <path d="M4 5h16" />
+                <path d="M4 12h16" />
+                <path d="M4 19h16" />
+            </svg>
+        </nav>
+        <div class="navigation">
+            <a href="/index.html">About</a>
+            <hr>
+            <a href="/pages/home.html">Home</a>
+            <hr>
+            <a href="/html/teach.html">Teach</a>
+            <hr>
+            <a href="/html/learn.html">Learn</a>
+            <hr>
+            <a href="/profile.htm">Profile</a>
+            <hr>
+            <a href="/auth.html">LogOut</a>
+        </div>
+    </header>
 
     <main>
 
@@ -23,12 +66,12 @@
         <div class="profile">
             <figure>
 
-                <img class="profile-pic" src="images/profilePicture1.jpg" alt="profile picture"
+                <img class="profile-pic" src="images1/profilePicture1.jpg" alt="profile picture"
                     title="your profile picture" />
                 <div class="user-mode">
-                    <div class="student-mode">Student</div>
+                    
                     <div class="teacher-mode">Teacher</div>
-                    <p> Manage you public profile details</p>
+                  
                 </div>
 
             </figure>
@@ -63,19 +106,6 @@
             </form>
         </div>
 
-        <div class="p-terms-align">
-            <h4>Privacy terms</h4>
-        </div>
-        <div class="privacy-terms">
-            <p>By continuing, you agree to our privacy policy and data processing</p>
-
-
-
-            <button class="view-privacy-terms">privacy
-
-                terms</button>
-
-        </div>
         <div class="certificates-align">
             <h4>Certificates</h4>
         </div>
@@ -89,9 +119,9 @@
                     </div>
 
 
-                    
-                            <button class="Remove" action="">Remove</button>
-                        
+
+                    <button class="Remove" action="">Remove</button>
+
 
                 </a>
                 <a href="#popup1" class="certificate-object" id="modal1">
@@ -106,8 +136,7 @@
             </div>
 
 
-            <label for="Certificate" class="Upload-button">Add certificate (PDF,PNG,JPG)</label>
-            <input type="file" id="Certificate" style="display:none;" name="certificate" accept="image/*">
+          
 
 
 
