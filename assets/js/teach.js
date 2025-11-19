@@ -450,7 +450,6 @@ function setupAddCourseButton() {
     }
   });
 }
-let teachnav = document.querySelector(".teachnav")
 function handleBecomeTeacherClick() {
   const storedCurrentUser = localStorage.getItem("currentUser");
 

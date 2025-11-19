@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
     closeBtn.addEventListener("click", () => {
         mydialog2.close();
     })
-    let teachnav = document.querySelector(".teachnav")
+    
 function handleBecomeTeacherClick() {
     const storedCurrentUser = localStorage.getItem("currentUser");
 

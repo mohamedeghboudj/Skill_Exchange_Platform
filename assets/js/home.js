@@ -1,7 +1,6 @@
 const search = document.querySelector(".searching")
 let courses = document.querySelectorAll(".course")
 let category = document.querySelectorAll(".category")
-let teachnav = document.querySelector(".teachnav")
 import { getCourses } from "../data/courseService.js";
 import "../data/courses.js";
 
@@ -95,17 +94,11 @@ search.addEventListener('input', () => {
     });
 });
 
-<<<<<<< HEAD
 
 
 
-//courseInfo navigation
-courses.forEach(card => {
-  card.addEventListener("click", () => {
-    const id = card.dataset.id;
-    window.location.href = `/pages/courseInfo.html?id=${id}`;
-  });
-=======
+
+
 courses.forEach(course => {
     course.addEventListener('click', () => {
         window.location.href = 'courseInfo.html';
@@ -153,5 +146,5 @@ document.getElementById("becomeTeacher").addEventListener("click", handleBecomeT
 document.querySelector(".teachnav").addEventListener("click", (e) => {
     e.preventDefault();
     handleBecomeTeacherClick();
->>>>>>> bf10997e8a4043e993726ffd7c4a1a65f2d4c65c
+
 });
