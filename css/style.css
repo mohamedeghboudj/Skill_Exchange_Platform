@@ -27,6 +27,22 @@ body {
 
 }
 
+
+    html,
+    body {
+        overflow-y: scroll;
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Edge */
+    }
+
+
+
 .container {
 
     margin: auto;
@@ -1124,18 +1140,19 @@ body {
 /*Start Student Request Window*/
 .container-card {
     position: relative;
-    height: auto;
+    height: 700px;
     /*width: 500px;*/
     margin: auto;
 
 }
 
-@media screen and (max-width:400px) {
+@media screen and (min-width:400px) {
     .container-card {
         width: 380px;
-        
+        height: 800px !important;
+        /*i changed here */
     }
-    
+
 }
 
 @media screen and (min-width:500px) {
@@ -1143,12 +1160,11 @@ body {
         width: 500px;
         height: 670px;
     }
-    
+
 
 }
-dialog::-webkit-scrollbar {
-    width: 0px;  
-}
+
+
 
 .card {
     border: 1px solid none;
@@ -1284,7 +1300,7 @@ dialog::-webkit-scrollbar {
     display: none;
     position: absolute;
     transform: translate(-50%, -50%);
-    top: 76vh;
+    top: 455px;
     left: 50%;
     width: 100%;
     background-color: white;
@@ -1351,7 +1367,7 @@ dialog::-webkit-scrollbar {
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
-    top: 44vh;
+    top: 270px;
     background-color: white;
     width: 100%;
     display: none;
@@ -1667,7 +1683,7 @@ dialog::-webkit-scrollbar {
 .container-sign-page span,
 .container-sign-page a {
     color: #787878;
-    
+
     font-size: 14px;
     text-decoration: none;
     margin: 15px 0;
