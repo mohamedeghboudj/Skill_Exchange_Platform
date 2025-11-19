@@ -22,15 +22,18 @@ const courses = [
     }
 ]
 
-// Always overwrite localStorage during development
-localStorage.setItem("courses", JSON.stringify(courses));
+
+
+// Only initialize localStorage for teach_courses if empty
+if (!localStorage.getItem("teach_courses")) {
+    localStorage.setItem("teach_courses", JSON.stringify(courses));
+}
+
 
 
 
 export function getCourses() {
-    const data = localStorage.getItem("courses");
-    console.log(data);
-
+    const data = localStorage.getItem("teach_courses");
     return data ? JSON.parse(data) : [];
 }
 
@@ -39,22 +42,25 @@ export function getCourseById(id) {
     return courses.find(course => course.id === id);
 }
 
+
 export function addCourse(newCourse) {
     const courses = getCourses();
     newCourse.id = Date.now();
     courses.push(newCourse);
-    localStorage.setItem("courses", JSON.stringify(courses));
+    localStorage.setItem("teach_courses", JSON.stringify(courses));
 }
+
 
 export function deleteCourse(id) {
     let courses = getCourses();
     courses = courses.filter(course => course.id !== id);
-    localStorage.setItem("courses", JSON.stringify(courses));
+    localStorage.setItem("teach_courses", JSON.stringify(courses));
 }
+
 
 export function updateCourse(updatedCourse) {
     const courses = getCourses().map(course =>
         course.id === updatedCourse.id ? updatedCourse : course
     );
-    localStorage.setItem("courses", JSON.stringify(courses));
+    localStorage.setItem("teach_courses", JSON.stringify(courses));
 }
