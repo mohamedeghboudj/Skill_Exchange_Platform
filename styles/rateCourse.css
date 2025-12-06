@@ -44,6 +44,9 @@ h2 {
     background-color: #0a4e9c;
     margin: 5px;
     margin-top: 10px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
 }
 
 .container {
@@ -63,9 +66,10 @@ h2 {
     width: 28px;
     height: 28px;
     color: transparent;
-
+/* background-color: white; */
     stroke: white;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .star:hover {
@@ -91,4 +95,3 @@ h2 {
     }
 
 }
-
