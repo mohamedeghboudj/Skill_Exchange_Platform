@@ -25,6 +25,44 @@ SignUpBTN.addEventListener("click", (event) => {
             setErrorFor(EmailUp, "This email is already registered.", emailerror);
         }
     }
+
+    function addNewUser(name, email, password) {
+        // Always load from localStorage to get the latest data
+        const currentUsers = fromLocalStorage() || users;
+
+        const existingUser = currentUsers.find(user => user.email === email);
+        if (existingUser) {
+            console.error("User with this email already exists!");
+            return false;
+        }
+
+        const newId = currentUsers.length > 0 ? Math.max(...currentUsers.map(user => user.id)) + 1 : 1;
+
+        const newUser = {
+            id: newId,
+            email: email,
+            password: password,
+            profile: {
+                name: name,
+                age: "",
+                skill: "",
+                role: "Student",
+                subject: "",
+                bio: "",
+                picture: "/images1/Fotos de perfil 1_ are secciones.jpg"
+            }
+        };
+
+        // Add to both the array and update storage
+        currentUsers.push(newUser);
+        users = currentUsers; // Update global users array
+        toLocalStorage();
+
+        console.log("New user added successfully:", newUser);
+        return true;
+    }
+    
+
 });
 
 function setErrorFor(input, message, errorElement) {

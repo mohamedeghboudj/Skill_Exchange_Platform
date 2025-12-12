@@ -17,8 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 Counter.innerText = target;
             }
         }
-        updateCount();
-       
+        updateCount();     
     });
 
 
@@ -147,6 +146,5 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log({ Container, signUpRotate, signInRotate });
     }
     
-  
-   
+
 });

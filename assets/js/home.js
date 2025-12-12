@@ -1,6 +1,8 @@
 const search = document.querySelector(".searching")
 let courses = document.querySelectorAll(".course")
 let category = document.querySelectorAll(".category")
+let searchcat=document.querySelector("#search-cat");
+const catsection=document.querySelector(".categories");
 import { getCourses } from "../data/courseService.js";
 import "../data/courses.js";
 
@@ -9,7 +11,10 @@ const container = document.querySelector("#course-list");
 const mycourses = getCourses();
 
 
-
+searchcat.addEventListener('click',()=>{
+    
+    catsection.classList.toggle('hidden');
+})
 
 mycourses.forEach(course => {
     const card = `
@@ -58,6 +63,7 @@ mycourses.forEach(course => {
     container.innerHTML += card;
     // Refresh NodeList AFTER cards are created
     courses = document.querySelectorAll(".course");
+    checkIfAnyCourseVisible();
 
 });
 
@@ -75,6 +81,7 @@ category.forEach(catEl => {
                 course.style.display = "none";
             }
         });
+        checkIfAnyCourseVisible();
     });
 })
 
@@ -92,8 +99,22 @@ search.addEventListener('input', () => {
             course.style.display = "block";
         }
     });
+    checkIfAnyCourseVisible();
 });
 
+function checkIfAnyCourseVisible() {
+  const noCoursesMsg = document.getElementById("noCourses");
+
+  let anyVisible = false;
+
+  courses.forEach(course => {
+    if (getComputedStyle(course).display !== "none") {
+      anyVisible = true;
+    }
+  });
+
+  noCoursesMsg.style.display = anyVisible ? "none" : "block";
+}
 
 
 

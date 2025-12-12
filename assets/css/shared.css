@@ -29,7 +29,7 @@ aside {
     flex-direction: column;
     border-radius: 12px;
     border: 1px solid #e5e7eb;
-    width: 400px;
+    width: 30%;
     height: fit-content;
     padding: 20px;
     margin: 80px 0 20px 20px;
@@ -111,7 +111,7 @@ aside {
     flex-direction: column;
     gap: 30px;
     margin-top: 80px;
-    width: 850px;
+    width: 70%;
 }
 
 .course {
