@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    const currentUserEmail = sessionStorage.getItem("currentUserEmail");
+    const currentUserEmail = localStorage.getItem("currentUserEmail");
 
     let Name = document.querySelector('#fullname');
     let age = document.querySelector('#age');
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             profileImage.src = user.profile.picture;
         }
     });
-    
+
     fileInput.addEventListener('change', function (e) {
         profileImage.src = URL.createObjectURL(e.target.files[0]);
         const reader = new FileReader();

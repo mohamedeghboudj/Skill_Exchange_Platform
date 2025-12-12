@@ -147,11 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log({ Container, signUpRotate, signInRotate });
     }
     
-    // Asking question in the FAQ part 
-    let textBTN=document.querySelector("#oumayma");
-    let text=document.querySelector("#question");
-    textBTN.addEventListener("click",()=>{
-        text.value="";
-    })
+  
    
 });
