@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learn Land</title>
     <!-- Main Css File -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
     <!-- Render All Elements Normally -->
     <link rel="stylesheet" href="css/normalize.css">
     <!-- Google Fonts -->
@@ -41,24 +41,35 @@
                 <form action="/pages/home.html">
                     <div class="title">
                         <h1>Create Account</h1>
-                        <p>We’re happy to have you here!</p>
+                      
                     </div>
                     <label for="Name">Name</label>
                     <input type="text" name="user-name" id="Name" minlength="3" autocomplete="name" required
                         placeholder="Enter your full name">
+                        <!--i added this -->
+                    <small class="error-message" id="nameError2"></small>
                     <label for="Email">Email</label>
                     <input type="email" id="Email" name="user-email" autocomplete="email" required
                         placeholder="Enter your email">
+                        <!--i added this -->
+                    <small class="error-message" id="emailError2"></small>
                     <label for="Password">Password</label>
                     <input type="password" id="Password" name="user-password" autocomplete="Passing-word" required
                         maxlength="8" placeholder="minimum 8 characters">
-                    <div id="Result"></div>
+                        <!--i added this -->
+                    <small class="error-message" id="passwordError2"></small>
+
+  <label for="Password">Confirm Password</label>
+                    <input type="password" id="PasswordConfirmation" name="user-password" autocomplete="Passing-word" required
+                        maxlength="8" placeholder="minimum 8 characters">
+                        <!--i added this -->
+                    <small class="error-message" id="passwordConfirmationError2"></small>
+
                     <div class="terms">
                         <p> By continuing , you agree to</p>
-                        <span id="term" >Terms</span>
+                        <span id="term">Terms</span>
                     </div>
                     <button type="submit" id="SIGNUP">SIGN UP</button>
-
                     <div class="flipping-part">
                         <p>Already have account?</p>
                         <button class="rotate-btn" type="button" id="signInRotate"><svg
@@ -85,18 +96,24 @@
                 <form action="/pages/home.html">
                     <div class="title">
                         <h1>Sign in</h1>
-                        <p class="soustitre">Welcome Back to LearnLand!</p>
+                        <p class="soustitre">
+                            Welcome back to LearnLand ! 
+                        </p>
+                       
                     </div>
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="user-email" required autocomplete="email"
                         placeholder="Enter your email">
+                        <!--i added this -->
+                    <small class="error-message" id="emailError"> </small>
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="user-password" autocomplete="pass" required maxlength="8"
                         placeholder="Enter your password">
-                    <div id="RESULT"></div>
+                        <!--i added this -->
+                    <small class="error-message" id="passwordError"></small>
+
                     <a href="">Forgot your password?</a><!--BACKEND-->
                     <button type="submit" id="SIGNIN">SIGN IN</button>
-
                     <div class="flipping-part">
                         <p class="alt">Don't have Account?
                         </p>
