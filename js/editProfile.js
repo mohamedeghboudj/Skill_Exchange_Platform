@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    const currentUserEmail = sessionStorage.getItem("currentUserEmail");
+    const currentUserEmail = localStorage.getItem("currentUserEmail");
 
     let Name = document.querySelector('#fullname');
     let age = document.querySelector('#age');

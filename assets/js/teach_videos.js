@@ -6,7 +6,6 @@ const videos = [
         id: 1,
         courseId: 1,
         title: "01.Introduction to the course",
-        duration: "15:00",
         thumbnail: "../assets/images/webdev.jpg",
         videoUrl: "",
         order: 1
@@ -15,7 +14,6 @@ const videos = [
         id: 2,
         courseId: 1,
         title: "02.HTML & CSS Basics",
-        duration: "38:36",
         thumbnail: "../assets/images/webdev.jpg",
         videoUrl: "",
         order: 2
@@ -24,7 +22,6 @@ const videos = [
         id: 3,
         courseId: 1,
         title: "03.JavaScript Essentials",
-        duration: "01:24:05",
         thumbnail: "../assets/images/webdev.jpg",
         videoUrl: "",
         order: 3
@@ -33,7 +30,6 @@ const videos = [
         id: 4,
         courseId: 1,
         title: "04.Async Javascript",
-        duration: "02:00:01",
         thumbnail: "../assets/images/webdev.jpg",
         videoUrl: "",
         order: 4
@@ -43,7 +39,6 @@ const videos = [
         id: 5,
         courseId: 2,
         title: "01.Introduction to the course",
-        duration: "00:15:01",
         thumbnail: "../assets/images/uiux.png",
         videoUrl: "",
         order: 1
@@ -52,7 +47,6 @@ const videos = [
         id: 6,
         courseId: 2,
         title: "02.UI & UX Fundamentals",
-        duration: "40:02:00",
         thumbnail: "../assets/images/uiux.png",
         videoUrl: "",
         order: 2
@@ -61,7 +55,6 @@ const videos = [
         id: 7,
         courseId: 2,
         title: "03.UI Essentials",
-        duration: "01:15:00",
         thumbnail: "../assets/images/uiux.png",
         videoUrl: "",
         order: 3
@@ -70,7 +63,6 @@ const videos = [
         id: 8,
         courseId: 2,
         title: "04.UX Essentials",
-        duration: "01:00:01",
         thumbnail: "../assets/images/uiux.png",
         videoUrl: "",
         order: 4
