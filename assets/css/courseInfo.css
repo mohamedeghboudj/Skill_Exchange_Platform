@@ -249,7 +249,7 @@ figcaption button:hover {
     background: transparent;
 }
 
-/*I added this */
+
 .content_container.hadil {
     display: flex;
     flex-direction: column;
@@ -297,14 +297,22 @@ figcaption button:hover {
     align-items: flex-start;
     color: #333
 }
-@media only screen and (min-width:630px) {
-   .content_container.hadil {
+
+@media only screen and (min-width:720px) {
+    .content_container.hadil {
         flex-direction: row;
-      justify-content:space-evenly;
-        width:100%;
+        justify-content: start;
+        width: 100%;
+        gap: 25%;
     }
 }
 
+@media only screen and (min-width:1024px) {
+    .content_container.hadil {
+
+        gap: 40%;
+    }
+}
 
 
 @media only screen and (min-width:768px) {
@@ -327,9 +335,5 @@ figcaption button:hover {
     .teacherlinkslg {
         display: flex;
     }
-
-
-
- 
 
 }
