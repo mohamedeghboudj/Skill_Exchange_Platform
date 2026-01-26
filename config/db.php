@@ -1,8 +1,8 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
-$database = "learland_db";
+$host = "mysql-3050642e-learnland63.k.aivencloud.com";
+$user = "avnadmin";
+$password = "AVNS_JVC48gUfTTbXvZlZzFJ";
+$database = "defaultdb";
 
 $conn = mysqli_connect($host, $user, $password, $database);
 
