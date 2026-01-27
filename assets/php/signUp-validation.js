@@ -14,7 +14,6 @@ SignUpBTN.addEventListener("click", async (event) => {
 
     // Validate all inputs simultaneously
     const validationResult = CheckInputs();
-
     // Only proceed if all validations pass
     if (validationResult.isValid) {
         // Register user via database
