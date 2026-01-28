@@ -1,4 +1,5 @@
 import { handleCourseSubmission } from './addcourse_handler.js';
+// validation for the form of adding course
 const CONFIG = {
     COURSE_NAME_MAX: 100,
     DESCRIPTION_MIN: 20,

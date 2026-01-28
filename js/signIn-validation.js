@@ -24,24 +24,24 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
-    function authenticateUser(email, password) {
+    // function authenticateUser(email, password) {
 
-        const currentUsers = fromLocalStorage();
-        const user = currentUsers.find(user =>
-            user.email === email && user.password === password
-        );
+    //     const currentUsers = fromLocalStorage();
+    //     const user = currentUsers.find(user =>
+    //         user.email === email && user.password === password
+    //     );
 
-        if (user) {
-            console.log("User authenticated successfully:", user.profile.name);
-            localStorage.setItem("currentUserEmail", user.email);
-            localStorage.setItem("currentUser", JSON.stringify(user));
+    //     if (user) {
+    //         console.log("User authenticated successfully:", user.profile.name);
+    //         localStorage.setItem("currentUserEmail", user.email);
+    //         localStorage.setItem("currentUser", JSON.stringify(user));
 
-            return true;
-        } else {
-            console.log("Authentication failed: Invalid credentials");
-            return false;
-        }
-    }
+    //         return true;
+    //     } else {
+    //         console.log("Authentication failed: Invalid credentials");
+    //         return false;
+    //     }
+    // }
     function setErrorFor(input, message) {
         Result.innerText += "\n" + message;
         input.classList.add("error");

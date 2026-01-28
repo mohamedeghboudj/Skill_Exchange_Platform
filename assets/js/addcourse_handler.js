@@ -1,3 +1,4 @@
+// local storage version
 // addcourse_handler.js - Handles saving course to localStorage and redirecting
 // This file should be imported as a module in addcourse.html
 

@@ -1,37 +1,37 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // TODO: Get current user from authentication system (session, JWT, etc.)
-    const currentUserEmail = localStorage.getItem("currentUserEmail"); // Replace with your auth method
+    // // TODO: Get current user from authentication system (session, JWT, etc.)
+    // const currentUserEmail = localStorage.getItem("currentUserEmail"); // Replace with your auth method
 
-    // TODO: Fetch user data from backend
-    async function getUserFromBackend() {
-        try {
-            // Example: GET /api/user/profile
-            // const response = await fetch('/api/user/profile', {
-            //     headers: {
-            //         'Authorization': `Bearer ${token}` // Add auth token
-            //     }
-            // });
-            // if (response.ok) {
-            //     return await response.json();
-            // }
-            // return null;
+    // // TODO: Fetch user data from backend
+    // async function getUserFromBackend() {
+    //     try {
+    //         // Example: GET /api/user/profile
+    //         // const response = await fetch('/api/user/profile', {
+    //         //     headers: {
+    //         //         'Authorization': `Bearer ${token}` // Add auth token
+    //         //     }
+    //         // });
+    //         // if (response.ok) {
+    //         //     return await response.json();
+    //         // }
+    //         // return null;
             
-            // Placeholder - remove when implementing backend
-            return null;
-        } catch (error) {
-            console.error("Error fetching user:", error);
-            return null;
-        }
-    }
+    //         // Placeholder - remove when implementing backend
+    //         return null;
+    //     } catch (error) {
+    //         console.error("Error fetching user:", error);
+    //         return null;
+    //     }
+    // }
 
-    // Load user data
-    getUserFromBackend().then(user => {
-        if (!user) {
-            console.log("User not found - redirecting to login");
-            window.location.href = "/auth.html";
-            return;
-        }
+    // // Load user data
+    // getUserFromBackend().then(user => {
+    //     if (!user) {
+    //         console.log("User not found - redirecting to login");
+    //         window.location.href = "/auth.html";
+    //         return;
+    //     }
 
         // Get DOM elements
         let NameValue = document.querySelector('#FullnameV'),
