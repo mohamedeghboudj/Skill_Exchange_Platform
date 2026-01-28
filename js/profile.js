@@ -467,9 +467,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('Profile page loaded, fetching user data...');
-
+    //--------------------------------------i changed this to make the session credentials work 
     // Change this line to use relative path
-    fetch('api/get_profile.php')  // Removed the leading slash
+    fetch('api/get_profile.php', {
+        credentials: "include"   // ⭐ sends session cookie
+    })
         .then(response => {
             console.log('Response status:', response.status);
             if (!response.ok) {
@@ -479,44 +481,48 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(user => {
             console.log('User data received:', user);
-
-            // Fill the form fields
-            const NameValue = document.getElementById('FullnameV');
-            const ageValue = document.getElementById('AgeV');
-            const emailValue = document.getElementById('emailV');
-            const skillValue = document.getElementById('skillV');
-            const bioValue = document.getElementById('bioV');
-
-            if (NameValue) {
-                NameValue.value = user.full_name || '';
-                console.log('Name set to:', user.full_name);
-            }
-            if (ageValue) {
-                ageValue.value = user.age || '';
-                console.log('Age set to:', user.age);
-            }
-            if (emailValue) {
-                emailValue.value = user.email || '';
-                console.log('Email set to:', user.email);
-            }
-            if (skillValue) {
-                skillValue.value = user.skill || '';
-                console.log('Skill set to:', user.skill);
-            }
-            if (bioValue) {
-                bioValue.value = user.bio || '';
-                console.log('Bio set to:', user.bio);
-            }
-
-            console.log('✅ Profile loaded successfully!');
         })
         .catch(error => {
-            console.error('❌ Fetch error:', error);
-            alert('Error loading profile: ' + error.message + '\n\nCheck the console for details.');
+            console.error('Error:', error);
         });
-});
 
-// Rest of the code stays the same...
+
+    // Fill the form fields
+    const NameValue = document.getElementById('FullnameV');
+    const ageValue = document.getElementById('AgeV');
+    const emailValue = document.getElementById('emailV');
+    const skillValue = document.getElementById('skillV');
+    const bioValue = document.getElementById('bioV');
+
+    if (NameValue) {
+        NameValue.value = user.full_name || '';
+        console.log('Name set to:', user.full_name);
+    }
+    if (ageValue) {
+        ageValue.value = user.age || '';
+        console.log('Age set to:', user.age);
+    }
+    if (emailValue) {
+        emailValue.value = user.email || '';
+        console.log('Email set to:', user.email);
+    }
+    if (skillValue) {
+        skillValue.value = user.skill || '';
+        console.log('Skill set to:', user.skill);
+    }
+    if (bioValue) {
+        bioValue.value = user.bio || '';
+        console.log('Bio set to:', user.bio);
+    }
+
+    console.log('✅ Profile loaded successfully!');
+})
+    .catch(error => {
+        console.error('❌ Fetch error:', error);
+        alert('Error loading profile: ' + error.message + '\n\nCheck the console for details.');
+    });
+
+
 const certificateInput = document.getElementById('Certificate');
 const certificatesContainer = document.getElementById('certificates-container');
 let currentCertificateToRemove = null;

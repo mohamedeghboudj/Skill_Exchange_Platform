@@ -15,11 +15,13 @@ main {
     justify-content: flex-start;
     gap: 20px;
 }
-#popup::backdrop{
+
+#popup::backdrop {
     background-color: #7f7f7f92;
 }
-#popup{
-    background:transparent;
+
+#popup {
+    background: transparent;
 
 }
 
@@ -371,11 +373,14 @@ aside {
     display: none !important;
 }
 
+
+
 @media (max-width: 768px) {
     @keyframes fadeIn {
         from {
             opacity: 0;
         }
+
         to {
             opacity: 1;
         }
