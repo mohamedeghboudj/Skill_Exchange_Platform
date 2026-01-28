@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let passError = document.querySelector("#passwordError");
     let SignInBTN = document.querySelector("#SIGNIN");
 
-    SignInBTN.addEventListener("click", (event) => {
+    SignInBTN.addEventListener("click", async (event) => {
         event.preventDefault();
 
         // Check all inputs simultaneously
@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Only proceed to authentication if all inputs are valid
         if (validationResult.isValid) {
-            if (authenticateUser(EmailIn.value, PasswordIn.value)) {
+            const result = await authenticateUser(EmailIn.value, PasswordIn.value);
+            if (result.success) {
                 window.location.href = "/pages/home.html";
             } else {
                 setErrorFor(EmailIn, "Invalid email or password.", EmailError);
@@ -23,29 +24,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    async function authenticateUser(email, password) {
+        try {
+            const response = await fetch('/assets/php/authenticate.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password }),
+                credentials: "include" // hadil added this to test the work of the session 
+        
+                
+            });
 
-    function authenticateUser(email, password) {
-        const currentUsers = fromLocalStorage();
-        const user = currentUsers.find(user =>
-            user.email === email && user.password === password
-        );
+            // Check if response is OK before parsing JSON
+            if (!response.ok) {
+                console.error(`HTTP Error: ${response.status}`);
+                return { success: false };
+            }
 
-        if (user) {
-            console.log("User authenticated successfully:", user.profile.name);
-            localStorage.setItem("currentUserEmail", user.email);
-            localStorage.setItem("currentUser", JSON.stringify(user));
-            return true;
-        } else {
-            console.log("Authentication failed: Invalid credentials");
-            return false;
+            const data = await response.json();
+
+            if (data.success) {
+                console.log("User authenticated successfully via PHP sessions");
+                return { success: true };
+            } else {
+                console.log("Authentication failed:", data.message);
+                return { success: false };
+            }
+        } catch (error) {
+            console.error("Authentication error:", error);
+            return { success: false };
         }
     }
 
     function setErrorFor(input, message, errorElement) {
         errorElement.innerText = message;
-      
-        errorElement.style.display = "block"; // Make sure it's visible
 
+        errorElement.style.display = "block"; // Make sure it's visible
         input.classList.add("error");
         input.classList.remove("success");
     }
@@ -60,11 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function CheckInputs() {
         const EmailSIGNIN = EmailIn.value.trim();
         const Pass = PasswordIn.value.trim();
-        
+
         // Regex patterns
         const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         const mail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
-        
+
         let isValid = true;
 
         // Validate email

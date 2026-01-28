@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // TODO: Fetch user profile picture from backend
         // profileImage.src = user.profile.picture;
     });
-    
+
     fileInput.addEventListener('change', function (e) {
         profileImage.src = URL.createObjectURL(e.target.files[0]);
         const reader = new FileReader();
@@ -72,11 +72,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     save_btn.addEventListener("click", (event) => {
         event.preventDefault();
-        
+
         if (checkInputs()) {
             // TODO: Save profile data to backend
             // saveToBackend();
-            
+
             // Redirect based on teaching mode
             if (isTeacherModeActive) {
                 window.location.href = "pages/teacherrequest.html";
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return isValid;
     }
-    
+
     function isValidUrl(string) {
         try {
             new URL(string);
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return false;
         }
     }
-    
+
     function setErrorFor(input, message) {
         small.innerText += "\n" + message;
         input.classList.remove("success");
@@ -202,35 +202,77 @@ document.addEventListener('DOMContentLoaded', function () {
         input.classList.remove("error");
         input.classList.add("success");
     }
-
+    //--------hadil added from here 
     function loadUserData() {
-        // TODO: Fetch user data from backend
-        // Example: GET request to your API endpoint
-        
-        // Placeholder - remove this when implementing backend
-        /*
-        const user = getCurrentUserFromBackend();
-        if (user) {
-            Name.value = user.profile.name || '';
-            age.value = user.profile.age || '';
-            skill.value = user.profile.skill || '';
-            email.value = user.email || '';
-            role.value = user.profile.role || "Student";
-            bio.value = user.profile.bio || '';
-            link1.value = user.profile.whatsapp || '';
-            link2.value = user.profile.linkedin || '';
-            link3.value = user.profile.instagram || '';
-            profileImage.src = user.profile.picture || '';
-            teachingCheckbox.checked = user.profile.role ? user.profile.role.includes('Teacher') : false;
-            isTeacherModeActive = teachingCheckbox.checked;
-            updateFormForTeacherMode();
+
+        fetch('/LearnLand/api/get_profile.php', { credentials: "include" })// to send the session cookie 
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(user => {
+                populateForm(user);
+            })
+            .catch(err => {
+                console.error('Failed to load user data:', err);
+                small.innerText = 'Failed to load profile data.';
+            });
+    };
+    function populateForm(user) {
+        Name.value = user.full_name || '';
+        age.value = user.age || '';
+        skill.value = user.skill || '';
+        email.value = user.email || '';
+        bio.value = user.bio || '';
+
+        // Teacher mode
+        if (user.is_teacher && user.is_teacher == 1) {
+            isTeacherModeActive = true;
+            role.value = "Teacher";
+            teachingCheckbox.checked = true;
+        } else {
+            isTeacherModeActive = false;
+            role.value = "Student";
+            teachingCheckbox.checked = false;
         }
-        */
+
+        updateFormForTeacherMode();
+
+        // Teacher links
+        link1.value = user.whatsapp_link || '';
+        link2.value = user.linkedIn_link || '';
+        link3.value = user.insta_link || '';
+
+        // Profile picture
+        profileImage.src = user.profile_picture || 'images1/profilePicture1.jpg';
     }
 
-    // TODO: Remove these localStorage functions and implement backend equivalents
-    // function saveToLocalStorage() { ... }
-    // function fromLocalStorage() { ... }
-    // function updateProfilePicture(email, pictureData) { ... }
-    // function getCurrentUser() { ... }
-});
+
+    /*
+    const user = getCurrentUserFromBackend();
+    if (user) {
+        Name.value = user.profile.name || '';
+        age.value = user.profile.age || '';
+        skill.value = user.profile.skill || '';
+        email.value = user.email || '';
+        role.value = user.profile.role || "Student";
+        bio.value = user.profile.bio || '';
+        link1.value = user.profile.whatsapp || '';
+        link2.value = user.profile.linkedin || '';
+        link3.value = user.profile.instagram || '';
+        profileImage.src = user.profile.picture || '';
+        teachingCheckbox.checked = user.profile.role ? user.profile.role.includes('Teacher') : false;
+        isTeacherModeActive = teachingCheckbox.checked;
+        updateFormForTeacherMode();
+    }
+    */
+}); // TODO: Remove these localStorage functions and implement backend equivalents
+// function saveToLocalStorage() { ... }
+// function fromLocalStorage() { ... }
+// function updateProfilePicture(email, pictureData) { ... }
+// function getCurrentUser() { ... }
+
+
+

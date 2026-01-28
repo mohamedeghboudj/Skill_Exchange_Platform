@@ -39,6 +39,10 @@ const formatFileSize = (bytes) => {
 
 // Display uploaded videos
 const displayVideos = (files) => {
+    if (!files || files.length === 0) {
+        videosList.innerHTML = `<p class="empty-msg">No videos uploaded yet.</p>`;
+        return;
+    }
     videosList.innerHTML = '';
     Array.from(files).forEach((file, index) => {
         let fileItem = document.createElement('div');
@@ -49,7 +53,7 @@ const displayVideos = (files) => {
                 <div class="file-size">${formatFileSize(file.size)}</div>
             </div>
             <button type="button" class="remove-file" data-index="${index}">Remove</button>
-        `;
+      `;
         videosList.appendChild(fileItem);
     });
 
@@ -70,7 +74,7 @@ const displayVideos = (files) => {
 // Display uploaded assignment
 const displayAssignment = (file) => {
     if (!file) {
-        assignmentFile.innerHTML = '';
+        assignmentFile.innerHTML = `< class="empty-msg">No assignment uploaded yet.</p>`;
         return;
     }
 

@@ -9,61 +9,54 @@ let passerror = document.querySelector("#passwordError2");
 let passConfirmerror = document.querySelector("#passwordConfirmationError2");
 let SignUpBTN = document.querySelector("#SIGNUP");
 
-SignUpBTN.addEventListener("click", (event) => {
+SignUpBTN.addEventListener("click", async (event) => {
     event.preventDefault();
 
     // Validate all inputs simultaneously
     const validationResult = CheckInputs();
-
     // Only proceed if all validations pass
     if (validationResult.isValid) {
-        // Add the user to localStorage
-        if (addNewUser(UserName.value, EmailUp.value, PasswordUp.value)) {
-            localStorage.setItem("currentUserEmail", EmailUp.value);
+        // Register user via database
+        const result = await registerUser(UserName.value, EmailUp.value, PasswordUp.value);
+        if (result.success) {
+            // Session is already started in PHP
             window.location.href = "/pages/home.html";
         } else {
-            setErrorFor(EmailUp, "This email is already registered.", emailerror);
+            setErrorFor(EmailUp, result.message, emailerror);
         }
     }
-
-    function addNewUser(name, email, password) {
-        // Always load from localStorage to get the latest data
-        const currentUsers = fromLocalStorage() || users;
-
-        const existingUser = currentUsers.find(user => user.email === email);
-        if (existingUser) {
-            console.error("User with this email already exists!");
-            return false;
-        }
-
-        const newId = currentUsers.length > 0 ? Math.max(...currentUsers.map(user => user.id)) + 1 : 1;
-
-        const newUser = {
-            id: newId,
-            email: email,
-            password: password,
-            profile: {
-                name: name,
-                age: "",
-                skill: "",
-                role: "Student",
-                subject: "",
-                bio: "",
-                picture: "/images1/Fotos de perfil 1_ are secciones.jpg"
-            }
-        };
-
-        // Add to both the array and update storage
-        currentUsers.push(newUser);
-        users = currentUsers; // Update global users array
-        toLocalStorage();
-
-        console.log("New user added successfully:", newUser);
-        return true;
-    }
-    
-
 });
+
+async function registerUser(name, email, password) {
+    try {
+        const response = await fetch('/assets/php/register.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, password })
+        });
+
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+            console.error(`HTTP Error: ${response.status}`);
+            return { success: false, message: `Server error: ${response.status}` };
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log("User registered successfully:", data.user);
+            return { success: true, message: "Registration successful" };
+        } else {
+            console.log("Registration failed:", data.message);
+            return { success: false, message: data.message };
+        }
+    } catch (error) {
+        console.error("Registration error:", error);
+        return { success: false, message: "An error occurred during registration" };
+    }
+}
 
 function setErrorFor(input, message, errorElement) {
     errorElement.innerText = message;
@@ -86,12 +79,12 @@ function CheckInputs() {
     const EmailSIGNUP = EmailUp.value.trim();
     const Pass = PasswordUp.value.trim();
     const PassConfirm = PasswordConfirm.value.trim();
-    
+
     // Regex patterns
     const charOnly = /^[A-Za-z\s]+$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const mail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
-    
+
     let isValid = true;
 
     // Validate Name (check all conditions, don't return early)
@@ -135,62 +128,23 @@ function CheckInputs() {
     return { isValid };
 }
 
-function addNewUser(name, email, password) {
-    // Always load from localStorage to get the latest data
-    const currentUsers = fromLocalStorage() || users;
-
-    const existingUser = currentUsers.find(user => user.email === email);
-    if (existingUser) {
-        console.error("User with this email already exists!");
-        return false;
-    }
-
-    const newId = currentUsers.length > 0 ? Math.max(...currentUsers.map(user => user.id)) + 1 : 1;
-
-    const newUser = {
-        id: newId,
-        email: email,
-        password: password,
-        profile: {
-            name: name,
-            age: "",
-            skill: "",
-            role: "Student",
-            subject: "",
-            bio: "",
-            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
-        }
-    };
-
-    // Add to both the array and update storage
-    currentUsers.push(newUser);
-    users = currentUsers; // Update global users array
-    toLocalStorage();
-
-    console.log("New user added successfully:", newUser);
-    return true;
-}
-
 // Terms popup functionality
 let showTerms = document.querySelector('#term');
 let mydialog2 = document.getElementById("popup1");
 
-showTerms.addEventListener('click', () => {
-    mydialog2.showModal();
-});
-
-function closePop() {
-    mydialog2.close();
+if (showTerms) {
+    showTerms.addEventListener('click', () => {
+        if (mydialog2) mydialog2.showModal();
+    });
 }
 
-mydialog2.addEventListener('click', () => {
-    mydialog2.close();
-});
+function closePop() {
+    if (mydialog2) mydialog2.close();
+}
 
-
-
-
-
-
-
+if (mydialog2) {
+    mydialog2.addEventListener('click', () => {
+        mydialog2.close();
+    });
+}
 

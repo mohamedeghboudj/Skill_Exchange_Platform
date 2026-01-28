@@ -7,9 +7,12 @@
     flex-direction: column;
     gap: 1rem;
 }
+
 dialog::-webkit-scrollbar {
-    width: 0px;   /* Remove scrollbar width */
+    width: 0px;
+    /* Remove scrollbar width */
 }
+
 .name {
     color: black;
 }
@@ -71,6 +74,11 @@ dialog::-webkit-scrollbar {
 .addAss:hover,
 .addVd:hover {
     transform: scale(1.040);
+}
+
+.addAss svg {
+    height: 10px;
+    width: 12px;
 }
 
 .coursename {

@@ -4,6 +4,7 @@
     margin: 0;
     box-sizing: border-box;
 }
+
 /* nav {
     width: 100vw;
 } */
@@ -13,6 +14,12 @@ body {
 
 
 
+}
+
+.empty-msg {
+    padding: 8px;
+    color: #777;
+    font-style: italic;
 }
 
 .big_container {

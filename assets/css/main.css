@@ -230,6 +230,10 @@ footer .links li,
     color: rgb(174, 174, 181);
 }
 
+footer .links li,
+.coursetypes li :hover {
+    cursor: pointer;
+}
 .contacts h3 {
     text-align: center;
     margin-bottom: 20px;

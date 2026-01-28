@@ -13,7 +13,7 @@ body{
 #videoPlayer{
     margin: auto;
     height: 80vh;
-    width: auto;
+    width: 60vw;
     box-shadow: 2px 5px 15px 2px rgb(2, 2, 2);
     border-radius: 15px;
 }

@@ -1,12 +1,12 @@
 .courseinfo {
-   
+
     padding-inline: 7%;
     padding-block: 50px;
     background-color: rgba(131, 215, 254, 0.236);
 }
 
-.courseinfo h2,.courseinfo
-h3 {
+.courseinfo h2,
+.courseinfo h3 {
     font-size: 28px;
     margin-top: 20px;
 }
@@ -14,6 +14,7 @@ h3 {
 .info :nth-child(1) {
     grid-column: span 2;
 }
+
 .teacher {
     display: flex;
     flex-direction: column;
@@ -74,7 +75,7 @@ h3 {
 
 .info p {
     display: flex;
-    gap:15px;
+    gap: 15px;
     color: #333;
     margin: 5px;
 }
@@ -156,9 +157,11 @@ figure:hover {
     scale: 1.02;
     box-shadow: 2px 2px 12px 2px rgb(200, 199, 199);
 }
-figure:hover img{
+
+figure:hover img {
     transform: scale(1.08);
 }
+
 figcaption {
     position: relative;
     padding-bottom: 30px;
@@ -171,13 +174,15 @@ figure img {
     border-radius: 20px;
     transition: all 0.3s ease;
 }
-figure picture{
+
+figure picture {
     width: 100%;
     height: 180px;
     border-radius: 20px;
     display: block;
     overflow: hidden;
 }
+
 figcaption p {
     margin: 0px 0px 2px;
     color: rgb(88, 88, 88);
@@ -231,22 +236,94 @@ figcaption button:hover {
     background-color: red;
     border-color: red;
 }
+
 #locked:hover {
     color: white;
 }
-#popup::backdrop{
+
+#popup::backdrop {
     background-color: #7f7f7f92;
 }
-#popup{
-    background:transparent;
+
+#popup {
+    background: transparent;
 }
+
+
+.content_container.hadil {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.had {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.hadil h2 {
+    font-size: 16px;
+    margin-block: 0;
+    color: rgb(48, 48, 48);
+}
+
+.had ul {
+    list-style-type: none;
+    padding-inline: 0;
+}
+
+.videos.had {
+    padding-inline: 0;
+}
+
+.had li {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 5px;
+    padding: 3px;
+
+}
+
+.had span {
+    font-size: 16px;
+}
+
+.teacher.bigger {
+    padding-inline: 8%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: #333
+}
+
+@media only screen and (min-width:720px) {
+    .content_container.hadil {
+        flex-direction: row;
+        justify-content: start;
+        width: 100%;
+        gap: 25%;
+    }
+}
+
+@media only screen and (min-width:1024px) {
+    .content_container.hadil {
+
+        gap: 40%;
+    }
+}
+
+
 @media only screen and (min-width:768px) {
     .courseinfo .info {
         position: relative;
     }
+
     .courseinfo .info button {
         width: 150px;
     }
+
     .teacher {
         flex-direction: row;
     }
@@ -258,6 +335,5 @@ figcaption button:hover {
     .teacherlinkslg {
         display: flex;
     }
+
 }
-
-
