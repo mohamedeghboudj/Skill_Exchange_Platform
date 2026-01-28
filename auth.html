@@ -1,183 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn Land</title>
-    <!-- Main Css File -->
-    <link rel="stylesheet" href="css/auth.css">
-    <!-- Render All Elements Normally -->
-    <link rel="stylesheet" href="css/normalize.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <!-- The icon  -->
-    <link rel="icon" type="image/jpg" href="assets/icon.jpg">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Learn Land</title>
+        <!-- Main Css File -->
+        <link rel="stylesheet" href="css/auth.css">
+        <!-- Render All Elements Normally -->
+        <link rel="stylesheet" href="css/normalize.css">
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet">
+        <!-- The icon  -->
+        <link rel="icon" type="image/jpg" href="assets/icon.jpg">
 
-</head>
+    </head>
 
-<body>
+    <body>
 
-    <!-- Start nav bar to be changed -->
-    <div class="nav">
-        <div class="container">
-            <div class="content">
-                <div class="name">
-                    <img src="assets/logo-removebg-preview.png" alt="logo">
-                    <h2>Learn Land</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--  End nav bar  -->
-    <!--Start sign cards -->
-    <div class="whole-container">
-        <div class="container-sign-page" id="container">
-            <div class="form-container sign-up-container">
-                <form action="/pages/home.html">
-                    <div class="title">
-                        <h1>Create Account</h1>
-                      
-                    </div>
-                    <label for="Name">Name</label>
-                    <input type="text" name="user-name" id="Name" minlength="3" autocomplete="name" required
-                        placeholder="Enter your full name">
-                        <!--i added this -->
-                    <small class="error-message" id="nameError2"></small>
-                    <label for="Email">Email</label>
-                    <input type="email" id="Email" name="user-email" autocomplete="email" required
-                        placeholder="Enter your email">
-                        <!--i added this -->
-                    <small class="error-message" id="emailError2"></small>
-                    <label for="Password">Password</label>
-                    <input type="password" id="Password" name="user-password" autocomplete="Passing-word" required
-                        maxlength="8" placeholder="minimum 8 characters">
-                        <!--i added this -->
-                    <small class="error-message" id="passwordError2"></small>
-
-  <label for="Password">Confirm Password</label>
-                    <input type="password" id="PasswordConfirmation" name="user-password" autocomplete="Passing-word" required
-                        maxlength="8" placeholder="minimum 8 characters">
-                        <!--i added this -->
-                    <small class="error-message" id="passwordConfirmationError2"></small>
-
-                    <div class="terms">
-                        <p> By continuing , you agree to</p>
-                        <span id="term">Terms</span>
-                    </div>
-                    <button type="submit" id="SIGNUP">SIGN UP</button>
-                    <div class="flipping-part">
-                        <p>Already have account?</p>
-                        <button class="rotate-btn" type="button" id="signInRotate"><svg
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none">
-                                <defs>
-                                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#1976D2" />
-                                        <stop offset="100%" stop-color="#26C6DA" />
-                                    </linearGradient>
-                                </defs>
-                                <path
-                                    d="M13 9a1 1 0 0 1-1-1V5.061a1 1 0 0 0-1.811-.75l-6.835 6.836a1.207 1.207 0 0 0 0 1.707l6.835 6.835a1 1 0 0 0 1.811-.75V16a1 1 0 0 1 1-1h2a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z"
-                                    fill="url(#grad)" stroke="none" />
-                                <path d="M20 9v6" stroke="url(#grad)" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" fill="none" />
-                            </svg>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="form-container sign-in-container">
-                <form action="/pages/home.html">
-                    <div class="title">
-                        <h1>Sign in</h1>
-                        <p class="soustitre">
-                            Welcome back to LearnLand ! 
-                        </p>
-                       
-                    </div>
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="user-email" required autocomplete="email"
-                        placeholder="Enter your email">
-                        <!--i added this -->
-                    <small class="error-message" id="emailError"> </small>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="user-password" autocomplete="pass" required maxlength="8"
-                        placeholder="Enter your password">
-                        <!--i added this -->
-                    <small class="error-message" id="passwordError"></small>
-
-                    <a href="">Forgot your password?</a><!--BACKEND-->
-                    <button type="submit" id="SIGNIN">SIGN IN</button>
-                    <div class="flipping-part">
-                        <p class="alt">Don't have Account?
-                        </p>
-                        <button class="rotate-btn" type="button" id="signUpRotate">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none">
-                                <defs>
-                                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#1976D2" /> <!-- blue -->
-                                        <stop offset="100%" stop-color="#26C6DA" /> <!-- teal -->
-                                    </linearGradient>
-                                </defs>
-
-                                <path
-                                    d="M11 9a1 1 0 0 0 1-1V5.061a1 1 0 0 1 1.811-.75l6.836 6.836a1.207 1.207 0 0 1 0 1.707l-6.836 6.835a1 1 0 0 1-1.811-.75V16a1 1 0 0 0-1-1H9a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z"
-                                    fill="url(#grad)" stroke="none" />
-
-                                <path d="M4 9v6" stroke="url(#grad)" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" fill="none" />
-                            </svg>
-
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-
-
-            <div class="overlay-container">
-                <div class="overlay">
-                    <div class="overlay-panel overlay-left">
-                        <div class="image">
-                            <img src="assets/generated-image-removebg-preview.png" alt="logo">
-                        </div>
-                        <h1>Welcome Back!</h1>
-                        <p class="slider-p">Keep the momentum going — stay curious,
-                            and grow a little more every day.</p>
-                        <button class="ghost" id="SignIn">SIGN IN</button>
-                    </div>
-                    <dialog id="popup1"
-                        style="width:  650px; height:650px; border: none; scrollbar-width: none; border-radius: 15px; padding: 0;margin: auto;">
-                        <iframe src="privacyTerms.htm" frameborder="0"
-                            style="width: 100%; height: 100%; border: none; border-radius:15px; margin: auto;"></iframe>
-                    </dialog>
-                    <div class="overlay-panel overlay-right">
-                        <div class="image">
-                            <img src="assets/generated-image-removebg-preview.png" alt="logo">
-                        </div>
-                        <h1>Hello, Freind!</h1>
-                        <p class="slider-p">Enter your personal details and start journey with us</p>
-                        <button class="ghost" id="SignUp">SIGN UP</button>
+        <!-- Start nav bar to be changed -->
+        <div class="nav">
+            <div class="container">
+                <div class="content">
+                    <div class="name">
+                        <img src="assets/logo-removebg-preview.png" alt="logo">
+                        <h2>Learn Land</h2>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <!--  End nav bar  -->
+        <!--Start sign cards -->
+        <div class="whole-container">
+            <div class="container-sign-page" id="container">
+                <div class="form-container sign-up-container">
+                    <form action="/pages/home.html">
+                        <div class="title">
+                            <h1>Create Account</h1>
 
-    <!--End sign cards  -->
-    <script src="js/user.js" defer></script>
-    <script src="js/script.js" defer></script>
-    <script src="js/signUp-validation.js" defer></script>
-    <script src="js/signIn-validation.js" defer></script>
-    <script src="js/privacyTerms.js" defer></script>
+                        </div>
+                        <label for="Name">Name</label>
+                        <input type="text" name="user-name" id="Name"
+                            minlength="3" autocomplete="name" required
+                            placeholder="Enter your full name">
+                        <!--i added this -->
+                        <small class="error-message" id="nameError2"></small>
+                        <label for="Email">Email</label>
+                        <input type="email" id="Email" name="user-email"
+                            autocomplete="email" required
+                            placeholder="Enter your email">
+                        <!--i added this -->
+                        <small class="error-message" id="emailError2"></small>
+                        <label for="Password">Password</label>
+                        <input type="password" id="Password"
+                            name="user-password" autocomplete="Passing-word"
+                            required
+                            maxlength="8" placeholder="minimum 8 characters">
+                        <!--i added this -->
+                        <small class="error-message"
+                            id="passwordError2"></small>
 
-</body>
+                        <label for="Password">Confirm Password</label>
+                        <input type="password" id="PasswordConfirmation"
+                            name="user-password" autocomplete="Passing-word"
+                            required
+                            maxlength="8" placeholder="minimum 8 characters">
+                        <!--i added this -->
+                        <small class="error-message"
+                            id="passwordConfirmationError2"></small>
+
+                        <div class="terms">
+                            <p> By continuing , you agree to</p>
+                            <span id="term">Terms</span>
+                        </div>
+                        <button type="submit" id="SIGNUP">SIGN UP</button>
+                        <div class="flipping-part">
+                            <p>Already have account?</p>
+                            <button class="rotate-btn" type="button"
+                                id="signInRotate"><svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none">
+                                    <defs>
+                                        <lineargradient id="grad" x1="0%"
+                                            y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%"
+                                                stop-color="#1976D2" />
+                                            <stop offset="100%"
+                                                stop-color="#26C6DA" />
+                                        </lineargradient>
+                                    </defs>
+                                    <path
+                                        d="M13 9a1 1 0 0 1-1-1V5.061a1 1 0 0 0-1.811-.75l-6.835 6.836a1.207 1.207 0 0 0 0 1.707l6.835 6.835a1 1 0 0 0 1.811-.75V16a1 1 0 0 1 1-1h2a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z"
+                                        fill="url(#grad)" stroke="none" />
+                                    <path d="M20 9v6" stroke="url(#grad)"
+                                        stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" fill="none" />
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-container sign-in-container">
+                    <form action="/pages/home.html">
+                        <div class="title">
+                            <h1>Sign in</h1>
+                            <p class="soustitre">
+                                Welcome back to LearnLand !
+                            </p>
+
+                        </div>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="user-email"
+                            required autocomplete="email"
+                            placeholder="Enter your email">
+                        <!--i added this -->
+                        <small class="error-message" id="emailError"> </small>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password"
+                            name="user-password" autocomplete="pass" required
+                            maxlength="8"
+                            placeholder="Enter your password">
+                        <!--i added this -->
+                        <small class="error-message" id="passwordError"></small>
+
+                        <a href>Forgot your password?</a><!--BACKEND-->
+                        <button type="submit" id="SIGNIN">SIGN IN</button>
+                        <div class="flipping-part">
+                            <p class="alt">Don't have Account?
+                            </p>
+                            <button class="rotate-btn" type="button"
+                                id="signUpRotate">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none">
+                                    <defs>
+                                        <lineargradient id="grad" x1="0%"
+                                            y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%"
+                                                stop-color="#1976D2" />
+                                            <!-- blue -->
+                                            <stop offset="100%"
+                                                stop-color="#26C6DA" />
+                                            <!-- teal -->
+                                        </lineargradient>
+                                    </defs>
+
+                                    <path
+                                        d="M11 9a1 1 0 0 0 1-1V5.061a1 1 0 0 1 1.811-.75l6.836 6.836a1.207 1.207 0 0 1 0 1.707l-6.836 6.835a1 1 0 0 1-1.811-.75V16a1 1 0 0 0-1-1H9a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z"
+                                        fill="url(#grad)" stroke="none" />
+
+                                    <path d="M4 9v6" stroke="url(#grad)"
+                                        stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" fill="none" />
+                                </svg>
+
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="overlay-container">
+                    <div class="overlay">
+                        <div class="overlay-panel overlay-left">
+                            <div class="image">
+                                <img
+                                    src="assets/generated-image-removebg-preview.png"
+                                    alt="logo">
+                            </div>
+                            <h1>Welcome Back!</h1>
+                            <p class="slider-p">Keep the momentum going — stay
+                                curious,
+                                and grow a little more every day.</p>
+                            <button class="ghost" id="SignIn">SIGN IN</button>
+                        </div>
+                        <dialog id="popup1"
+                            style="width:  650px; height:650px; border: none; scrollbar-width: none; border-radius: 15px; padding: 0;margin: auto;">
+                            <iframe src="privacyTerms.htm" frameborder="0"
+                                style="width: 100%; height: 100%; border: none; border-radius:15px; margin: auto;"></iframe>
+                        </dialog>
+                        <div class="overlay-panel overlay-right">
+                            <div class="image">
+                                <img
+                                    src="assets/generated-image-removebg-preview.png"
+                                    alt="logo">
+                            </div>
+                            <h1>Hello, Freind!</h1>
+                            <p class="slider-p">Enter your personal details and
+                                start journey with us</p>
+                            <button class="ghost" id="SignUp">SIGN UP</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--End sign cards  -->
+        <script src="js/user.js" defer></script>
+        <script src="js/script.js" defer></script>
+        <script src="assets/php/signUp-validation.js" defer></script>
+        <script src="assets/php/signIn-validation.js" defer></script>
+        <script src="js/privacyTerms.js" defer></script>
+
+    </body>
 
 </html>

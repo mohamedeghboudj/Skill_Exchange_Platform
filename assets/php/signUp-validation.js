@@ -37,6 +37,12 @@ async function registerUser(name, email, password) {
             body: JSON.stringify({ name, email, password })
         });
 
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+            console.error(`HTTP Error: ${response.status}`);
+            return { success: false, message: `Server error: ${response.status}` };
+        }
+
         const data = await response.json();
 
         if (data.success) {
@@ -141,3 +147,4 @@ if (mydialog2) {
         mydialog2.close();
     });
 }
+

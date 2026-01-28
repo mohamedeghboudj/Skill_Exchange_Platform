@@ -7,6 +7,19 @@ header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST');//allows post requests only 
 header('Access-Control-Allow-Headers: Content-Type'); //allows requests that include the Content-Type header.
 
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Only allow POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed. Use POST.']);
+    exit();
+}
+
 require_once 'db.php';
 
 // get POST data
@@ -21,8 +34,8 @@ if (!isset($data['email']) || !isset($data['password'])) {
 $email = $data['email'];
 $password = $data['password'];
 
-// Query user by email using prepared statement
-$sql = "SELECT * FROM user WHERE email = ?";
+// Query user by email using prepared statement - match actual schema
+$sql = "SELECT * FROM USER WHERE email = ?";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
@@ -38,13 +51,13 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
     
-    // Verify password
-    if ($password === $user['password']) { 
-        // Store user data in session
-        $_SESSION['user_id'] = $user['id'];
+    // Verify password using password_hash
+    if (password_verify($password, $user['password_hash'])) { 
+        // Store user data in session - use correct column names
+        $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_name'] = $user['username'];
-        $_SESSION['user_role'] = $user['role'] ?? 'Student';
+        $_SESSION['user_name'] = $user['full_name'];
+        $_SESSION['user_role'] = $user['is_teacher'] ? 'Teacher' : 'Student';
         
         http_response_code(200);
         echo json_encode([

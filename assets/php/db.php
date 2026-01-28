@@ -6,9 +6,11 @@ $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
 
 // check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
+    exit();
 }
-echo "Connected successfully!";
 // $sql = "SELECT * FROM user"; //test test
 // $result = $conn->query($sql);
 

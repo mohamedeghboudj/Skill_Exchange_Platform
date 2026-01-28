@@ -5,6 +5,23 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+// Enable error reporting to JSON
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Only allow POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed. Use POST.']);
+    exit();
+}
+
 require_once 'db.php';
 
 // Get POST data
@@ -19,10 +36,12 @@ if (!isset($data['name']) || !isset($data['email']) || !isset($data['password'])
 $name = $data['name'];
 $email = $data['email'];
 $password = $data['password'];
-$role = 'Student'; // Default role
+
+// Hash the password
+$passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 // Check if email already exists using prepared statement
-$checkSql = "SELECT id FROM user WHERE email = ?";
+$checkSql = "SELECT user_id FROM USER WHERE email = ?";
 $checkStmt = $conn->prepare($checkSql);
 
 if (!$checkStmt) {
@@ -44,17 +63,18 @@ if ($checkResult->num_rows > 0) {
 
 $checkStmt->close();
 
-// Insert new user using prepared statement
-$sql = "INSERT INTO user (username, email, password, role) VALUES (?, ?, ?, ?)";
+// Insert new user using prepared statement - match actual schema
+$sql = "INSERT INTO USER (full_name, email, password_hash, is_teacher) VALUES (?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Database error']);
+    echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
     exit();
 }
 
-$stmt->bind_param('ssss', $name, $email, $password, $role);
+$isTeacher = 0; // Default Student
+$stmt->bind_param('sssi', $name, $email, $passwordHash, $isTeacher);
 
 if ($stmt->execute()) {
     $userId = $conn->insert_id;
@@ -63,7 +83,7 @@ if ($stmt->execute()) {
     $_SESSION['user_id'] = $userId;
     $_SESSION['user_email'] = $email;
     $_SESSION['user_name'] = $name;
-    $_SESSION['user_role'] = $role;
+    $_SESSION['user_role'] = 'Student';
     
     http_response_code(201);
     echo json_encode([
@@ -72,7 +92,7 @@ if ($stmt->execute()) {
     ]);
 } else {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Error registering user']);
+    echo json_encode(['success' => false, 'message' => 'Error registering user: ' . $stmt->error]);
 }
 
 $stmt->close();
