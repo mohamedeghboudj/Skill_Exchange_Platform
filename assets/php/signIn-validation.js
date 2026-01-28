@@ -34,6 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ email, password })
             });
 
+            // Check if response is OK before parsing JSON
+            if (!response.ok) {
+                console.error(`HTTP Error: ${response.status}`);
+                return { success: false };
+            }
+
             const data = await response.json();
 
             if (data.success) {
