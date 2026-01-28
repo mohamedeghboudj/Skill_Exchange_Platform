@@ -8,14 +8,14 @@ require_once '../config/db.php';
 if (ob_get_level()) ob_end_clean();
 
 
-/*if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id'])) {
     header('Content-Type: application/json', true, 401);
     echo json_encode(['error' => 'Not logged in']);
     exit;
-}*/
+}
 
-//$user_id = $_SESSION['user_id'];
-$user_id = 1 ;
+$user_id = $_SESSION['user_id'];
+
 try {
   
   $sql = "SELECT 
