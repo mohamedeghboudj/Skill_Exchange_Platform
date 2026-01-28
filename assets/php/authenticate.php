@@ -1,7 +1,9 @@
 <?php
 session_start();
 header('Content-Type: application/json'); //informs client bli respose will be in json
-header('Access-Control-Allow-Origin: *');//to allow requests from any domain
+// hadil touched this   header('Access-Control-Allow-Origin: *');//to allow requests from any domain
+header('Access-Control-Allow-Origin: http://localhost');
+header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST');//allows post requests only 
 header('Access-Control-Allow-Headers: Content-Type'); //allows requests that include the Content-Type header.
 

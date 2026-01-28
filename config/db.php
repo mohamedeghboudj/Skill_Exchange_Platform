@@ -2,14 +2,25 @@
 $host = "mysql-3050642e-learnland63.k.aivencloud.com";
 $user = "avnadmin";
 $password = "AVNS_JVC48gUfTTbXvZlZzFJ";
-$database = "defaultdb";
+$database = "learland_db";
+$port = 19985; 
 
-$conn = mysqli_connect($host, $user, $password, $database);
+$conn = mysqli_init();
+mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+mysqli_real_connect(
+    $conn,
+    $host,
+    $user,
+    $password,
+    $database,
+    $port,
+    NULL,
+    MYSQLI_CLIENT_SSL
+);
 
-if (mysqli_connect_errno()) {
+if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
- else {
-    echo "Database connection is successful!";
-}
+
+
 ?>
