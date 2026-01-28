@@ -1,7 +1,7 @@
 <?php
 $host = "mysql-3050642e-learnland63.k.aivencloud.com";
 $user = "avnadmin";
-$password = "AVNS_JVC48gUfTTbXvZlZzFJ";
+$password = "AVNS_L5dWdIuG88yYHyxP7RE";
 $database = "learland_db";
 $port = 19985; 
 
@@ -21,6 +21,7 @@ mysqli_real_connect(
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
+
 
 
 ?>

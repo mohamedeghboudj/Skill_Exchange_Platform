@@ -467,10 +467,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('Profile page loaded, fetching user data...');
-    //--------------------------------------i changed this to make the session credentials work 
-    // Change this line to use relative path
+    //--------------------------------------i changed this to make the session credentials work  hadil
+
     fetch('api/get_profile.php', {
-        credentials: "include"   // ⭐ sends session cookie
+        credentials: "include"
     })
         .then(response => {
             console.log('Response status:', response.status);
@@ -481,46 +481,39 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(user => {
             console.log('User data received:', user);
+
+            // Get DOM elements
+            let NameValue = document.querySelector('#FullnameV'),
+                ageValue = document.querySelector('#AgeV'),
+                emailValue = document.querySelector('#emailV'),
+                skillValue = document.querySelector('#skillV'),
+                bioValue = document.querySelector('#bioV'),
+                teacherModeElement = document.querySelector('.teacher-mode'),
+                certificateSection = document.querySelector('.certificate-section'),
+                profileImage = document.querySelector('.profile-pic');
+
+
+            NameValue.value = user.full_name || '';
+            ageValue.value = user.age || '';
+            emailValue.value = user.email || '';
+            skillValue.value = user.skill || '';
+            bioValue.value = user.bio || '';
+
+            // Profile picture
+            profileImage.src = user.profile_picture
+                ? user.profile_picture
+                : 'images1/profilePicture1.jpg';
+            console.log('✅ Profile loaded successfully!');
         })
         .catch(error => {
             console.error('Error:', error);
         });
 
-
-    // Fill the form fields
-    const NameValue = document.getElementById('FullnameV');
-    const ageValue = document.getElementById('AgeV');
-    const emailValue = document.getElementById('emailV');
-    const skillValue = document.getElementById('skillV');
-    const bioValue = document.getElementById('bioV');
-
-    if (NameValue) {
-        NameValue.value = user.full_name || '';
-        console.log('Name set to:', user.full_name);
-    }
-    if (ageValue) {
-        ageValue.value = user.age || '';
-        console.log('Age set to:', user.age);
-    }
-    if (emailValue) {
-        emailValue.value = user.email || '';
-        console.log('Email set to:', user.email);
-    }
-    if (skillValue) {
-        skillValue.value = user.skill || '';
-        console.log('Skill set to:', user.skill);
-    }
-    if (bioValue) {
-        bioValue.value = user.bio || '';
-        console.log('Bio set to:', user.bio);
-    }
-
-    console.log('✅ Profile loaded successfully!');
 })
-    .catch(error => {
-        console.error('❌ Fetch error:', error);
-        alert('Error loading profile: ' + error.message + '\n\nCheck the console for details.');
-    });
+
+
+
+
 
 
 const certificateInput = document.getElementById('Certificate');
