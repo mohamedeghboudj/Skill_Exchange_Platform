@@ -17,8 +17,8 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 try {
-  
-  $sql = "SELECT 
+
+$sql = "SELECT 
             user_id, 
             email, 
             full_name, 
