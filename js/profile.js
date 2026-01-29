@@ -509,6 +509,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error:', error);
         });
 
+        loadUserCertificates();  
 })
 
 
@@ -722,4 +723,36 @@ if (teachNav) {
         e.preventDefault();
         window.location.href = "pages/teacherrequest.html";
     });
+}
+//  hadil added this to display the certificates from the backend --------------------------------
+async function loadUserCertificates() {
+    try {
+        const response = await fetch('api/get_certificates.php', { credentials: 'include' });
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const certificates = await response.json();
+
+        certificates.forEach(cert => {
+            const certificateDiv = document.createElement('div');
+            certificateDiv.className = 'certificate-object';
+            certificateDiv.dataset.fileName = cert.file_name;
+            certificateDiv.dataset.fileUrl = cert.file_url;
+            certificateDiv.dataset.fileType = cert.file_type;
+
+            certificateDiv.innerHTML = `
+                <div class="certificate-content clickable">
+                    <i class="spreadsheet" data-lucide="file-spreadsheet"></i>
+                    <p>${cert.file_name}</p>
+                </div>
+                <button class="Remove">Remove</button>
+            `;
+
+            certificatesContainer.appendChild(certificateDiv);
+        });
+
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        console.log(' Certificates loaded from backend!');
+    } catch (error) {
+        console.error("Error loading certificates:", error);
+    }
 }
