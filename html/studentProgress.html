@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Progress</title>
+    <link rel="stylesheet" href="../assets//css/studentProgress.css">
+
+</head>
+
+<body>
+
+    <!-- ===== Header ===== -->
+    <header>
+        <h1>Full-Stack Web Development</h1>
+        <div class="user">Alex Johnson</div>
+    </header>
+
+    <!-- ===== Layout ===== -->
+    <div class="container">
+
+        <!-- ===== Sidebar ===== -->
+        <aside class="sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x close-chat"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+
+            <div class="course-title">Full-Stack Web Development</div>
+            <div class="course-sub">With Dr. Mohamed Mahmoudi</div>
+
+            <div class="chat teacher">
+                Hi Alex, let me know if you have any questions about the JavaScript basics video.
+            </div>
+
+            <div class="chat student">
+                Thanks! I'm a bit unsure about when to use let vs const.
+            </div>
+
+            <div class="chat teacher">
+                Great question. Use const by default and switch to let only when you need to reassign.
+            </div>
+
+            <div class="chat-input">
+                <input type="text" placeholder="Type a message to your instructor...">
+                <button>Send</button>
+            </div>
+        </aside>
+
+        <!-- ===== Main Content ===== -->
+        <main class="main">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-left-icon lucide-move-left " id="left-arrow"><path d="M6 8L2 12L6 16"/><path d="M2 12H22"/></svg>            <div class="progress-box">
+            <!-- Course Progress -->
+            <div class="progress-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle chat-toggle"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>
+                <div class="progress-header">
+                    <span>Course progress</span>
+                    <span>72% complete</span>
+                </div>
+
+                <div class="progress-bar">
+                    <div></div>
+                </div>
+
+                <p class="stats">
+                    Videos watched: <b>18 / 24</b> &nbsp; | &nbsp;
+                    Assignments: <b>6 done · 1 missed</b> &nbsp; | &nbsp;
+                    Average mark: <b>84%</b>
+                </p>
+            </div>
+
+            <div class="progress-box">
+                <h3>Video progress</h3>
+
+                <div class="stepper">
+                    <div class="step completed">
+                        <span class="circle"></span>
+                        <p>Course welcome</p>
+                    </div>
+
+                    <div class="step completed">
+                        <span class="circle"></span>
+                        <p>Setup</p>
+                    </div>
+
+                    <div class="step completed">
+                        <span class="circle"></span>
+                        <p>HTML basics</p>
+                    </div>
+
+                    <div class="step completed">
+                        <span class="circle"></span>
+                        <p>CSS selectors</p>
+                    </div>
+
+                    <div class="step active">
+                        <span class="circle"></span>
+                        <p>JavaScript</p>
+                    </div>
+
+                    <div class="step">
+                        <span class="circle"></span>
+                        <p>Functions</p>
+                    </div>
+
+                    <div class="step">
+                        <span class="circle"></span>
+                        <p>DOM</p>
+                    </div>
+
+                    <div class="step">
+                        <span class="circle"></span>
+                        <p>Mini project</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Assignments -->
+            <div class="progress-box">
+                <h3>Assignments and marks</h3>
+
+                <div class="row done">
+                    <span>A1 · HTML structure</span>
+                    <span>96 / 100</span>
+                </div>
+
+                <div class="row done">
+                    <span>A2 · Responsive layout</span>
+                    <span>78 / 100</span>
+                </div>
+
+                <div class="row missed">
+                    <span>Quiz · Semantic HTML</span>
+                    <span>0 / 20</span>
+                </div>
+
+                <div class="row done">
+                    <span>A3 · JavaScript basics</span>
+                    <span>86 / 100</span>
+                </div>
+
+                <div class="row pending">
+                    <span>Checkpoint quiz · JavaScript</span>
+                    <span>Pending</span>
+                </div>
+
+                <div class="row locked">
+                    <span>A4 · DOM manipulation project</span>
+                    <span>Locked</span>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+    <script src="../assets/js/studentProgress.js"></script>
+</body>
+
+</html>
