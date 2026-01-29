@@ -1,3 +1,4 @@
+//main.js
 const menu = document.querySelector(".menuIcon")
 const navigation = document.querySelector(".navigation")
 let courses = document.querySelectorAll(".course")

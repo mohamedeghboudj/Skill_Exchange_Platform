@@ -1,4 +1,4 @@
-import { handleCourseSubmission } from './addcourse_handler.js';
+import { handleCourseSubmission } from './backend_addcourse.js';
 // validation for the form of adding course
 const CONFIG = {
     COURSE_NAME_MAX: 100,
