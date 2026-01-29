@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+
     function authenticateUser(email, password) {
         const currentUsers = fromLocalStorage();
         const user = currentUsers.find(user =>
@@ -44,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         errorElement.innerText = message;
       
         errorElement.style.display = "block"; // Make sure it's visible
+
         input.classList.add("error");
         input.classList.remove("success");
     }

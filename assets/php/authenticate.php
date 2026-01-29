@@ -1,6 +1,6 @@
 <?php
 session_start();
-header('Content-Type: application/json'); //informs client bli respose will be in json
+header('Content-Type: application/json'); //informs client bli response will be in json
 // hadil touched this   header('Access-Control-Allow-Origin: *');//to allow requests from any domain
 header('Access-Control-Allow-Origin: http://localhost');
 header('Access-Control-Allow-Credentials: true');

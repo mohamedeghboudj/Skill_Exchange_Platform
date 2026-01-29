@@ -1,3 +1,4 @@
+//poptach.js
 let mydialog=document.getElementById("popup");
 let request = document.querySelector(".request");
 

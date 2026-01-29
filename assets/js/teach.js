@@ -1,3 +1,4 @@
+//teach.js
 // Import functions from courses.js and videos.js
 console.log("js is working..");
 import { getCourses, deleteCourse, addCourse } from './teach_courses.js';

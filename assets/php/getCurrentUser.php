@@ -23,7 +23,8 @@ echo json_encode([
         'id' => $_SESSION['user_id'],
         'email' => $_SESSION['user_email'],
         'name' => $_SESSION['user_name'],
-        'role' => $_SESSION['user_role']
+        'role' => $_SESSION['user_role'],
+        'is_teacher' => ($_SESSION['user_role'] === 'teacher') ? 1 : 0 // indicate if the user is a teacher
     ]
 ]);
 ?>

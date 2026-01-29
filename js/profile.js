@@ -1,7 +1,8 @@
 /*document.addEventListener('DOMContentLoaded', function () {
 
-    // TODO: Get current user from authentication system (session, JWT, etc.)
-    const currentUserEmail = localStorage.getItem("currentUserEmail"); // Replace with your auth method
+    // // TODO: Get current user from authentication system (session, JWT, etc.)
+    // const currentUserEmail = localStorage.getItem("currentUserEmail"); // Replace with your auth method
+
 
     // TODO: Fetch user data from backend
     async function getUserFromBackend() {
@@ -32,6 +33,7 @@
     //  window.location.href = "/auth.html"; ---------- why this ?!!!
     //   return;
     // }
+
 
     // Get DOM elements
     let NameValue = document.querySelector('#FullnameV'),

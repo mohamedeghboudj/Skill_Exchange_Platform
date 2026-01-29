@@ -1,4 +1,5 @@
-import { handleCourseSubmission } from './addcourse_handler.js';
+import { handleCourseSubmission } from './backend_addcourse.js';
+// validation for the form of adding course
 const CONFIG = {
     COURSE_NAME_MAX: 100,
     DESCRIPTION_MIN: 20,
@@ -14,7 +15,6 @@ const CONFIG = {
 const courseName = document.querySelector("#courseName");
 const timeToComplete = document.querySelector("#timeToComplete");
 const price = document.querySelector("#price");
-const teacher = document.querySelector("#teacher");
 const description = document.querySelector("#description");
 const droplistUl = document.querySelector("#droplist-ul");
 const videos = document.querySelector("#vdFiles");
@@ -144,18 +144,7 @@ const validateTimeToComplete = time => {
     return errors;
 };
 
-// Validate teacher name
-const validateTeacherName = tname => {
-    const errors = [];
-    if (isEmptyStr(tname)) {
-        errors.push('Enter your name.');
-    }
-    const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/u;
-    if (!isEmptyStr(tname) && !nameRegex.test(tname)) {
-        errors.push('Please enter a valid name.');
-    }
-    return errors;
-};
+
 
 // Validate description
 const validateDescription = desc => {
@@ -230,7 +219,6 @@ submitBtn.addEventListener("click", e => {
     showErrorsDynamic(courseName, validateCourseName(courseName.value));
     showErrorsDynamic(price, validatePrice(price.value));
     showErrorsDynamic(timeToComplete, validateTimeToComplete(timeToComplete.value));
-    showErrorsDynamic(teacher, validateTeacherName(teacher.value));
     showErrorsDynamic(description, validateDescription(description.value));
     showErrorsDynamic(categoryDroplist, validateDroplist());
     showErrorsDynamic(videos.parentElement, validateVideos(videos.files));
