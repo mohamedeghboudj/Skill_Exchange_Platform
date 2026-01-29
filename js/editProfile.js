@@ -1,3 +1,5 @@
+console.log("NEW JS FILE LOADED");
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const currentUserEmail = localStorage.getItem("currentUserEmail");
@@ -204,8 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     //--------hadil added from here 
     function loadUserData() {
-
-        fetch('/LearnLand/api/get_profile.php', { credentials: "include" })// to send the session cookie 
+        fetch('/api/get_profile.php', { credentials: "include" })// to send the session cookie 
             .then(res => {
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
