@@ -1,0 +1,432 @@
+/* teach2.css - Specific styles for teach page */
+
+.chat-course,
+.course-requests {
+    font-size: smaller;
+    color: grey;
+    margin-bottom: 1px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+main {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+#popup::backdrop {
+    background-color: #7f7f7f92;
+}
+
+#popup {
+    background: transparent;
+
+}
+
+aside {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    width: 40%;
+    height: fit-content;
+    padding: 20px;
+    margin: 15px 0 20px 20px;
+    position: sticky;
+    gap: 5px;
+}
+
+.requests,
+.chatlist {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.requests {
+    margin-top: 10px;
+}
+
+.requests p,
+.chatlist p {
+    font-weight: 700;
+}
+
+.chat,
+.request {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    align-items: center;
+    gap: 12px;
+    background: #f9fafb;
+    height: 60px;
+    display: flex;
+    padding-left: 5px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.chat {
+    justify-content: flex-start;
+}
+
+.request {
+    justify-content: flex-start;
+    align-content: center;
+    gap: 5px;
+}
+
+.left {
+    display: flex;
+    gap: 2px;
+}
+
+.chat:hover,
+.request:hover {
+    background-color: #f9fafb;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.chatImg img {
+    width: 3rem;
+    margin-right: 4px;
+    border-radius: 50%;
+}
+
+.name {
+    font-weight: 700;
+    color: black;
+}
+
+.chatInfo .lastchat,
+.chatInfo .Rcourse {
+    font-size: small;
+    color: grey;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.course {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.coursename {
+    background-color: white;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    width: 97%;
+    justify-content: space-between;
+}
+
+.coursename h3 {
+    font-weight: 800;
+}
+
+.coursename svg {
+    cursor: pointer;
+    visibility: hidden;
+    transition: visibility 0.5s linear;
+}
+
+.coursename svg:hover {
+    transform: scale(1.090);
+}
+
+.coursename:hover svg {
+    visibility: visible;
+}
+
+.vdHead {
+    display: flex;
+    justify-content: space-between;
+}
+
+.vdHead p {
+    font-weight: 700;
+    align-self: center;
+}
+
+.vd-background img {
+    width: 100px;
+    height: 70px;
+    border-radius: 15%;
+    margin-right: 10px;
+}
+
+.vd-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.vd-info .title {
+    font-weight: 700;
+    font-size: 110%;
+}
+
+.vd-info .duration {
+    font-size: small;
+    color: grey;
+    background-color: rgba(143, 201, 251, 0.301);
+    border-radius: 10px;
+    width: fit-content;
+    padding: 4px;
+    border: 1px solid #e5e7eb;
+}
+
+.course .videos {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    padding: 20px;
+    width: 97%;
+    height: 63%;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid #e5e7eb;
+    overflow-y: auto;
+}
+
+.vdcards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.vdcards .video {
+    border: 1px solid #e5e7eb;
+    width: 46%;
+    height: 100px;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 12px;
+    transition: background-color 0.15s ease-in;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.video:hover {
+    background-color: #f0f8ffcf;
+    box-shadow: 0 4px 10px #e5e7eb;
+    cursor: pointer;
+}
+
+.one {
+    display: flex;
+}
+
+.video {
+    justify-content: space-between;
+    gap: 5px;
+}
+
+#agree {
+    visibility: hidden;
+}
+
+.video-checkbox {
+    visibility: hidden;
+}
+
+.assignments {
+    background-color: white;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e5e7eb;
+    width: 97%;
+    height: auto;
+    padding: 15px 20px;
+    gap: 5px;
+}
+
+.assignments p {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.assignment {
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    width: 98.5%;
+    padding: 15px 20px;
+    height: 70%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.assignment .pdf {
+    border: 2px dashed rgba(55, 110, 85, 0.6);
+    border-radius: 10px;
+    padding: 10px;
+    width: 150px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(225, 250, 240, 0.3);
+    gap: 5px;
+}
+
+.assignment .pdf:hover {
+    cursor: pointer;
+    transform: scale(1.015);
+}
+
+.addVd,
+.addAss {
+    background-color: rgba(124, 213, 148, 0.285);
+    border-radius: 10px;
+    padding: 10px;
+    width: fit-content;
+    color: darkolivegreen;
+    border: 1px solid darkolivegreen;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: scale 0.25s ease;
+}
+
+.deletebtn {
+    background-color: #FEE2E2;
+    border-radius: 10px;
+    border: 1px solid #931414d1;
+    padding: 10px;
+    width: fit-content;
+    color: #931414d1;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: scale 0.25s ease;
+    display: flex;
+    gap: 3px;
+}
+
+.deletebtn:hover,
+.deletebtn:active {
+    color: white;
+    background-color: #df2a2ab8;
+}
+
+.deletebtn:active {
+    transform: scale(1.040);
+}
+
+.edit-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.addAss:hover,
+.addVd:hover {
+    transform: scale(1.040);
+}
+
+.message {
+    display: none;
+}
+
+.slider {
+    display: none;
+    position: sticky;
+    justify-content: center;
+    align-items: center;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    top: 10%;
+    left: .25px;
+    width: fit-content;
+    padding: 10px;
+    height: 15px;
+    background-color: rgba(55, 110, 85, 0.6);
+    cursor: pointer;
+    z-index: 1000;
+    color: white;
+    transition: all 0.3s linear;
+}
+
+.slider:active {
+    background-color: rgba(143, 201, 251, 0.301);
+    color: rgba(55, 110, 85, 0.6);
+}
+
+.hide {
+    display: none !important;
+}
+
+
+
+@media (max-width: 768px) {
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    aside {
+        display: none;
+        width: 90%;
+        height: fit-content;
+        position: sticky;
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .content {
+        display: flex;
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .vdcards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    body {
+        justify-content: center;
+    }
+
+    main {
+        justify-content: center;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .content {
+        width: 90%;
+        justify-content: center;
+        margin: 15px 2px;
+        gap: 0px;
+    }
+
+    .vdcards .video {
+        width: 100%;
+    }
+
+    .slider {
+        display: flex;
+    }
+}

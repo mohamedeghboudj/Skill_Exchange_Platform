@@ -1,0 +1,38 @@
+.courses {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    padding: 0, 0, 1rem, 1rem;
+}
+
+.course .videos {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    padding: 20px;
+    width: 97%;
+    height: 63%;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid #e5e7eb;
+    overflow-y: auto;
+}
+
+.vdcards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.video {
+    justify-content: flex-start;
+}
+
+#popup::backdrop {
+    background-color: #7f7f7f92;
+}
+
+#popup,#popup2 {
+    background: transparent;
+}

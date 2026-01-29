@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Land</title>
+    <!-- Main Css File -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Render All Elements Normally -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- The icon  -->
+    <link rel="icon" type="image/jpg" href="assets/icon.jpg">
+</head>
+
+<body>
+    <div class="container-card">
+        <div class="overlay hidden"></div>
+        <div class="card">
+            <div class="title">
+                <h3>Student Request</h3>
+            </div>
+            <form action="#" method="post">
+               
+                <div class="information">
+                  
+                    <!-- Level  -->
+                    <label >Current level at the skill</label>
+                    <div class="select" id="selected"><p id="default">Select level</p><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                            <path d="m6 9 6 6 6-6" />
+                        </svg>
+                    </div>
+                    <div class="list" id="level-list">
+                        <ul>
+                            <li id="beginner">Beginner</li>
+                            <li id="intermediate">intermediate</li>
+                            <li id="advanced">Advanced</li>
+                        </ul>
+                    </div>
+                    <!-- Days  -->
+                    <label >Available days</label>
+                    <div class="select " id="selected-day"><p id="DEFAULT">Select available days</p> <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-chevron-down-icon lucide-chevron-down" required>
+                            <path d="m6 9 6 6 6-6" />
+                        </svg>
+                    </div>
+                    <div class="list1" id="days-list">
+                        <ul>
+                            <li >
+                                <input class="Day" type="checkbox" id="Monday" name="day" value="Monday">
+                                <label for="Monday" class="chosen-day">Monday</label>
+                            </li>
+                            <li >
+                                <input class="Day" type="checkbox" id="Thursday" name="day" value="Thursday">
+                                <label for="Thursday" class="chosen-day">Thursday</label>
+                            </li>
+                            <li >
+                                <input class="Day" type="checkbox" id="Wednesday" name="day" value="Wednesday">
+                                <label for="Wednesday" class="chosen-day">Wednesday</label>
+                            </li>
+                            <li >
+                                <input class="Day" type="checkbox" id="Tuesday" name="day" value="Tuesday">
+                                <label for="Tuesday" class="chosen-day">Tuesday</label>
+                            </li>
+                            <li >
+                                <input class="Day" type="checkbox" id="Friday" name="day" value="Friday">
+                                <label for="Friday" class="chosen-day">Friday</label>
+                            </li>
+                            <li >
+                                <input class="Day" type="checkbox" id="Saturday" name="day" value="Saturday">
+                                <label for="Saturday" class="chosen-day">Saturday</label>
+                            </li>
+                            <li >
+                                <input class="Day" type="checkbox" id="Sunday" name="day" value="Sunday">
+                                <label for="Sunday" class="chosen-day">Sunday</label>
+                            </li>
+
+
+                        </ul>
+
+
+                    </div>
+                    <!-- Time  -->
+                    <label for="time">Available time</label>
+                    <div class="time">
+                        <div class="start">
+                            <label for="time">From</label>
+                            <input type="time"  id="startTime" name="available-time" required>
+                        </div>
+                        <div class="end">
+                            <label for="time">To</label>
+                            <input type="time" id="endTime" name="available-time" required>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Message  -->
+                <label for="message">Message to teacher</label>
+                <textarea name="message-to-teacher" id="message" rows="4" cols="30"
+                    placeholder="Write your message here " required></textarea>
+                    <div id="submissionResult"></div>
+                <div class="send">
+                    <button type="submit" id="SubmitButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-send-icon lucide-send">
+                            <path
+                                d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+                            <path d="m21.854 2.147-10.94 10.939" />
+                        </svg>
+                        Send
+                    </button>
+                    
+                </div>
+            </form>
+        </div>
+    </div>    <script src="js/script.js" defer></script>
+    <script src="js/student-request.js" defer></script>
+    <script src="/assets/js/courseInfo.js"></script>
+</body>
+</html>

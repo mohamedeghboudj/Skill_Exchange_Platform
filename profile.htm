@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnLand-My profile</title>
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/profile.css">
+
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../assets/images/logo-removebg-preview.png" alt="learn-land" width="60px" height="50">
+                <h3>LearnLand</h3>
+            </div>
+            <ul>
+                <li><a href="/index.html">About</a></li>
+                <li><a href="/pages/home.html">Home</a></li>
+                <li class="teachnav"><a href="/html/teach.html">Teach</a></li>
+                <li><a href="/html/learn.html">Learn</a></li>
+                <li><a href="/profile.php">Profile</a></li>
+                <button><a href="/index.html"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-log-out-icon lucide-log-out">
+                            <path d="m16 17 5-5-5-5" />
+                            <path d="M21 12H9" />
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        </svg>Logout</a></button>
+            </ul>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menuIcon">
+                <path d="M4 5h16" />
+                <path d="M4 12h16" />
+                <path d="M4 19h16" />
+            </svg>
+        </nav>
+        <div class="navigation">
+            <a href="/index.html">About</a>
+            <hr>
+            <a href="/pages/home.html">Home</a>
+            <hr>
+            <a href="/html/teach.html">Teach</a>
+            <hr>
+            <a href="/html/learn.html">Learn</a>
+            <hr>
+            <a href="/profile.htm">Profile</a>
+            <hr>
+            <a href="/auth.html">LogOut</a>
+        </div>
+    </header>
+
+    <main>
+
+
+        <div class="header">
+            <h1 class="mainHeading"> Your profile</h1>
+            <form action="editProfile.htm" class="go-to-edit" method="get">
+                <button class="edit"> <i data-lucide="pencil-line" class="edit-icon"></i> Edit</button>
+            </form>
+        </div>
+
+        <div class="profile">
+            <figure>
+
+                <img class="profile-pic" src="/images1/profilePicture1.jpg" alt="profile picture"
+                    title="your profile picture" />
+                <div class="user-mode">
+                    <div class="student-mode">Student</div>
+                    <div class="teacher-mode">Teacher</div>
+                    <p> Manage you public profile details</p>
+                </div>
+
+            </figure>
+
+
+            <form action="EditProfile.htm" method="post">
+                <div class="personalInfo">
+                    <div class="form-input">
+                        <label for="FullnameV">Full name</label>
+                        <input type="text" id="FullnameV" value="" readonly />
+                    </div>
+                    <div>
+                        <label for="emailV">Email</label>
+                        <input type="email" id="emailV" value="" readonly />
+                    </div>
+
+
+
+                    <div>
+                        <label for="skillV"> Skill</label>
+                        <input type="text" id="skillV" readonly value="" />
+                    </div>
+                    <div> <label for="AgeV"> Age</label>
+                        <input id="AgeV" value="" readonly />
+                    </div>
+                </div>
+                <div class="bio-section">
+
+                    <label class="bioV" for="bioV">Bio</label>
+
+                    <textarea id="bioV" name="bio" rows="5" readonly>
+
+
+
+
+
+                    </textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="p-terms-align">
+            <h4>Privacy terms</h4>
+        </div>
+        <div class="privacy-terms">
+            <p>By continuing, you agree to our privacy policy and data processing</p>
+            <button class="view-privacy-terms" id="vpt">privacy
+                terms</button>
+
+        </div>
+        <div class="certificates-align">
+            <h4>Certificates</h4>
+        </div>
+
+        <div class="certificate-section ">
+            <div class="certificate" id="certificates-container">
+
+            </div>
+
+            <label for="Certificate" class="Upload-button">Add certificate (PDF,PNG,JPG)</label>
+            <input type="file" id="Certificate" style="display:none;" name="certificate" accept="image/*" multiple>
+
+            <dialog id="popup"
+                style="width:  500px; height: 551px; border: none; scrollbar-width: none; border-radius: 15px; padding: 0;margin: auto;">
+                <iframe src="removeCertificate.htm" frameborder="0"
+                    style="width: 100%; height: 100%; border: none; border-radius:15px; margin: auto;"></iframe>
+            </dialog>
+            <dialog id="popup1"
+                style="width:  650px; height: 650px; border: none; scrollbar-width: none; border-radius: 15px; padding: 0;margin: auto;">
+                <iframe src="privacyTerms.htm" frameborder="0"
+                    style="width: 100%; height: 100%; border: none; border-radius:15px; margin: auto;"></iframe>
+            </dialog>
+
+        </div>
+        <br>
+        <p class="note">Certificates are optional.You can add them anytime</p>
+        <br>
+
+    </main>
+
+
+    <script class="image1" src="https://unpkg.com/lucide"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <script src="js/profile.js"></script>
+
+    <script src="js/user.js"></script>
+    <script src="js/removeCertificate.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="js/privacyTerms.js"></script>
+    <script src="/assets/js/home.js"></script>
+
+</body>
+
+
+
+</html>

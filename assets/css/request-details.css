@@ -1,0 +1,191 @@
+* {
+    font-family: mulish, sans-serif, Arial, Helvetica;
+    font-size: 15px;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+body {
+
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+.container {
+    background-color: white;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+
+    padding: 10px;
+    box-shadow: 2px 2px 10px grey;
+
+    width: 380px;
+    height: 550px;
+    border-radius: 15px;
+    margin: auto;
+
+
+
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+
+}
+
+.header .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    font-size: 14.5px;
+
+}
+
+
+.header span {
+    background: #DFF7E0;
+    color: rgb(14, 124, 45);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 10px;
+    background-color: white;
+    padding: 14px;
+}
+
+.inputs .input {
+    background-color: white;
+    border-radius: 12px;
+    background-color: rgba(255, 250, 205, 0.4);
+    border: 1px solid #e5e7eb;
+    padding: 5px;
+}
+
+.inputs:last-child {
+    margin-bottom: 70px;
+}
+
+
+.input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    height: 30px;
+}
+
+.input span {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 2px 10px;
+}
+
+p {
+    font-size: 12px;
+    color: grey;
+}
+
+.options {
+    background-color: white;
+    width: 100%;
+    /* margin-top: 20px; */
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #e5e7eb;
+
+
+}
+
+.options .para {
+    align-self: center;
+    margin-top: 0px;
+    padding-left: 10px;
+    display: flex;
+    gap: 3px;
+
+
+}
+
+.options button {
+    align-self: flex-end;
+    border: none;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    /* margin-right: 0px; */
+
+}
+
+.options .buttons {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.options .cancel {
+    background-color: #FEE2E2;
+    color: #931414d1;
+    font-weight: 600;
+    width: 80px;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 7px 0px;
+}
+
+.options .pay {
+    background-color: #4F8CFF;
+    color: white;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 7px;
+
+
+}
+
+svg {
+    width: 14px;
+    height: 14px;
+}
+
+@media (max-width: 768px) {
+
+
+    .inputs {
+        gap: 20px;
+
+    }
+
+    .inputs .input {
+        height: 50px;
+    }
+
+}

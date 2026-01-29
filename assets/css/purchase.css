@@ -1,0 +1,151 @@
+
+.paymentdetails {
+    font-family: "mulish", "arial", "sans";
+    padding-inline: 22px;
+    padding-bottom: 24px;
+    /* margin: auto; */
+    border:solid;
+    border-width: 2px;
+    border-color: rgb(222, 220, 220);
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 2px 2px 10px 2px rgb(203, 203, 203);
+    width:330px ;
+}
+.paymentdetails h2{
+    font-weight: 800;
+    font-size: 28px;
+}
+.paymentdetails h3{
+    font-weight: 700;
+    font-size: 22px;
+}
+
+.form-container{
+    display: grid;
+    gap: 4px;
+    grid-template-columns:1fr 1fr;
+    padding-bottom: 20px;
+}
+form :is(label , input,.cardinfo,.cardvalues,#terms,.submition){
+    grid-column: 1/span 2;
+}
+
+form button{
+    padding-block: 8px;
+    border-width: 2px;
+    border-radius: 12px;
+    padding-inline: 5px ;
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: white;
+    font-weight: 550;
+    font-size: 12px;
+}
+form button:hover{
+    background-color: var(--hover-color);
+    color: var(--secondary-color);
+}
+form input{
+    padding-block: 10px;
+    border-radius: 12px;
+    border-width: 1px;
+    padding-left: 10px;
+    background-color: rgb(225, 239, 251);
+    border-style:ridge;
+
+}
+#terms{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 12px;
+    color: rgb(93, 92, 92);
+}
+form input:focus{
+    background-color: rgb(239, 248, 251);
+    outline: none;
+}
+form label{
+    font-weight: 600;
+    margin-top: 5px;
+    color: rgb(93, 92, 92);
+}
+.cardinfo{
+    display: flex;
+}
+.cardinfo label{
+    width: 50%;
+}
+.cardvalues{
+    display: flex;
+    gap: 4px;
+}
+.cardvalues >input{
+    width: 50%;
+}
+#expiry{
+    border: solid;
+    border-width: 1px;
+    border-radius: 12px;
+    flex: 1;
+    outline: none;
+    background-color: rgb(225, 239, 251);
+    border-color: grey;
+    
+}
+#expiry:focus-within {
+  background-color: rgb(239, 248, 251);
+}
+#expiry input{
+    background-color: transparent;
+}
+#expiry input:focus{
+    outline: none;
+}
+.cardvalues span{
+    display: flex;
+    align-items: center;
+}
+
+.cardvalues span input{
+    width: 50%;
+    border: 0;
+}
+
+.submition{
+    display: flex;
+    justify-content: space-between;    
+}
+
+.error { 
+border: 1px solid red; 
+} 
+
+.success { 
+border: 1px solid green; 
+}
+#result{
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: small;
+    color: red;
+    background-color: rgb(253, 225, 225);
+    padding-block: 5px;
+    padding-inline: 10px;
+    width: fit-content;
+    border-radius: 15px;
+    border:solid 1px red;
+    text-align: center;
+
+}
+@media only screen and (min-width:768px){
+    .paymentdetails{
+        height:fit-content;
+        width: 500px;
+        padding-inline: 30px;
+    }
+    form button{
+        font-size: 15px;
+    }
+}

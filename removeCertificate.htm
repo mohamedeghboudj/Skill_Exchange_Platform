@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+    <title> LeranLand-Delete-certificate</title>
+    <link rel="icon" href="images/logo.png">
+    <link rel="stylesheet" href="styles/d-certificate.css">
+</head>
+
+<body>
+    <div class="overlay">
+        <div class="window">
+            <header>
+                <h2><i class="trash" data-lucide="trash-2"></i>Remove certifcate ? </h2>
+            </header>
+            <main>
+                <div class="selected-certificate">
+                   <i  class="spreadsheet"data-lucide="file-spreadsheet"></i> <p>Professional certificate</p>
+                </div>
+                <div class="warning">
+                    This action can not be undone. Removing this certificate will delete it from your profile.
+                </div>
+                <p class="p">
+                    if you still want to keep a copy, amke sure it's saved elsewhere before confirming.
+                </p>
+            </main>
+            <footer>
+                <button class="cancel" id="cancel">Cancel</button>
+                <button class="remove" id="rv">Remove certificate</button>
+            </footer>
+        </div>
+    </div>
+    <script src="https://unpkg.com/lucide"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="js/removeCertificate.js"></script>
+</body>
+
+</html>
