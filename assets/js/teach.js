@@ -1,3 +1,4 @@
+//teach.js
 // Import functions from courses.js and videos.js
 console.log("js is working..");
 import { getCourses, deleteCourse, addCourse } from './teach_courses.js';
@@ -87,13 +88,13 @@ export function createCourseElement(course) {
         </div>
       </div>
       <div class="vdcards" data-course-id="${course.id}">
-        ${videos.map(video => createVideoCard(video, course.id)).join('')}
+      ${videos.length > 0 ? videos.map(video => createVideoCard(video, course.id)).join('') : '<p style="color: #999; font-style: italic;">No videos yet</p>'}
       </div>
     </div>
     
     <div class="assignments">
       <p>Assignments</p>
-      ${assignments.map(assignment => createAssignmentCard(assignment, course.id)).join('')}
+        ${assignments.length > 0 ? assignments.map(assignment => createAssignmentCard(assignment, course.id)).join('') : '<p style="color: #999; font-style: italic;">No assignments yet</p>'}
       <div class="add-assignment-container" style="margin-top: 10px;">
         <button class="addAss add-assignment-btn" data-course-id="${course.id}">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -125,7 +126,6 @@ function createVideoCard(video, courseId) {
         </div>
         <div class="vd-info">
           <div class="title">${video.title}</div>
-          <div class="duration">${video.duration}</div>
         </div>
       </div>
       <div class="two">
@@ -234,11 +234,11 @@ function handleDeleteVideos(courseId, courseDiv) {
   if (!deleteMode[courseId]) {
     // ENTER delete mode - show checkboxes
     deleteMode[courseId] = true;
-    
+
     checkboxes.forEach(cb => {
       cb.style.display = 'block';
     });
-    
+
     deleteBtn.innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
         viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -282,6 +282,15 @@ function handleDeleteVideos(courseId, courseDiv) {
           </svg>
           delete
         `;
+        // If no videos remain, show placeholder
+        const remainingVideos = vdcards.querySelectorAll('.video');
+        if (remainingVideos.length === 0) {
+          const placeholder = document.createElement('p');
+          placeholder.style.color = '#999';
+          placeholder.style.fontStyle = 'italic';
+          placeholder.textContent = 'No videos yet';
+          vdcards.appendChild(placeholder);
+        }
       }, 350);
     } else {
       // EXIT delete mode without deleting
@@ -316,7 +325,6 @@ function handleAddVideo(courseId, courseDiv) {
       const newVideo = {
         courseId: courseId,
         title: `${String(nextOrder).padStart(2, '0')}.${file.name.replace(/\.[^/.]+$/, '')}`,
-        duration: "00:00:00",
         thumbnail: "../assets/images/webdev.jpg",
         videoUrl: URL.createObjectURL(file),
         order: nextOrder
@@ -325,6 +333,12 @@ function handleAddVideo(courseId, courseDiv) {
       const addedVideo = addVideo(newVideo);
 
       const vdcards = courseDiv.querySelector('.vdcards');
+      // Remove placeholder message if present (search by text to avoid matching the header)
+      const placeholder = Array.from(vdcards.querySelectorAll('p')).find(p => /no videos yet/i.test(p.textContent));
+      if (placeholder) {
+        placeholder.style.animation = 'slideOut 0.25s ease';
+        setTimeout(() => placeholder.remove(), 250);
+      }
       const videoCard = document.createElement('div');
       videoCard.innerHTML = createVideoCard(addedVideo, courseId);
       vdcards.appendChild(videoCard.firstElementChild);
@@ -337,12 +351,6 @@ function handleAddVideo(courseId, courseDiv) {
 // Handle add assignment - FIXED: Only allow one assignment
 function handleAddAssignment(courseId, courseDiv) {
   const assignments = getAssignmentsByCourse(courseId);
-  
-  if (assignments.length >= 1) {
-    // alert('You can only add one assignment per course. Please delete the existing assignment first.');
-    return;
-  }
-
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.pdf,.doc,.docx';
@@ -350,9 +358,13 @@ function handleAddAssignment(courseId, courseDiv) {
   input.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Determine assignment number based on existing assignments
+      const currentAssignments = getAssignmentsByCourse(courseId);
+      const assignmentNumber = currentAssignments.length + 1;
+
       const newAssignment = {
         courseId: courseId,
-        title: `Assignment 1`,
+        title: `Assignment ${assignmentNumber}`,
         fileName: file.name,
         fileUrl: URL.createObjectURL(file)
       };
@@ -361,6 +373,13 @@ function handleAddAssignment(courseId, courseDiv) {
 
       const assignmentsDiv = courseDiv.querySelector('.assignments');
       const addButtonContainer = assignmentsDiv.querySelector('.add-assignment-container');
+
+      // Remove placeholder message if present (search by text to avoid matching the header)
+      const placeholder = Array.from(assignmentsDiv.querySelectorAll('p')).find(p => /no assignments yet/i.test(p.textContent));
+      if (placeholder) {
+        placeholder.style.animation = 'slideOut 0.25s ease';
+        setTimeout(() => placeholder.remove(), 250);
+      }
 
       const assignmentCard = document.createElement('div');
       assignmentCard.innerHTML = createAssignmentCard(addedAssignment, courseId);
@@ -397,6 +416,17 @@ function handleDeleteSingleAssignment(assignmentId, courseDiv) {
     setTimeout(() => {
       deleteAssignment(assignmentId);
       assignmentCard.remove();
+      // If no assignments remain, add placeholder
+      const assignmentsDiv = courseDiv.querySelector('.assignments');
+      const remainingAssignments = assignmentsDiv.querySelectorAll('.assignment');
+      if (remainingAssignments.length === 0) {
+        const placeholder = document.createElement('p');
+        placeholder.style.color = '#999';
+        placeholder.style.fontStyle = 'italic';
+        placeholder.textContent = 'No assignments yet';
+        const addButtonContainer = assignmentsDiv.querySelector('.add-assignment-container');
+        assignmentsDiv.insertBefore(placeholder, addButtonContainer);
+      }
     }, 300);
   }
 }

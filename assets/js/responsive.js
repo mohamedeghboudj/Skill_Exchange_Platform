@@ -1,3 +1,4 @@
+//responsive.js
 const slider_btn = document.querySelector("#slider");
 const chat = document.querySelector("aside");
 const content = document.querySelector(".content");

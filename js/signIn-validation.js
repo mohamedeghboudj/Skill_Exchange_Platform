@@ -1,31 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-    //sign in validation 
-
+    // Sign in validation
     let EmailIn = document.querySelector("#email");
     let PasswordIn = document.querySelector("#password");
-    let Result = document.querySelector("#RESULT");
+    let EmailError = document.querySelector("#emailError");
+    let passError = document.querySelector("#passwordError");
     let SignInBTN = document.querySelector("#SIGNIN");
-
 
     SignInBTN.addEventListener("click", (event) => {
         event.preventDefault();
-        // to verify the user exists in the array
 
+        // Check all inputs simultaneously
+        const validationResult = CheckInputs();
 
-        if (CheckInputs()) {
-
+        // Only proceed to authentication if all inputs are valid
+        if (validationResult.isValid) {
             if (authenticateUser(EmailIn.value, PasswordIn.value)) {
                 window.location.href = "/pages/home.html";
             } else {
-                setErrorFor(EmailIn, "Invalid email or password.");
-                setErrorFor(PasswordIn, "");
+                setErrorFor(EmailIn, "Invalid email or password.", EmailError);
+                setErrorFor(PasswordIn, "Invalid email or password.", passError);
             }
-        };
+        }
     });
 
-    function authenticateUser(email, password) {
 
+    function authenticateUser(email, password) {
         const currentUsers = fromLocalStorage();
         const user = currentUsers.find(user =>
             user.email === email && user.password === password
@@ -35,47 +34,58 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("User authenticated successfully:", user.profile.name);
             localStorage.setItem("currentUserEmail", user.email);
             localStorage.setItem("currentUser", JSON.stringify(user));
-
             return true;
         } else {
             console.log("Authentication failed: Invalid credentials");
             return false;
         }
     }
-    function setErrorFor(input, message) {
-        Result.innerText += "\n" + message;
+
+    function setErrorFor(input, message, errorElement) {
+        errorElement.innerText = message;
+      
+        errorElement.style.display = "block"; // Make sure it's visible
+
         input.classList.add("error");
         input.classList.remove("success");
     }
 
-    function setSuccessFor(input) {
+    function setSuccessFor(input, errorElement) {
+        errorElement.innerText = "";
+        errorElement.style.display = "none"; // Hide the error message
         input.classList.add("success");
         input.classList.remove("error");
     }
-    function CheckInputs() {
 
+    function CheckInputs() {
         const EmailSIGNIN = EmailIn.value.trim();
         const Pass = PasswordIn.value.trim();
-        const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/;
-
+        
+        // Regex patterns
+        const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         const mail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
-        Result.innerText = "";
+        
+        let isValid = true;
 
+        // Validate email
         if (!EmailSIGNIN || !mail.test(EmailSIGNIN)) {
-            setErrorFor(EmailIn, "Invalid email");
-            return false;
+            setErrorFor(EmailIn, "Please enter a valid email address", EmailError);
+            isValid = false;
         } else {
-            setSuccessFor(EmailIn);
-        }
-        if (!Pass || !passwordRegex.test(Pass)) {
-            setErrorFor(PasswordIn, "Password must be 8 chars and include a letter, number, and one of: @$!%*?&");
-            return false;
-        } else {
-            setSuccessFor(PasswordIn);
+            setSuccessFor(EmailIn, EmailError);
         }
 
-        return true;
+        // Validate password
+        if (!Pass) {
+            setErrorFor(PasswordIn, "Password is required", passError);
+            isValid = false;
+        } else if (!passwordRegex.test(Pass)) {
+            setErrorFor(PasswordIn, "Password must be at least 8 characters and include a letter, number, and special character (@$!%*?&)", passError);
+            isValid = false;
+        } else {
+            setSuccessFor(PasswordIn, passError);
+        }
 
+        return { isValid };
     }
-
 });

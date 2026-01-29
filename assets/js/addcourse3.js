@@ -69,7 +69,7 @@ const validateFiles = (filesList, { atLeastOneVideo = true } = {}) => {
       errors.push(`The format (${f.type}) is not supported.`);
     }
     videoCount++;
-    else if (CONFIG.ALLOWED_FILE_MIMES && !CONFIG.ALLOWED_FILE_MIMES.includes(f.type)) {
+     if (CONFIG.ALLOWED_FILE_MIMES && !CONFIG.ALLOWED_FILE_MIMES.includes(f.type)) {
     errors.push(`Le fichier "${f.name}" a un type non autorisé (${f.type}).`);}
   }
   // si CONFIG.ALLOWED_FILE_MIMES non null, valider les autres fichiers auss
@@ -83,7 +83,7 @@ if (atLeastOneVideo && videoCount === 0) {
 }
 
 return errors;
-};
+
 // Course Form Validation
 class CourseFormValidator {
   constructor(formId) {

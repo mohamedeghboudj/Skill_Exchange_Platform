@@ -1,4 +1,4 @@
-
+//droplist.js
 const btn = document.getElementById('category-btn');
 // const selectedDiv = document.querySelector("#dropdown-selected");
 const droplist = document.querySelector('#droplist-ul');

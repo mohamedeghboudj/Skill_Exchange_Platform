@@ -68,11 +68,11 @@
                     </div>
                 </div>
 
-                <form class="course-form">
+                <form class="course-form" id="courseForm">
                     <div class="inputs">
                         <div class="field-wrapper">
                             <label>Course name</label>
-                            <input type="text" id="courseName"
+                            <input type="text" id="courseName" name="course_title"
                                 placeholder="e.g., Modern Algebra I" />
                         </div>
 
@@ -80,31 +80,25 @@
                             <div class="sub-row">
                                 <div class="field-wrapper">
                                     <label>Time to complete</label>
-                                    <input type="text" id="timeToComplete"
+                                    <input type="text" id="timeToComplete" name="duration"
                                         placeholder="In Hours : e.g., 6 " />
                                 </div>
                             </div>
                             <div class="sub-row">
                                 <div class="field-wrapper">
                                     <label>Price</label>
-                                    <input type="text" id="price"
+                                    <input type="text" id="price" name="price"
                                         placeholder="e.g., $199" />
                                 </div>
                             </div>
                         </div>
 
                         <div class="field-wrapper">
-                            <label>Teacher</label>
-                            <input type="text" id="teacher"
-                                placeholder="Select a teacher" />
-                        </div>
-
-                        <div class="field-wrapper">
                             <label>Description</label>
-                            <input type="text" id="description"
+                            <input type="text" id="description" name="course_description"
                                 placeholder="Describe your course" />
                         </div>
-
+                            
                         <div class="field-wrapper">
                             <label for="category">Category:</label>
                             <div class="droplist" id="categoryDroplist">
@@ -162,7 +156,7 @@
                 </form>
             </div>
             <div class="submit">
-                <button type="submit" id="submit">Create course</button>
+                <button type="button" id="submit">Create course</button>
             </div>
         </div>
         <footer>
@@ -260,7 +254,7 @@
 
         </footer>
         <script type="module" src="../assets/js/addcourse.js"></script>
-        <!-- <script type="module" src="../assets/js/addcourse_handler.js"></script> -->
+        <script type="module" src="../assets/js/backend_addcourse.js"></script>
         <script src="/assets/js/main.js"></script>
 
     </body>

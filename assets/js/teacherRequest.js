@@ -1,3 +1,4 @@
+
 const uploadDiv = document.querySelector('.uploadphoto');
 const fileInput = document.getElementById('upload');
 let skill = document.querySelector('#skills');
@@ -7,6 +8,60 @@ let submit = document.querySelector("#send");
 let result = document.querySelector("#result")
 
 result.style.display = "none";
+// hadil added from here : 
+window.addEventListener("DOMContentLoaded", checkTeacherStatus);
+
+async function checkTeacherStatus() {
+    try {
+        const res = await fetch('/assets/php/check_teacher_status.php');
+        const data = await res.json();
+
+        if (data.status === 'no_request') {
+            // No previous request → normal form
+            return;
+        }
+        if (data.status === 'success') {
+            const status = data.teacher_status;
+
+            if (status === 'pending') {
+                showMessage("⏳ Your request is under review. You cannot submit another one now.", "orange");
+                disableForm();
+            } else if (status === 'approved') {
+                showMessage("✅ Approved! Redirecting you...", "green");
+                setTimeout(() => window.location.href = "/html/teach.html", 1500);
+            } else if (status === 'rejected') {
+                showMessage("❌ Your previous request was rejected. You may submit a new one.", "red");
+            }
+        } else {
+            // Not logged in or other error
+            showMessage(data.message || "An error occurred. Please try again.", "red");
+        }
+    } catch (err) {
+        console.error(err);
+        showMessage("An error occurred while checking your status.", "red");
+    }
+}
+function showMessage(msg, color) {
+    result.style.display = "block";
+    result.style.color = color;
+    result.innerHTML = msg;
+}
+
+function disableForm() {
+    skill.disabled = true;
+    bio.disabled = true;
+    fileInput.disabled = true;
+    terms.disabled = true;
+    submit.disabled = true;
+    submit.style.opacity = "0.6";
+    submit.style.cursor = "not-allowed";
+    uploadDiv.style.display = "none";// to hide the upload area 
+}
+
+
+
+
+
 function setErrorFor(input, message) {
     result.style.display = "block";
     result.innerHTML = message;
@@ -23,12 +78,50 @@ uploadDiv.addEventListener('click', () => {
     fileInput.click();
 });
 
-submit.addEventListener('click', (e) => {
+// hadil was here !!
+/*submit.addEventListener('click', (e) => {
     e.preventDefault();
     if (checkInputs()) {
         window.location.href = "/html/teach.html";
     };
+});*/
+submit.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    if (!checkInputs()) return;
+
+    const formData = new FormData();
+    formData.append('primary_skill', skill.value.trim());
+    formData.append('bio', bio.value.trim());
+    formData.append('certificate', fileInput.files[0]);
+
+    try {
+        const response = await fetch('/assets/php/teacher_request_send.php', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+            showMessage(data.message, "green");
+            // clearing the form 
+            skill.value = '';
+            bio.value = '';
+            fileInput.value = '';
+            terms.checked = false;
+        } else {
+            showMessage(data.message, "red");
+        }
+    } catch (error) {
+        console.error(error);
+        showMessage('An error occurred. Please try again.', "red");
+    }
 });
+
+
+
+
+
+
 
 function checkInputs() {
     const skillvalue = skill.value.trim();
@@ -77,3 +170,4 @@ function checkInputs() {
     terms.checked = false;
     return true;
 }
+
