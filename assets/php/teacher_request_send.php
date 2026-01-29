@@ -11,12 +11,14 @@ if (!isset($_SESSION['user_id'])) {
     ]);
     exit; 
     }
-   $user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
+
 
     $primary_skill = $_POST['primary_skill'] ?? '';
 $bio = $_POST['bio'] ?? '';
-$certificate = $_FILES['certificate'] ?? null;// wait not yet 
-// making sure the inputs are not empty 
+$certificate = $_FILES['certificate'] ?? null;
+
+
 if (!$primary_skill || !$bio || !$certificate) {
     echo json_encode([
         'status' => 'error',
@@ -24,7 +26,7 @@ if (!$primary_skill || !$bio || !$certificate) {
     ]);
     exit;
 }
-// allowed types are : pdf , jpeg and png only 
+// allowed types :
 $allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
 if (!in_array($certificate['type'], $allowedTypes)) {
     echo json_encode([
@@ -33,111 +35,74 @@ if (!in_array($certificate['type'], $allowedTypes)) {
     ]);
     exit;
 } 
-// check it !! and continue from here
-/*<?php
-// Start the session to access user session variables
-session_start();
-
-// Set the response type to JSON (so the frontend can parse it easily)
-header('Content-Type: application/json');
-
-// Include your database connection
-require_once '../config/db.php'; // <-- change path to your actual db.php
-
-// Ensure the user is logged in before submitting a teacher request
-if (!isset($_SESSION['user_id'])) {
-    // User not logged in: return JSON error
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'User not logged in'
-    ]);
-    exit; // stop executing the rest of the code
-}
-
-// Get the logged-in user's ID from the session
-$user_id = $_SESSION['user_id'];
-
-// Retrieve POST data from the form
-$primary_skill = $_POST['primary_skill'] ?? '';
-$bio = $_POST['bio'] ?? '';
-$certificate = $_FILES['certificate'] ?? null;
-
-// Basic validation: ensure all fields are filled
-if (!$primary_skill || !$bio || !$certificate) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'All fields are required'
-    ]);
-    exit;
-}
-
-// Optional: Validate file type (only PDF/JPG/PNG allowed)
-$allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-if (!in_array($certificate['type'], $allowedTypes)) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Invalid file type. Allowed: PDF, JPG, PNG'
-    ]);
-    exit;
-}
-
-// Optional: Limit file size (5MB max)
+// Max file size 5MB
 if ($certificate['size'] > 5 * 1024 * 1024) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'File too large. Max size is 5MB'
+        'message' => 'File too large (max 5MB).'
     ]);
     exit;
 }
 
-// Prepare upload directory
-$targetDir = "../uploads/certificates/"; // where files will be stored
+// uploading file to server :
+$targetDir = "../../uploads/certificates/"; 
 if (!is_dir($targetDir)) {
-    mkdir($targetDir, 0777, true); // create folder if it doesn't exist
+    mkdir($targetDir, 0777, true);
 }
-
-// Generate a unique filename to prevent overwriting
-$fileName = uniqid() . "_" . basename($certificate['name']);
+$fileName = uniqid() . "_" . basename($certificate['name']); // give the a unique name to avoid overwriting 
+// uniqid() generates a unique string based on time
 $targetFile = $targetDir . $fileName;
-
-// Move the uploaded file from temp folder to our uploads folder
-if (move_uploaded_file($certificate['tmp_name'], $targetFile)) {
-    // Store the relative path in DB
-    $filePath = "uploads/certificates/" . $fileName;
-
-    // Prepare the SQL statement to prevent SQL injection
-    $stmt = $conn->prepare("
-        INSERT INTO TEACHER_REQUEST (user_id, primary_skill, bio, certificate)
-        VALUES (?, ?, ?, ?)
-    ");
-
-    // Bind parameters to the SQL statement
-    // "isss" means: integer, string, string, string
-    $stmt->bind_param("isss", $user_id, $primary_skill, $bio, $filePath);
-
-    // Execute the query
-    if ($stmt->execute()) {
-        echo json_encode([
-            'status' => 'success',
-            'message' => 'Request submitted successfully!'
-        ]);
-    } else {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Database insert failed: ' . $stmt->error
-        ]);
-    }
-
-    // Close the prepared statement
-    $stmt->close();
-} else {
-    // File upload failed
+//moving the uploaded file
+if (!move_uploaded_file($certificate['tmp_name'], $targetFile)) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'File upload failed'
+        'message' => 'File upload failed.'
     ]);
+    exit;
+}
+// path to store in db 
+$filePath = "uploads/certificates/" . $fileName;
+
+// inserting the request in the teacher request table db 
+
+$stmt = $conn->prepare("
+    INSERT INTO TEACHER_REQUEST (user_id, primary_skill, bio, teacher_status)
+    VALUES (?, ?, ?, 'pending')
+");
+$stmt->bind_param("iss", $user_id, $primary_skill, $bio);
+
+if (!$stmt->execute()) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Could not create teacher request.'
+    ]);
+    exit;
+}
+// Get the new teacher_request_id
+$teacher_request_id = $conn->insert_id;
+$stmt->close();
+
+// storing the certificate in the certificate table :
+    $stmt2 = $conn->prepare("
+    INSERT INTO CERTIFICATE (teacher_id, certificate_name, certificate_url)
+    VALUES (?, ?, ?)
+");
+$stmt2->bind_param("iss", $teacher_request_id, $certificate['name'], $filePath);
+
+if (!$stmt2->execute()) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Certificate record failed.'
+    ]);
+    exit;
 }
 
-// Close the DB connection
+$stmt2->close();
 $conn->close();
-?>*/
+echo json_encode([
+    'status' => 'success',
+    'message' => 'Teacher request submitted successfully!',
+    'teacher_request_id' => $teacher_request_id,
+    'certificate_path' => $filePath
+]);
+?>
