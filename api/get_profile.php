@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1); // disabling error reporting 
 
 session_start();
-require_once '/config/db.php';
+require_once '../config/db.php';
 
 if (ob_get_level()) ob_end_clean();
 
