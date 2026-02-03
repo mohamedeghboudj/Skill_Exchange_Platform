@@ -13,7 +13,7 @@ window.addEventListener("DOMContentLoaded", checkTeacherStatus);
 
 async function checkTeacherStatus() {
     try {
-        const res = await fetch('/assets/php/check_teacher_status.php');
+        const res = await fetch('/assets/php/check_teacher_request_status.php');
         const data = await res.json();
 
         if (data.status === 'no_request') {
@@ -85,7 +85,7 @@ uploadDiv.addEventListener('click', () => {
         window.location.href = "/html/teach.html";
     };
 });*/
-submit.addEventListener('click', async (e) => {
+/*submit.addEventListener('click', async (e) => {
     e.preventDefault();
 
     if (!checkInputs()) return;
@@ -116,8 +116,56 @@ submit.addEventListener('click', async (e) => {
         showMessage('An error occurred. Please try again.', "red");
     }
 });
+*/
+submit.addEventListener('click', async (e) => {
+    e.preventDefault();
 
+    if (!checkInputs()) return;
 
+    // DEBUG: Log what we're sending
+    console.log('Skill:', skill.value.trim());
+    console.log('Bio:', bio.value.trim());
+    console.log('File:', fileInput.files[0]);
+
+    // Check if file is actually selected
+    if (!fileInput.files || fileInput.files.length === 0) {
+        showMessage('Please select a certificate file', "red");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('primary_skill', skill.value.trim());
+    formData.append('bio', bio.value.trim());
+    formData.append('certificate', fileInput.files[0]);
+
+    // DEBUG: Log FormData contents
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ', pair[1]);
+    }
+
+    try {
+        const response = await fetch('/assets/php/teacher_request_send.php', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+
+        console.log('Server response:', data); // DEBUG
+
+        if (data.status === 'success') {
+            showMessage(data.message, "green");
+            skill.value = '';
+            bio.value = '';
+            fileInput.value = '';
+            terms.checked = false;
+        } else {
+            showMessage(data.message, "red");
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showMessage('An error occurred. Please try again.', "red");
+    }
+});
 
 
 
@@ -165,9 +213,7 @@ function checkInputs() {
     }
     result.innerHTML = "";
     result.style.display = "none";
-    skill.value = "";
-    bio.value = "";
-    terms.checked = false;
+
     return true;
 }
 

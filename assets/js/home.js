@@ -1,13 +1,21 @@
 const search = document.querySelector(".searching")
 let courses = document.querySelectorAll(".course")
 let category = document.querySelectorAll(".category")
+<<<<<<< HEAD
 let searchcat=document.querySelector("#search-cat");
 const catsection=document.querySelector(".categories");
+=======
+let searchcat = document.querySelector("#search-cat");
+const catsection = document.querySelector(".categories");
+import { getCourses } from "../data/courseService.js";
+import "../data/courses.js";
+
+>>>>>>> 0c363b2c85635ca7d47fd2a23bceb266c4b0282a
 const container = document.querySelector("#course-list");
 
 
-searchcat.addEventListener('click',()=>{
-    
+searchcat.addEventListener('click', () => {
+
     catsection.classList.toggle('hidden');
 })
 search.addEventListener("input", () => {
@@ -121,9 +129,27 @@ category.forEach(catEl => {
             .catch(err => console.error("Error fetching category courses:", err));
     });
 });
+<<<<<<< HEAD
 fetch("/learn-land/fetch_courses_by_category.php")
     .then(res => res.json())
     .then(renderCourses);
+=======
+
+function checkIfAnyCourseVisible() {
+    const noCoursesMsg = document.getElementById("noCourses");
+
+    let anyVisible = false;
+
+    courses.forEach(course => {
+        if (getComputedStyle(course).display !== "none") {
+            anyVisible = true;
+        }
+    });
+
+    noCoursesMsg.style.display = anyVisible ? "none" : "block";
+}
+
+>>>>>>> 0c363b2c85635ca7d47fd2a23bceb266c4b0282a
 
 
 
@@ -134,35 +160,38 @@ courses.forEach(course => {
     });
 });
 //
+// hadil has to change starting from here !
+//--------------------------------------------------------THIS IS NOT WORKING YET -----------------------------------------
 function handleBecomeTeacherClick() {
-    const storedCurrentUser = localStorage.getItem("currentUser");
+    //  const storedCurrentUser = localStorage.getItem("currentUser");
 
-    if (!storedCurrentUser) {
-        console.warn("No user logged in");
-        return;
-    }
+    // if (!storedCurrentUser) {
+    //    console.warn("No user logged in");
+    //   return;
+    // }
 
-    const currentUser = JSON.parse(storedCurrentUser);
+    // const currentUser = JSON.parse(storedCurrentUser);
 
     // Load the latest users array
-    const allUsers = fromLocalStorage() || users;
+    // const allUsers = fromLocalStorage() || users;
 
     // Find the fresh user by ID
-    const freshUser = allUsers.find(u => u.id === currentUser.id);
+    // const freshUser = allUsers.find(u => u.id === currentUser.id);
 
-    if (!freshUser) {
-        console.error("User not found in database");
-        return;
-    }
+    // if (!freshUser) {
+    //    console.error("User not found in database");
+    //   return;
+    // }
 
     // Check teacherProfile properly
-    if (freshUser.teacherProfile) {
-        // User is a teacher
-        window.location.href = "/html/teach.html";
-    } else {
-        // User is not yet a teacher
-        window.location.href = "/pages/teacherrequest.html";
-    }
+    // if (freshUser.teacherProfile) {
+    // User is a teacher
+    //    window.location.href = "/html/teach.html";
+    window.location.href = "/html/teach.html";
+    //} else {
+    // User is not yet a teacher
+    //     window.location.href = "/pages/teacherrequest.html";
+    // }
 }
 
 // Attach to button
@@ -171,7 +200,7 @@ document.getElementById("becomeTeacher")
 
 
 document.getElementById("becomeTeacher").addEventListener("click", handleBecomeTeacherClick);
-
+// adding the logic to the nav bar 
 document.querySelector(".teachnav").addEventListener("click", (e) => {
     e.preventDefault();
     handleBecomeTeacherClick();
