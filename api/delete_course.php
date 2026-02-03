@@ -1,66 +1,70 @@
 <?php
+// api/delete_course.php
 session_start();
-require_once '../config.php';
-
 header('Content-Type: application/json');
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Not logged in']);
     exit;
 }
+
+require_once '../assets/php/db.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
-$video_id = isset($data['video_id']) ? intval($data['video_id']) : 0;
 
-if ($video_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Invalid video ID']);
+if (empty($data['course_id']) || !is_numeric($data['course_id'])) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Missing or invalid course_id']);
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$course_id  = (int)$data['course_id'];
+$teacher_id = $_SESSION['user_id'];
 
-// Get video info and verify ownership
-$check_sql = "SELECT v.video_id, v.video_url, c.teacher_id 
-              FROM VIDEO v 
-              JOIN COURSE c ON v.course_id = c.course_id 
-              WHERE v.video_id = ?";
-$check_stmt = $conn->prepare($check_sql);
-$check_stmt->bind_param("i", $video_id);
-$check_stmt->execute();
-$check_result = $check_stmt->get_result();
+try {
+    $conn->begin_transaction();
 
-if ($check_result->num_rows === 0) {
-    echo json_encode(['success' => false, 'message' => 'Video not found']);
-    exit;
-}
+    // 1. Verify this course belongs to the logged-in teacher
+    $check = $conn->prepare("SELECT teacher_id FROM COURSE WHERE course_id = ?");
+    $check->bind_param("i", $course_id);
+    $check->execute();
+    $check->bind_result($owner_id);
 
-$video_data = $check_result->fetch_assoc();
-if ($video_data['teacher_id'] != $user_id) {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
-}
-$check_stmt->close();
-
-// Delete video file if exists
-if (!empty($video_data['video_url'])) {
-    $file_path = '../' . ltrim($video_data['video_url'], '/');
-    if (file_exists($file_path)) {
-        unlink($file_path);
+    if (!$check->fetch() || $owner_id !== $teacher_id) {
+        $check->close();
+        $conn->rollback();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Not your course']);
+        exit;
     }
+    $check->close();
+
+    // 2. Delete assignments for this course
+    $delAssign = $conn->prepare("DELETE FROM ASSIGNMENT WHERE course_id = ?");
+    $delAssign->bind_param("i", $course_id);
+    $delAssign->execute();
+    $delAssign->close();
+
+    // 3. Delete videos for this course
+    $delVideos = $conn->prepare("DELETE FROM VIDEO WHERE course_id = ?");
+    $delVideos->bind_param("i", $course_id);
+    $delVideos->execute();
+    $delVideos->close();
+
+    // 4. Delete the course itself
+    $delCourse = $conn->prepare("DELETE FROM COURSE WHERE course_id = ?");
+    $delCourse->bind_param("i", $course_id);
+    $delCourse->execute();
+    $delCourse->close();
+
+    $conn->commit();
+
+    echo json_encode(['success' => true, 'message' => 'Course deleted']);
+
+} catch (Exception $e) {
+    $conn->rollback();
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
-
-// Delete from database
-$delete_sql = "DELETE FROM VIDEO WHERE video_id = ?";
-$delete_stmt = $conn->prepare($delete_sql);
-$delete_stmt->bind_param("i", $video_id);
-
-if ($delete_stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => 'Video deleted successfully']);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Database error']);
-}
-
-$delete_stmt->close();
-$conn->close();
 ?>
