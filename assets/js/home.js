@@ -129,6 +129,7 @@ fetch("/learn-land/fetch_courses_by_category.php")
 
 
 
+
 courses.forEach(course => {
     course.addEventListener('click', () => {
         window.location.href = 'courseInfo.html';

@@ -69,10 +69,11 @@ document.addEventListener("DOMContentLoaded", () => {
         handleBecomeTeacherClick();
     });
 });
-let chatLabels = document.getElementsByClassName("chat");
+// Hadil touched this ---------------------------------------------------------------------------------
+/*let chatLabels = document.getElementsByClassName("chat");
 
 for (let chatLabel of chatLabels) {
   chatLabel.addEventListener('click', () => {
     window.location.href = "/html/studentProgress.html";
   });
-}
+}*/ 

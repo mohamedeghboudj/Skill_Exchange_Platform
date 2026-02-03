@@ -24,7 +24,7 @@ mydialog.addEventListener('click',()=>{
 
 //courseInfo display
 
-import { getCourseById } from "/assets/data/courseService.js";
+import { getCourseById } from "../assets/data/courseService.js";
 
 const params = new URLSearchParams(window.location.search);
 const id = Number(params.get("id"));
