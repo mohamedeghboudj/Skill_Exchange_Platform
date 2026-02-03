@@ -2,7 +2,7 @@ let mydialog = document.getElementById("popup");
 let mydialog2 = document.getElementById("popup2");
 let request = document.querySelector(".request");
 
-
+console.log("js is working")
 request.addEventListener('click', () => {
     mydialog.showModal();
    
