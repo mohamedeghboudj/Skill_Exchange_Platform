@@ -158,7 +158,7 @@ function addNewUser(name, email, password) {
             role: "Student",
             subject: "",
             bio: "",
-            picture: "images1/Fotos de perfil 1_ are secciones.jpg"
+            picture: "/images1/Fotos de perfil 1_ are secciones.jpg"
         }
     };
 

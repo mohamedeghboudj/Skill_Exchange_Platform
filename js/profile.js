@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Profile page loaded, fetching user data...');
     //--------------------------------------i changed this to make the session credentials work  hadil
 
-    fetch('api/get_profile.php', {
+    fetch('/api/get_profile.php', {
         credentials: "include"
     })
         .then(response => {
@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Profile picture
             profileImage.src = user.profile_picture
                 ? user.profile_picture
-                : 'images1/profilePicture1.jpg';
+                : '/images1/profilePicture1.jpg';
             console.log('✅ Profile loaded successfully!');
         })
         .catch(error => {
@@ -723,13 +723,13 @@ const teachNav = document.querySelector(".teachnav");
 if (teachNav) {
     teachNav.addEventListener("click", (e) => {
         e.preventDefault();
-        window.location.href = "pages/teacherrequest.html";
+        window.location.href = "/pages/teacherrequest.html";
     });
 }
 //  hadil added this to display the certificates from the backend --------------------------------
 async function loadUserCertificates() {
     try {
-        const response = await fetch('api/get_certificates.php', { credentials: 'include' });
+        const response = await fetch('/api/get_certificates.php', { credentials: 'include' });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const certificates = await response.json();

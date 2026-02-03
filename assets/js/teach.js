@@ -13,7 +13,7 @@ import {
 
 // State management
 let deleteMode = {};
-
+console.log("js is working")
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
   setupPreExistingCourses();
@@ -519,10 +519,13 @@ document.addEventListener("DOMContentLoaded", () => {
     handleBecomeTeacherClick();
   });
 });
-let chatLabels = document.getElementsByClassName("chat");
+document.addEventListener("DOMContentLoaded", () => {
+  let chatLabels = document.getElementsByClassName("chat");
 
-for (let chatLabel of chatLabels) {
-  chatLabel.addEventListener('click', () => {
-    window.location.href = "/html/teacherProgress.html";
-  });
-}
+  for (let chatLabel of chatLabels) {
+    chatLabel.addEventListener('click', () => {
+      window.location.href = "/html/teacherProgress.html";
+    });
+  }
+});
+

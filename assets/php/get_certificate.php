@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');// telling that the output is json
-require_once '../config/db.php';
+require_once '/config/db.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
