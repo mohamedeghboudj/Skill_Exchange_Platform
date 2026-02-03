@@ -1,475 +1,6 @@
-/*document.addEventListener('DOMContentLoaded', function () {
-
-    // // TODO: Get current user from authentication system (session, JWT, etc.)
-    // const currentUserEmail = localStorage.getItem("currentUserEmail"); // Replace with your auth method
-
-
-    // TODO: Fetch user data from backend
-    async function getUserFromBackend() {
-        try {
-            // Example: GET /api/user/profile
-            // const response = await fetch('/api/user/profile', {
-            //     headers: {
-            //         'Authorization': `Bearer ${token}` // Add auth token
-            //     }
-            // });
-            // if (response.ok) {
-            //     return await response.json();
-            // }
-            // return null;
-
-            // Placeholder - remove when implementing backend
-            return null;
-        } catch (error) {
-            console.error("Error fetching user:", error);
-            return null;
-        }
-    }
-
-    // Load user data
-    //  getUserFromBackend().then(user => {
-    // if (!user) {
-    //    console.log("User not found - redirecting to login");
-    //  window.location.href = "/auth.html"; ---------- why this ?!!!
-    //   return;
-    // }
-
-
-    // Get DOM elements
-    let NameValue = document.querySelector('#FullnameV'),
-        ageValue = document.querySelector('#AgeV'),
-        emailValue = document.querySelector('#emailV'),
-        skillValue = document.querySelector('#skillV'),
-        bioValue = document.querySelector('#bioV'),
-        teacherModeElement = document.querySelector('.teacher-mode'),
-        certificateSection = document.querySelector('.certificate-section');
-    profileImage = document.querySelector('.profile-pic');
-
-    // Set form values from backend data
-    NameValue.value = user.name || '';
-    ageValue.value = user.age || '';
-    emailValue.value = user.email || '';
-    skillValue.value = user.skill || '';
-    bioValue.value = user.bio || '';
-    profileImage.src = user.profilePicture || '';
-
-    // TODO: Load user certificates from backend
-    // loadUserCertificates(user.id);
-
-    updateUIForUserRole(user.role);
-}).catch(error => {
-    console.error("Error loading user:", error);
-});
-
-// CERTIFICATE HANDLING - UPDATED FOR MULTIPLE CERTIFICATES
-const certificateInput = document.getElementById('Certificate');
-const certificatesContainer = document.querySelector('.certificate');
-let currentCertificateToRemove = null;
-
-// When certificate is selected
-if (certificateInput && certificatesContainer) {
-    certificateInput.addEventListener('change', function (e) {
-        if (e.target.files.length > 0) {
-            for (let file of e.target.files) {
-                const fileName = file.name;
-                const fileUrl = URL.createObjectURL(file);
-
-                // Create new certificate element
-                const certificateDiv = document.createElement('div');
-                certificateDiv.className = 'certificate-object';
-
-                // Store file data
-                certificateDiv.dataset.fileName = fileName;
-                certificateDiv.dataset.fileUrl = fileUrl;
-                certificateDiv.dataset.fileType = file.type;
-
-                certificateDiv.innerHTML = `
-                        <div class="certificate-content clickable">
-                            <i class="spreadsheet" data-lucide="file-spreadsheet"></i>
-                            <p>${fileName}</p>
-                        </div>
-                        <button class="Remove">Remove</button>
-                    `;
-
-                // Add to container
-                certificatesContainer.appendChild(certificateDiv);
-
-                // TODO: Upload certificate to backend
-                // uploadCertificateToBackend(file);
-
-                // Update Lucide icons
-                setTimeout(() => {
-                    lucide.createIcons();
-                }, 0);
-            }
-
-            // Clear file input for next upload
-            certificateInput.value = '';
-        }
-    });
-}
-
-// Handle ALL remove buttons (event delegation)
-document.addEventListener('click', function (e) {
-    if (e.target.classList.contains('Remove')) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const certificateObject = e.target.closest('.certificate-object');
-        if (certificateObject) {
-            currentCertificateToRemove = certificateObject;
-
-            // Get the certificate name
-            const certificateName = certificateObject.querySelector('p').textContent;
-
-            // Store the certificate name so iframe can access it
-            localStorage.setItem('currentCertificateName', certificateName);
-
-            // Show the confirmation dialog
-            const mydialog = document.getElementById("popup");
-            if (mydialog) {
-                mydialog.showModal();
-
-                // Refresh iframe to show updated certificate name
-                const iframe = mydialog.querySelector('iframe');
-                if (iframe) {
-                    iframe.src = iframe.src;
-                }
-            }
-        }
-    }
-});
-
-// Handle certificate card clicks to view content
-document.addEventListener('click', function (e) {
-    // Don't trigger if clicking the remove button
-    if (e.target.classList.contains('Remove') || e.target.closest('.Remove')) {
-        return;
-    }
-
-    const clickableElement = e.target.closest('.clickable');
-    const certificateObject = e.target.closest('.certificate-object');
-
-    if (clickableElement || certificateObject) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const certObject = certificateObject || clickableElement.closest('.certificate-object');
-        if (certObject) {
-            const fileName = certObject.dataset.fileName || certObject.querySelector('p').textContent;
-            const fileUrl = certObject.dataset.fileUrl;
-            const fileType = certObject.dataset.fileType || '';
-
-            // Show certificate in modal
-            showCertificateModal(fileName, fileUrl, fileType);
-        }
-    }
-});
-
-// Function to show certificate in modal
-function showCertificateModal(fileName, fileUrl, fileType) {
-    // Create modal overlay
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'certificate-modal-overlay';
-
-    // Determine content based on file type
-    let content = '';
-    let contentClass = '';
-
-    if (fileType.includes('image')) {
-        content = `<img src="${fileUrl}" class="certificate-image-preview" alt="${fileName}">`;
-        contentClass = 'image-content';
-    } else if (fileType.includes('pdf')) {
-        content = `<iframe src="${fileUrl}" class="certificate-pdf-preview"></iframe>`;
-        contentClass = 'pdf-content';
-    } else {
-        content = `
-                <div class="certificate-download-content">
-                    <i data-lucide="file" class="file-icon-large"></i>
-                    <p class="file-name">${fileName}</p>
-                    <p class="file-message">Preview not available for this file type</p>
-                    <a href="${fileUrl}" download="${fileName}" class="download-button">
-                        Download File
-                    </a>
-                </div>
-            `;
-        contentClass = 'download-content';
-    }
-
-    // Create modal
-    modalOverlay.innerHTML = `
-            <div class="certificate-modal">
-                <div class="modal-header">
-                    <h3 class="modal-title">${fileName}</h3>
-                    <button class="close-certificate-modal">
-                        ×
-                    </button>
-                </div>
-                <div class="modal-body ${contentClass}">
-                    ${content}
-                </div>
-            </div>
-        `;
-
-    document.body.appendChild(modalOverlay);
-
-    // Update Lucide icons in modal
-    setTimeout(() => {
-        lucide.createIcons();
-    }, 0);
-
-    // Close modal on X button click
-    modalOverlay.querySelector('.close-certificate-modal').addEventListener('click', () => {
-        document.body.removeChild(modalOverlay);
-        // Revoke object URL to free memory
-        if (fileUrl && fileUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(fileUrl);
-        }
-    });
-
-    // Close modal on background click
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-            document.body.removeChild(modalOverlay);
-            // Revoke object URL to free memory
-            if (fileUrl && fileUrl.startsWith('blob:')) {
-                URL.revokeObjectURL(fileUrl);
-            }
-        }
-    });
-
-    // Close modal on Escape key
-    const closeOnEscape = function (e) {
-        if (e.key === 'Escape') {
-            document.body.removeChild(modalOverlay);
-            // Revoke object URL to free memory
-            if (fileUrl && fileUrl.startsWith('blob:')) {
-                URL.revokeObjectURL(fileUrl);
-            }
-            document.removeEventListener('keydown', closeOnEscape);
-        }
-    };
-    document.addEventListener('keydown', closeOnEscape);
-}
-
-// TODO: Function to load existing certificates from backend
-// async function loadUserCertificates(userId) {
-//     try {
-//         const response = await fetch(`/api/user/${userId}/certificates`);
-//         if (response.ok) {
-//             const certificates = await response.json();
-//             certificates.forEach(cert => {
-//                 // Create certificate elements from backend data
-//                 // ...
-//             });
-//         }
-//     } catch (error) {
-//         console.error("Error loading certificates:", error);
-//     }
-// }
-
-// TODO: Function to upload certificate to backend
-// async function uploadCertificateToBackend(file) {
-//     const formData = new FormData();
-//     formData.append('certificate', file);
-//     
-//     try {
-//         const response = await fetch('/api/certificates/upload', {
-//             method: 'POST',
-//             body: formData
-//         });
-//         if (response.ok) {
-//             const result = await response.json();
-//             console.log("Certificate uploaded:", result);
-//         }
-//     } catch (error) {
-//         console.error("Error uploading certificate:", error);
-//     }
-// }
-
-// TODO: Function to delete certificate from backend
-// async function deleteCertificateFromBackend(certificateId) {
-//     try {
-//         const response = await fetch(`/api/certificates/${certificateId}`, {
-//             method: 'DELETE'
-//         });
-//         if (response.ok) {
-//             console.log("Certificate deleted from backend");
-//         }
-//     } catch (error) {
-//         console.error("Error deleting certificate:", error);
-//     }
-// }
-
-// LISTEN FOR MESSAGES FROM IFRAME
-window.addEventListener('message', function (event) {
-    if (event.data === 'confirmRemove' && currentCertificateToRemove) {
-        // TODO: Delete certificate from backend
-        // const certificateId = currentCertificateToRemove.dataset.certificateId;
-        // deleteCertificateFromBackend(certificateId);
-
-        // Revoke object URL before removing
-        const fileUrl = currentCertificateToRemove.dataset.fileUrl;
-        if (fileUrl && fileUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(fileUrl);
-        }
-
-        // Remove the certificate from UI
-        currentCertificateToRemove.remove();
-        currentCertificateToRemove = null;
-
-        // Clear stored certificate name
-        localStorage.removeItem('currentCertificateName');
-
-        // Close dialog
-        const mydialog = document.getElementById("popup");
-        if (mydialog) {
-            mydialog.close();
-        }
-    }
-
-    if (event.data === 'cancelRemove') {
-        currentCertificateToRemove = null;
-
-        // Clear stored certificate name
-        localStorage.removeItem('currentCertificateName');
-
-        // Close dialog
-        const mydialog = document.getElementById("popup");
-        if (mydialog) {
-            mydialog.close();
-        }
-    }
-
-    // Old message for compatibility
-    if (event.data === 'hideCertificate' && currentCertificateToRemove) {
-        // TODO: Delete certificate from backend
-        // const certificateId = currentCertificateToRemove.dataset.certificateId;
-        // deleteCertificateFromBackend(certificateId);
-
-        // Revoke object URL before removing
-        const fileUrl = currentCertificateToRemove.dataset.fileUrl;
-        if (fileUrl && fileUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(fileUrl);
-        }
-
-        currentCertificateToRemove.remove();
-        currentCertificateToRemove = null;
-
-        // Clear stored certificate name
-        localStorage.removeItem('currentCertificateName');
-
-        const mydialog = document.getElementById("popup");
-        if (mydialog) {
-            mydialog.close();
-        }
-    }
-});
-
-// Global function for iframe to close dialog
-window.closePop = function () {
-    const mydialog = document.getElementById("popup");
-    if (mydialog) {
-        mydialog.close();
-    }
-    currentCertificateToRemove = null;
-    localStorage.removeItem('currentCertificateName');
-};
-
-// Update UI based on user role
-function updateUIForUserRole(userRole) {
-    const isTeacher = userRole && userRole.includes('Teacher');
-    const teacherModeElement = document.querySelector('.teacher-mode');
-    const certificateSection = document.querySelector('.certificate-section');
-
-    if (teacherModeElement && certificateSection) {
-        if (isTeacher) {
-            teacherModeElement.style.display = 'block';
-            certificateSection.style.display = 'flex';
-        } else {
-            teacherModeElement.style.display = 'none';
-            certificateSection.style.display = 'none';
-        }
-    }
-}
-
-let mydialog = document.getElementById("popup");
-
-mydialog.addEventListener('click', (e) => {
-    if (e.target === mydialog) {
-        mydialog.close();
-        currentCertificateToRemove = null;
-        localStorage.removeItem('currentCertificateName');
-    }
-});
-
-let showTrems = document.querySelector("#vpt");
-let mydialog2 = document.getElementById("popup1");
-
-showTrems.addEventListener('click', (e) => {
-    e.preventDefault();
-    mydialog2.showModal();
-});
-
-mydialog2.addEventListener('click', (e) => {
-    if (e.target === mydialog2) {
-        e.preventDefault();
-        mydialog2.close();
-    }
-});
-
-let closeBtn = document.querySelector(".close");
-if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-        mydialog2.close();
-    });
-}
-
-// TODO: Update teacher navigation logic for backend
-function handleBecomeTeacherClick() {
-    // TODO: Check if user is already a teacher via backend
-    // const response = await fetch('/api/user/teacher-status');
-    // const data = await response.json();
-
-    // if (data.isTeacher) {
-    //     window.location.href = "/html/teach.html";
-    // } else {
-    //     window.location.href = "/pages/teacherrequest.html";
-    // }
-
-    // Placeholder - remove when implementing backend
-    window.location.href = "/pages/teacherrequest.html";
-}
-
-document.querySelector(".teachnav").addEventListener("click", (e) => {
-    e.preventDefault();
-    handleBecomeTeacherClick();
-});
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    fetch('/api/get_profile.php')
-        .then(response => {
-            if (!response.ok) throw new Error('User not found');
-            return response.json();
-        })
-        .then(user => {
-            // Fill your HTML inputs with data
-            document.getElementById('FullnameV').value = user.full_name;
-            document.getElementById('emailV').value = user.email;
-            document.getElementById('skillV').value = user.skill;
-            document.getElementById('AgeV').value = user.age;
-            document.getElementById('bioV').value = user.bio;
-        })
-        .catch(error => {
-            console.error(error);
-            alert('Could not load user data');
-        });
-});*/
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('Profile page loaded, fetching user data...');
-    //--------------------------------------i changed this to make the session credentials work  hadil
 
     fetch('api/get_profile.php', {
         credentials: "include"
@@ -491,10 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 skillValue = document.querySelector('#skillV'),
                 bioValue = document.querySelector('#bioV'),
                 teacherModeElement = document.querySelector('.teacher-mode'),
-                certificateSection = document.querySelector('.certificate-section'),
                 profileImage = document.querySelector('.profile-pic');
 
+            // Certificate elements
+            const certificatesAlign = document.querySelector('.certificates-align');
+            const certificateSection = document.querySelector('.certificate-section');
+            const certificateNote = document.querySelector('.note');
 
+            // Populate fields
             NameValue.value = user.full_name || '';
             ageValue.value = user.age || '';
             emailValue.value = user.email || '';
@@ -505,58 +40,120 @@ document.addEventListener('DOMContentLoaded', function () {
             profileImage.src = user.profile_picture
                 ? user.profile_picture
                 : 'images1/profilePicture1.jpg';
-            console.log('✅ Profile loaded successfully!');
+
+            // Show/hide certificates section based on teacher status
+            if (user.is_teacher == 1) {
+                // Show all certificate elements
+                if (certificatesAlign) certificatesAlign.style.display = 'block';
+                if (certificateSection) certificateSection.style.display = 'block';
+                if (certificateNote) certificateNote.style.display = 'block';
+
+                // Show teacher mode badge
+                if (teacherModeElement) {
+                    teacherModeElement.style.display = 'block';
+                }
+
+                // Load certificates only if teacher
+                loadUserCertificates();
+            } else {
+                // Hide all certificate elements
+                if (certificatesAlign) certificatesAlign.style.display = 'none';
+                if (certificateSection) certificateSection.style.display = 'none';
+                if (certificateNote) certificateNote.style.display = 'none';
+
+                // Hide teacher mode badge
+                if (teacherModeElement) {
+                    teacherModeElement.style.display = 'none';
+                }
+            }
+
+            console.log('Profile loaded successfully!');
         })
         .catch(error => {
             console.error('Error:', error);
         });
-
-        loadUserCertificates();  
-})
+});
 
 
-
-
-
-
+// Certificate Upload and Management
 const certificateInput = document.getElementById('Certificate');
 const certificatesContainer = document.getElementById('certificates-container');
 let currentCertificateToRemove = null;
 
 if (certificateInput && certificatesContainer) {
-    certificateInput.addEventListener('change', function (e) {
+    certificateInput.addEventListener('change', async function (e) {
         if (e.target.files.length > 0) {
-            for (let file of e.target.files) {
-                const fileName = file.name;
-                const fileUrl = URL.createObjectURL(file);
+            // Create FormData to send files
+            const formData = new FormData();
 
-                const certificateDiv = document.createElement('div');
-                certificateDiv.className = 'certificate-object';
-                certificateDiv.dataset.fileName = fileName;
-                certificateDiv.dataset.fileUrl = fileUrl;
-                certificateDiv.dataset.fileType = file.type;
-
-                certificateDiv.innerHTML = `
-                    <div class="certificate-content clickable">
-                        <i class="spreadsheet" data-lucide="file-spreadsheet"></i>
-                        <p>${fileName}</p>
-                    </div>
-                    <button class="Remove">Remove</button>
-                `;
-
-                certificatesContainer.appendChild(certificateDiv);
-
-                setTimeout(() => {
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
-                    }
-                }, 0);
+            // Add all selected files
+            for (let i = 0; i < e.target.files.length; i++) {
+                formData.append('certificates[]', e.target.files[i]);
             }
-            certificateInput.value = '';
+
+            try {
+                // Show loading state (optional)
+                console.log('Uploading certificates...');
+
+                // Upload to backend
+                const response = await fetch('api/set_certificate.php', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log('Upload successful:', result.message);
+
+                    // Add each uploaded certificate to the UI
+                    result.certificates.forEach(cert => {
+                        addCertificateToUI(cert);
+                    });
+
+                    // Clear the file input
+                    certificateInput.value = '';
+                } else {
+                    console.error('Upload failed:', result.error);
+                    alert('Failed to upload certificates: ' + result.error);
+                }
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Failed to upload certificates. Please try again.');
+            }
         }
     });
 }
 
+// Helper function to add certificate to UI
+function addCertificateToUI(cert) {
+    const certificateDiv = document.createElement('div');
+    certificateDiv.className = 'certificate-object';
+    certificateDiv.dataset.certificateId = cert.certificate_id;
+    certificateDiv.dataset.fileName = cert.file_name;
+    certificateDiv.dataset.fileUrl = cert.file_url;
+    certificateDiv.dataset.fileType = cert.file_type;
+
+    certificateDiv.innerHTML = `
+        <div class="certificate-content clickable">
+            <i class="spreadsheet" data-lucide="file-spreadsheet"></i>
+            <p>${cert.file_name}</p>
+        </div>
+        <button class="Remove">Remove</button>
+    `;
+
+    certificatesContainer.appendChild(certificateDiv);
+
+    setTimeout(() => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }, 0);
+}
+
+// Handle Remove button clicks
 document.addEventListener('click', function (e) {
     if (e.target.classList.contains('Remove')) {
         e.preventDefault();
@@ -565,17 +162,42 @@ document.addEventListener('click', function (e) {
         const certificateObject = e.target.closest('.certificate-object');
         if (certificateObject) {
             currentCertificateToRemove = certificateObject;
+            const certificateId = certificateObject.dataset.certificateId;
             const certificateName = certificateObject.querySelector('p').textContent;
-            localStorage.setItem('currentCertificateName', certificateName);
 
             const mydialog = document.getElementById("popup");
+            const iframe = mydialog ? mydialog.querySelector('iframe') : null;
+
             if (mydialog) {
                 mydialog.showModal();
+            }
+
+            // Send certificate info to iframe after it loads
+            if (iframe) {
+                const sendData = () => {
+                    console.log('Sending certificate data to iframe:', certificateName);
+                    iframe.contentWindow.postMessage({
+                        type: 'setCertificateName',
+                        certificateId: certificateId,
+                        certificateName: certificateName
+                    }, '*');
+                };
+
+                // If iframe is already loaded
+                if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                    setTimeout(sendData, 100);
+                } else {
+                    // Wait for iframe to load
+                    iframe.onload = () => {
+                        setTimeout(sendData, 100);
+                    };
+                }
             }
         }
     }
 });
 
+// Handle certificate click to view
 document.addEventListener('click', function (e) {
     if (e.target.classList.contains('Remove') || e.target.closest('.Remove')) {
         return;
@@ -597,6 +219,7 @@ document.addEventListener('click', function (e) {
     }
 });
 
+// Show certificate in modal
 function showCertificateModal(fileName, fileUrl, fileType) {
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'certificate-modal-overlay';
@@ -653,48 +276,90 @@ function showCertificateModal(fileName, fileUrl, fileType) {
     });
 }
 
-window.addEventListener('message', function (event) {
+// Handle certificate deletion confirmation
+window.addEventListener('message', async function (event) {
     if ((event.data === 'confirmRemove' || event.data === 'hideCertificate') && currentCertificateToRemove) {
-        const fileUrl = currentCertificateToRemove.dataset.fileUrl;
-        if (fileUrl && fileUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(fileUrl);
-        }
+        const certificateId = currentCertificateToRemove.dataset.certificateId;
 
-        currentCertificateToRemove.remove();
-        currentCertificateToRemove = null;
-        localStorage.removeItem('currentCertificateName');
-
+        // Close modal immediately
         const mydialog = document.getElementById("popup");
         if (mydialog) mydialog.close();
+
+        if (certificateId) {
+            try {
+                const response = await fetch('api/delete_certificate.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ certificate_id: parseInt(certificateId) })
+                });
+
+                let result = { success: false };
+
+                // Only attempt JSON parse if response is 200
+                if (response.ok) {
+                    try {
+                        result = await response.json();
+                    } catch (e) {
+                        console.warn("Invalid JSON response from delete_certificate.php");
+                    }
+                } else {
+                    console.warn("Delete request returned status:", response.status);
+                }
+
+                // Remove certificate from UI anyway
+                currentCertificateToRemove.remove();
+                console.log('Certificate removed from UI');
+
+                // Only alert if backend explicitly fails
+                if (!result.success && result.error) {
+                    console.warn('Backend error:', result.error);
+                }
+
+            } catch (error) {
+                console.error('Delete request failed:', error);
+                // Still remove from UI
+                currentCertificateToRemove.remove();
+            }
+        } else {
+            // Blob preview only
+            const fileUrl = currentCertificateToRemove.dataset.fileUrl;
+            if (fileUrl && fileUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(fileUrl);
+            }
+            currentCertificateToRemove.remove();
+        }
+
+        // Cleanup
+        currentCertificateToRemove = null;
     }
 
     if (event.data === 'cancelRemove') {
-        currentCertificateToRemove = null;
-        localStorage.removeItem('currentCertificateName');
-
         const mydialog = document.getElementById("popup");
         if (mydialog) mydialog.close();
+        currentCertificateToRemove = null;
     }
 });
 
+// Close popup function
 window.closePop = function () {
     const mydialog = document.getElementById("popup");
     if (mydialog) mydialog.close();
     currentCertificateToRemove = null;
-    localStorage.removeItem('currentCertificateName');
 };
 
+// Close dialog on outside click
 const mydialog = document.getElementById("popup");
 if (mydialog) {
     mydialog.addEventListener('click', (e) => {
         if (e.target === mydialog) {
             mydialog.close();
             currentCertificateToRemove = null;
-            localStorage.removeItem('currentCertificateName');
         }
     });
 }
 
+// Privacy Terms Dialog
 const showTermsBtn = document.querySelector("#vpt");
 const privacyDialog = document.getElementById("popup1");
 
@@ -719,6 +384,7 @@ if (closeBtn && privacyDialog) {
     });
 }
 
+// Teach Navigation
 const teachNav = document.querySelector(".teachnav");
 if (teachNav) {
     teachNav.addEventListener("click", (e) => {
@@ -726,34 +392,46 @@ if (teachNav) {
         window.location.href = "pages/teacherrequest.html";
     });
 }
-//  hadil added this to display the certificates from the backend --------------------------------
+
+// Load user certificates from backend
 async function loadUserCertificates() {
     try {
-        const response = await fetch('api/get_certificates.php', { credentials: 'include' });
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch('assets/php/get_certificate.php', { credentials: 'include' });
 
-        const certificates = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
+        const result = await response.json();
+
+        // Check if there's an error in the response
+        if (result.error) {
+            console.log('No certificates or error:', result.error);
+            return;
+        }
+
+        const certificates = result.certificates || [];
+        const certificatesContainer = document.getElementById('certificates-container');
+
+        if (!certificatesContainer) {
+            console.error('Certificates container not found');
+            return;
+        }
+
+        // Clear existing certificates
+        certificatesContainer.innerHTML = '';
+
+        if (certificates.length === 0) {
+            console.log('No certificates found for this teacher');
+            return;
+        }
+
+        // Use the helper function to add each certificate
         certificates.forEach(cert => {
-            const certificateDiv = document.createElement('div');
-            certificateDiv.className = 'certificate-object';
-            certificateDiv.dataset.fileName = cert.file_name;
-            certificateDiv.dataset.fileUrl = cert.file_url;
-            certificateDiv.dataset.fileType = cert.file_type;
-
-            certificateDiv.innerHTML = `
-                <div class="certificate-content clickable">
-                    <i class="spreadsheet" data-lucide="file-spreadsheet"></i>
-                    <p>${cert.file_name}</p>
-                </div>
-                <button class="Remove">Remove</button>
-            `;
-
-            certificatesContainer.appendChild(certificateDiv);
+            addCertificateToUI(cert);
         });
 
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-        console.log(' Certificates loaded from backend!');
+        console.log(`${certificates.length} certificate(s) loaded from backend!`);
     } catch (error) {
         console.error("Error loading certificates:", error);
     }

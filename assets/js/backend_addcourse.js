@@ -40,7 +40,7 @@ export function handleCourseSubmission() {
     }
     
     // 7. Send to backend API
-    fetch('../api/create_course.php', {
+    fetch('/api/create_course.php', {
         method: 'POST',
         body: formData,
         credentials: 'include' // Important for sessions
