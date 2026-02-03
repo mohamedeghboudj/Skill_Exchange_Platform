@@ -13,8 +13,3 @@ if (acceptBtn && refusBtn) {
         window.parent.closePop();
     });
 }
-
-const messageEl = document.getElementById("message");
-if (messageEl) {
-    messageEl.value = "I'm interested in learning photography, especially street photography. I enjoy capturing spontaneous moments and real-life scenes. I learn best through practical exercises.";
-}

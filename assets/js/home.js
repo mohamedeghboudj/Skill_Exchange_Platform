@@ -1,16 +1,13 @@
 const search = document.querySelector(".searching")
 let courses = document.querySelectorAll(".course")
 let category = document.querySelectorAll(".category")
-<<<<<<< HEAD
-let searchcat=document.querySelector("#search-cat");
-const catsection=document.querySelector(".categories");
-=======
+
 let searchcat = document.querySelector("#search-cat");
 const catsection = document.querySelector(".categories");
 import { getCourses } from "../data/courseService.js";
 import "../data/courses.js";
 
->>>>>>> 0c363b2c85635ca7d47fd2a23bceb266c4b0282a
+
 const container = document.querySelector("#course-list");
 
 
@@ -129,11 +126,7 @@ category.forEach(catEl => {
             .catch(err => console.error("Error fetching category courses:", err));
     });
 });
-<<<<<<< HEAD
-fetch("/learn-land/fetch_courses_by_category.php")
-    .then(res => res.json())
-    .then(renderCourses);
-=======
+
 
 function checkIfAnyCourseVisible() {
     const noCoursesMsg = document.getElementById("noCourses");
@@ -149,7 +142,7 @@ function checkIfAnyCourseVisible() {
     noCoursesMsg.style.display = anyVisible ? "none" : "block";
 }
 
->>>>>>> 0c363b2c85635ca7d47fd2a23bceb266c4b0282a
+
 
 
 
