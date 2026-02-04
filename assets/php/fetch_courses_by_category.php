@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 header("Content-Type: application/json");
@@ -13,33 +13,34 @@ if ($conn->connect_error) {
 
 $category = trim($_GET['category'] ?? '');
 
-// ✅ If no category → return ALL courses
 if ($category === '') {
+    // Return all courses
     $sql = "SELECT 
-    c.courseid AS id,
-    c.coursetitle AS title,
-    c.coursedescription AS description,
-    c.category,
-    c.price,
-    c.duration,
-    c.rating,
-    u.fullname AS instructor
-FROM COURSE c
-JOIN USER u ON u.userid = c.teacherid;";
+                c.course_id AS id,
+                c.course_title AS title,
+                c.course_description AS description,
+                c.category,
+                c.price,
+                c.duration,
+                c.rating,
+                u.full_name AS instructor
+            FROM COURSE c
+            JOIN USER u ON u.user_id = c.teacher_id";
     $stmt = $conn->prepare($sql);
 } else {
+    // Filter by category
     $sql = "SELECT 
-    c.courseid AS id,
-    c.coursetitle AS title,
-    c.coursedescription AS description,
-    c.category,
-    c.price,
-    c.duration,
-    c.rating,
-    u.fullname AS instructor
-FROM COURSE c
-JOIN USER u ON u.userid = c.teacherid
-WHERE c.category LIKE ? ;";
+                c.course_id AS id,
+                c.course_title AS title,
+                c.course_description AS description,
+                c.category,
+                c.price,
+                c.duration,
+                c.rating,
+                u.full_name AS instructor
+            FROM COURSE c
+            JOIN USER u ON u.user_id = c.teacher_id
+            WHERE c.category LIKE ?";
     $stmt = $conn->prepare($sql);
     $like = "%$category%";
     $stmt->bind_param("s", $like);
@@ -57,4 +58,4 @@ echo json_encode($courses);
 
 $stmt->close();
 $conn->close();
-
+?>

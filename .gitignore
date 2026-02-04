@@ -1,1 +1,10 @@
-api/config-local.php
+# XAMPP system files
+/dashboard/
+/xampp/
+/*.log
+*.pdf
+*.pdfmarks
+
+# OS noise
+.DS_Store
+Thumbs.db
