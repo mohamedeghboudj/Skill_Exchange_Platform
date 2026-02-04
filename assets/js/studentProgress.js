@@ -105,5 +105,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 rate.addEventListener('click' ,()=>{
-    window.location.href="/pages/ratcourse.htm"
+    window.location.href="/ratcourse.htm";
 })
