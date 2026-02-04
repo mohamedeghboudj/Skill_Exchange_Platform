@@ -2,7 +2,12 @@
     box-sizing: border-box;
     font-family: "Segoe UI", Tahoma, sans-serif;
 }
+html{
+    height: 100%;
+    margin: 0;
+}
 body {
+    height: 100%;
     margin: 0;
     background: #f6f8fb;
     color: #333;
@@ -37,6 +42,8 @@ header h1 {
 
 /* ===== Sidebar ===== */
 .sidebar {
+    height: 100vh;
+    width: 100%;
     position: relative;
     background: #f0f0f0;
     border-right: 1px solid #e5e7eb;
@@ -109,6 +116,8 @@ header h1 {
 
 /* ===== Main ===== */
 .main {
+    height: 100vh;
+    width: 100%;
     flex: 1;
     padding: 30px;
     overflow-y: auto;
@@ -270,6 +279,9 @@ header h1 {
         display: flex;
         flex-direction: column;
         width: 40%;
+    }
+    main{
+        width: 60%;
     }
     .close-chat{
         display:none;

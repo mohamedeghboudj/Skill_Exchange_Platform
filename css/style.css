@@ -1552,7 +1552,108 @@ body {
 
 
 /* End Request Review*/
+/* ===== ENROLLMENT FORM ENHANCEMENTS ===== */
+/* These styles enhance without conflicting */
 
+/* Success/Error message styling */
+#submissionResult .error-message {
+    background-color: rgba(255, 200, 200, 0.9);
+    border: 1px solid #ff6b6b;
+    color: #d63031;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#submissionResult .success-message {
+    background-color: rgba(200, 255, 200, 0.9);
+    border: 1px solid #2ecc71;
+    color: #27ae60;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Loading state for submit button */
+#SubmitButton[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background-color: #5a9bd5 !important;
+}
+
+/* Enhanced dropdown visibility */
+#level-list.show, 
+#days-list.show {
+    display: block !important;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Checkbox styling for better visibility */
+.Day:checked + .chosen-day {
+    font-weight: bold;
+    color: var(--second-color);
+}
+
+/* Time input validation feedback */
+#startTime.error, #endTime.error {
+    border-color: #ff6b6b !important;
+    background-color: rgba(255, 200, 200, 0.2) !important;
+}
+
+#startTime.success, #endTime.success {
+    border-color: #2ecc71 !important;
+    background-color: rgba(200, 255, 200, 0.2) !important;
+}
+
+/* Message textarea character count */
+#message {
+    transition: all 0.3s ease;
+}
+
+#message:focus {
+    border-color: var(--second-color) !important;
+    box-shadow: 0 0 0 2px rgba(49, 140, 231, 0.2);
+}
+
+/* Responsive adjustments for messages */
+@media (max-width: 600px) {
+    #submissionResult .error-message,
+    #submissionResult .success-message {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Dropdown scrollbar styling */
+#level-list ul, #days-list ul {
+    scrollbar-width: thin;
+    scrollbar-color: var(--second-color) #f1f1f1;
+}
+
+#level-list ul::-webkit-scrollbar,
+#days-list ul::-webkit-scrollbar {
+    width: 6px;
+}
+
+#level-list ul::-webkit-scrollbar-track,
+#days-list ul::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#level-list ul::-webkit-scrollbar-thumb,
+#days-list ul::-webkit-scrollbar-thumb {
+    background-color: var(--second-color);
+    border-radius: 10px;
+}
 
 
 
