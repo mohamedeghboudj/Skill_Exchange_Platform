@@ -1,5 +1,5 @@
 <?php
-<<<<<<< HEAD
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
@@ -31,8 +31,8 @@ try {
                 duration,
                 rating,
                 enrolled_count
-              FROM COURSE
-              WHERE course_id = ?";
+            FROM COURSE
+        WHERE course_id = ?";
 
     $stmt = $conn->prepare($query);
     if (!$stmt) throw new Exception($conn->error);
