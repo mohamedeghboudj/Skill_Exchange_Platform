@@ -46,19 +46,13 @@ document.addEventListener("DOMContentLoaded", () => {
         input.classList.remove("error");
     }
     function CheckInputs() {
-        const NameValue = StudentName.value.trim();
+      
         const SkillValue = Skill.value.trim();
         const MessageValue = Message.value.trim();
         const charOnly = /^[A-Za-z\s]+$/;
         result.innerText = "";
-        if (NameValue === "" || NameValue.length < 3 || !charOnly.test(NameValue)) {
-
-            setErrorFor(StudentName, "Name must be at least 3 characters.");
-            return false;
-
-        } else {
-            setSuccessFor(StudentName);
-        }
+      
+        
         if (SkillValue === "" || SkillValue.length < 2) {
 
 

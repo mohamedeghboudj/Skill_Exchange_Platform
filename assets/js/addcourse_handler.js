@@ -42,7 +42,7 @@ export function handleCourseSubmission() {
                 courseId: courseId,
                 title: `${String(index + 1).padStart(2, '0')}.${file.name.replace(/\.[^/.]+$/, '')}`,
                 duration: "00:00:00",
-                thumbnail: "../assets/images/webdev.jpg", // Default thumbnail
+                thumbnail: "/assets/images/webdev.jpg", // Default thumbnail
                 videoUrl: URL.createObjectURL(file),
                 order: index + 1
             };

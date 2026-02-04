@@ -4,13 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Progress</title>
-    <link rel="stylesheet" href="../assets//css/studentProgress.css">
-
+    <title>Student Progress</title>
+    <link rel="stylesheet" href="../assets/css/studentProgress.css">
 </head>
 
 <body>
-
     <!-- ===== Header ===== -->
     <header>
         <h1>Full-Stack Web Development</h1>
@@ -19,22 +17,25 @@
 
     <!-- ===== Layout ===== -->
     <div class="container">
-
-        <!-- ===== Sidebar ===== -->
+        <!-- ===== Sidebar (Chat) ===== -->
         <aside class="sidebar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x close-chat"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-
-            <div class="course-title">Full-Stack Web Development</div>
-            <div class="course-sub">With Dr. Mohamed Mahmoudi</div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-x close-chat">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+            </svg>
+            <div id="chat-header">
+                <div class="course-title">Full-Stack Web Development</div>
+                <div class="course-sub">student Alex Johnson</div>
+            </div>
 
             <div class="chat teacher">
                 Hi Alex, let me know if you have any questions about the JavaScript basics video.
             </div>
-
             <div class="chat student">
                 Thanks! I'm a bit unsure about when to use let vs const.
             </div>
-
             <div class="chat teacher">
                 Great question. Use const by default and switch to let only when you need to reassign.
             </div>
@@ -47,111 +48,145 @@
 
         <!-- ===== Main Content ===== -->
         <main class="main">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-left-icon lucide-move-left " id="left-arrow"><path d="M6 8L2 12L6 16"/><path d="M2 12H22"/></svg>            <div class="progress-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-left"
+                id="left-arrow">
+                <path d="M6 8L2 12L6 16" />
+                <path d="M2 12H22" />
+            </svg>
+
             <!-- Course Progress -->
             <div class="progress-box">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle chat-toggle"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-message-circle chat-toggle">
+                    <path
+                        d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+                </svg>
                 <div class="progress-header">
                     <span>Course progress</span>
                     <span>72% complete</span>
                 </div>
-
                 <div class="progress-bar">
                     <div></div>
                 </div>
-
                 <p class="stats">
-                    Videos watched: <b>18 / 24</b> &nbsp; | &nbsp;
-                    Assignments: <b>6 done · 1 missed</b> &nbsp; | &nbsp;
-                    Average mark: <b>84%</b>
+                    Videos watched: <b>18 / 24</b> | Assignments: <b>6 done · 1 missed</b> | Average mark: <b>84%</b>
                 </p>
+                <button id="rateCourse">Rate the course!</button>
             </div>
 
+            <!-- Video Progress -->
             <div class="progress-box">
                 <h3>Video progress</h3>
-
                 <div class="stepper">
-                    <div class="step completed">
-                        <span class="circle"></span>
+                    <div class="step completed"><span class="circle"></span>
                         <p>Course welcome</p>
                     </div>
-
-                    <div class="step completed">
-                        <span class="circle"></span>
+                    <div class="step completed"><span class="circle"></span>
                         <p>Setup</p>
                     </div>
-
-                    <div class="step completed">
-                        <span class="circle"></span>
+                    <div class="step completed"><span class="circle"></span>
                         <p>HTML basics</p>
                     </div>
-
-                    <div class="step completed">
-                        <span class="circle"></span>
+                    <div class="step completed"><span class="circle"></span>
                         <p>CSS selectors</p>
                     </div>
-
-                    <div class="step active">
-                        <span class="circle"></span>
+                    <div class="step active"><span class="circle"></span>
                         <p>JavaScript</p>
                     </div>
-
-                    <div class="step">
-                        <span class="circle"></span>
+                    <div class="step"><span class="circle"></span>
                         <p>Functions</p>
                     </div>
-
-                    <div class="step">
-                        <span class="circle"></span>
+                    <div class="step"><span class="circle"></span>
                         <p>DOM</p>
                     </div>
-
-                    <div class="step">
-                        <span class="circle"></span>
+                    <div class="step"><span class="circle"></span>
                         <p>Mini project</p>
                     </div>
                 </div>
             </div>
 
-
-            <!-- Assignments -->
+            <!-- Assignments (Student View - No Grading) -->
+            <!-- Assignments (Student View) -->
             <div class="progress-box">
                 <h3>Assignments and marks</h3>
-
-                <div class="row done">
+                <div class="row done assignment" data-id="A1">
                     <span>A1 · HTML structure</span>
                     <span>96 / 100</span>
                 </div>
-
-                <div class="row done">
+                <div class="row done assignment" data-id="A2">
                     <span>A2 · Responsive layout</span>
                     <span>78 / 100</span>
                 </div>
-
-                <div class="row missed">
+                <div class="row missed assignment">
                     <span>Quiz · Semantic HTML</span>
                     <span>0 / 20</span>
                 </div>
-
-                <div class="row done">
+                <div class="row done assignment" data-id="A3">
                     <span>A3 · JavaScript basics</span>
                     <span>86 / 100</span>
                 </div>
-
-                <div class="row pending">
+                <div class="row pending assignment" data-id="Q1">
                     <span>Checkpoint quiz · JavaScript</span>
                     <span>Pending</span>
                 </div>
-
-                <div class="row locked">
+                <div class="row locked assignment">
                     <span>A4 · DOM manipulation project</span>
                     <span>Locked</span>
                 </div>
 
-            </div>
+                <div class="progress-box" id="submission-panel" style="display:none;">
+                    <h3 id="assignment-title">Assignment</h3>
+
+                    <!-- PDF VIEWER for DONE assignments (like teacher) -->
+                    <div class="submission-box">
+                        <div class="submission-pdf" style="display:none;"
+                            onclick="window.open('/assets/sample.pdf', '_blank')">
+                            <div class="pdf-thumbnail">
+                                <img src="/assets/images/pdf.jpg" alt="PDF Icon">
+                            </div>
+                            <div class="pdf-info">
+                                <h3>Student Submission</h3>
+                                <p>02_Finite_Automata.pdf</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPLOAD FORM for PENDING assignments -->
+                    <div class="file-upload-area" style="display:none;">
+                        <input type="file" id="file-input" accept=".pdf,.doc,.docx" style="display:none;">
+                        <label for="file-input" class="file-label">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17,8 12,13 7,8" />
+                                <line x1="12" y1="13" x2="12" y2="21" />
+                            </svg>
+                            <span>Choose file to upload</span>
+                        </label>
+                        <div class="file-preview" id="file-preview" style="display:none;">
+                            <img src="/assets/images/pdf.jpg" alt="Selected file">
+                            <div class="file-info">
+                                <h4 id="file-name"></h4>
+                                <p id="file-size"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT BUTTON for PENDING only -->
+                    <div class="submit-box" style="display:none;">
+                        <button id="submit-assignment">Submit Assignment</button>
+                    </div>
+                </div>
+
+            </div> <!-- END assignments progress-box -->
+
 
         </main>
     </div>
+    <script>
+        console.log("Inline script works!");
+    </script>
     <script src="../assets/js/studentProgress.js"></script>
 </body>
 

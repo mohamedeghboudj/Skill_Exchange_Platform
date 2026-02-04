@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Sign in validation
+    // Sign in validation  hii
     let EmailIn = document.querySelector("#email");
     let PasswordIn = document.querySelector("#password");
     let EmailError = document.querySelector("#emailError");
@@ -26,15 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function authenticateUser(email, password) {
         try {
-            const response = await fetch('/assets/php/authenticate.php', {
+            const response = await fetch('assets/php/authenticate.php', {// hadil to see whay it s not working 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ email, password }),
                 credentials: "include" // hadil added this to test the work of the session 
-        
-                
+
+
             });
 
             // Check if response is OK before parsing JSON

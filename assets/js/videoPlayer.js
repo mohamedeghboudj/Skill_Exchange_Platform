@@ -1,6 +1,7 @@
-let cross=document.querySelector("#cross");
+const crossIcon = document.getElementById("cross");
 
 
-cross.addEventListener("click",()=>{
-    window.location.href="/pages/courseInfo.html";
+crossIcon.addEventListener("click", () => {
+    // Redirect to courseinfo page
+    window.location.href = "/pages/courseInfo.html"; 
 });
