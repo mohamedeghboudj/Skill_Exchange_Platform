@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 header("Content-Type: application/json");
@@ -19,23 +19,40 @@ if ($conn->connect_error) {
 
 $search = trim($_GET['q'] ?? '');
 
-$sql = "SELECT 
-            courseid AS id,
-            coursetitle AS title,
-            coursedescription AS description,
-            category,
-            price,
-            duration,
-            rating
-        FROM COURSE
-        WHERE course_title LIKE ?
-           OR course_description LIKE ?
-           OR category LIKE ?";
-
-$stmt = $conn->prepare($sql);
-
-$like = "%$search%";
-$stmt->bind_param("sss", $like, $like, $like);
+// If search is empty, return all courses
+if ($search === '') {
+    $sql = "SELECT 
+                c.course_id AS id,
+                c.course_title AS title,
+                c.course_description AS description,
+                c.category,
+                c.price,
+                c.duration,
+                c.rating,
+                u.full_name AS instructor
+            FROM COURSE c
+            JOIN USER u ON u.user_id = c.teacher_id";
+    $stmt = $conn->prepare($sql);
+} else {
+    $sql = "SELECT 
+                c.course_id AS id,
+                c.course_title AS title,
+                c.course_description AS description,
+                c.category,
+                c.price,
+                c.duration,
+                c.rating,
+                u.full_name AS instructor
+            FROM COURSE c
+            JOIN USER u ON u.user_id = c.teacher_id
+            WHERE c.course_title LIKE ?
+               OR c.course_description LIKE ?
+               OR c.category LIKE ?
+               OR u.full_name LIKE ?";
+    $stmt = $conn->prepare($sql);
+    $like = "%$search%";
+    $stmt->bind_param("ssss", $like, $like, $like, $like);
+}
 
 $stmt->execute();
 $result = $stmt->get_result();
@@ -49,3 +66,4 @@ echo json_encode($courses);
 
 $stmt->close();
 $conn->close();
+?>

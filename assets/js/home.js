@@ -1,6 +1,89 @@
 const search = document.querySelector(".searching")
 let courses = document.querySelectorAll(".course")
 let category = document.querySelectorAll(".category")
+let searchcat = document.querySelector("#search-cat");
+const catsection = document.querySelector(".categories");
+const container = document.querySelector("#course-list");
+
+searchcat.addEventListener('click', () => {
+    catsection.classList.toggle('hidden');
+})
+
+search.addEventListener("input", () => {
+    const query = search.value.trim();
+
+    fetch(`/assets/php/search-courses.php?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            renderCourses(data);
+        })
+        .catch(err => console.error("Error searching courses:", err));
+});
+
+category.forEach(catEl => {
+    catEl.addEventListener('click', () => {
+        const categoryName = catEl.querySelector("h3").innerText.trim();
+
+        fetch(`/assets/php/fetch_courses_by_category.php?category=${encodeURIComponent(categoryName)}`)
+            .then(res => res.json())
+            .then(data => {
+                renderCourses(data);
+            })
+            .catch(err => console.error("Error fetching category courses:", err));
+    });
+});
+
+// Load all courses on page load
+fetch("/assets/php/fetch_courses_by_category.php")
+    .then(res => res.json())
+    .then(renderCourses)
+    .catch(err => console.error("Error loading courses:", err));
+
+function renderCourses(data) {
+    container.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        document.getElementById("noCourses").style.display = "block";
+        return;
+    }
+
+    document.getElementById("noCourses").style.display = "none";
+
+    data.forEach(course => {
+        const card = `
+            <div class="course" data-category="${course.category}" data-id="${course.id}">
+                <div class="skillicon">
+                    <img src="/assets/images/${course.category}.png" height="50">
+                </div>
+                <h3>${course.title}</h3>
+                <div class="teacher">
+                    <img src="/assets/images/person.webp" height="25" width="25">
+                    <p id="teacherName">${course.instructor || 'Unknown'}</p>
+                </div>
+                <div class="time">
+                    <img src="/assets/images/clock.png" width="12" height="12">
+                    <p>${course.duration} to complete</p>
+                </div>
+                <p class="description">${course.description}</p>
+                <div class="coursefoot">
+                    <div class="info">
+                        <div class="rating">
+                            ⭐ <p>${course.rating}</p>
+                        </div>
+                        <span id="price">${course.price}</span>
+                    </div>
+                    <button>start →</button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+
+}
+/*
+const search = document.querySelector(".searching")   //ikram old
+let courses = document.querySelectorAll(".course")
+let category = document.querySelectorAll(".category")
 let searchcat=document.querySelector("#search-cat");
 const catsection=document.querySelector(".categories");
 const container = document.querySelector("#course-list");
@@ -13,7 +96,7 @@ searchcat.addEventListener('click', () => {
 search.addEventListener("input", () => {
     const query = search.value.trim();
 
-    fetch(`/learn-land/search_courses.php?q=${encodeURIComponent(query)}`)
+    fetch(`/assets/php/search-courses.php?q=${encodeURIComponent(query)}`)
         .then(res => res.json())
         .then(data => {
             container.innerHTML = "";
@@ -70,7 +153,7 @@ category.forEach(catEl => {
     catEl.addEventListener('click', () => {
         const categoryName = catEl.querySelector("h3").innerText.trim();
 
-        fetch(`/learn-land/fetch_courses_by_category.php?category=${encodeURIComponent(categoryName)}`)
+        fetch(`/assets/php/fetch_courses_by_category.php?category=${encodeURIComponent(categoryName)}`)
             .then(res => res.json())
             .then(data => {
                 container.innerHTML = "";
@@ -122,9 +205,10 @@ category.forEach(catEl => {
     });
 });
 
-fetch("/learn-land/fetch_courses_by_category.php")
+fetch("/assets/php/fetch_courses_by_category.php")
     .then(res => res.json())
     .then(renderCourses);
+    */  
 
 
 
@@ -182,8 +266,8 @@ document.querySelector(".teachnav").addEventListener("click", (e) => {
     handleBecomeTeacherClick();
 
 });
-
-function renderCourses(data) {
+/*
+function renderCourses(data) { //ikram old
     container.innerHTML = "";
 
     if (!data || data.length === 0) {
@@ -194,13 +278,33 @@ function renderCourses(data) {
     document.getElementById("noCourses").style.display = "none";
 
     data.forEach(course => {
-        const card = `
-            <div class="course" data-id="${course.id}">
-                <h3>${course.title}</h3>
-                <p>${course.description}</p>
-                <span>${course.price}</span>
-            </div>
-        `;
-        container.innerHTML += card;
-    });
+                    const card = `
+                        <div class="course" data-category="${course.category}" data-id="${course.id}">
+                            <div class="skillicon">
+                                <img src="/assets/images/${course.category.replace(/\s+/g, '').toLowerCase()}.png" height="50">
+                            </div>
+                            <h3>${course.title}</h3>
+                            <div class="teacher">
+                                <img src="/assets/images/person.webp" height="25" width="25">
+                                <p id="teacherName">${course.instructor}</p>
+                            </div>
+                            <div class="time">
+                                <img src="../assets/images/clock.png" width="12" height="12">
+                                <p>${course.duration} to complete</p>
+                            </div>
+                            <p class="description">${course.description}</p>
+                            <div class="coursefoot">
+                                <div class="info">
+                                    <div class="rating">
+                                        ⭐ <p>${course.rating}</p>
+                                    </div>
+                                    <span id="price">${course.price}</span>
+                                </div>
+                                <button>start →</button>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
 }
+*/
