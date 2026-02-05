@@ -172,13 +172,66 @@ async function loadTeacherChats() {
 }
 
 // Attach click listeners to chat items
+// Attach click listeners to chat items
 function attachChatClickListeners() {
     let chatLabels = document.getElementsByClassName("chat");
 
     for (let chatLabel of chatLabels) {
-        chatLabel.addEventListener('click', () => {
-            window.location.href = "/html/studentProgress.html";
+        chatLabel.addEventListener('click', async function () {
+            const courseId = this.dataset.courseId;
+            const teacherId = this.dataset.teacherId;
+
+            if (!courseId || !teacherId) {
+                console.error('Missing course or teacher ID');
+                return;
+            }
+
+            // Call backend to set active chat in session
+            const success = await setActiveChat(courseId, teacherId);
+
+            if (success) {
+                // Navigate to progress page
+                window.location.href = "/html/studentProgress.html";
+            } else {
+                console.error('Failed to set active chat');
+                alert('Unable to open chat. Please try again.');
+            }
         });
+    }
+}
+
+// New function to set active chat in backend session
+async function setActiveChat(courseId, teacherId) {
+    try {
+        const response = await fetch('/api/set_active_chat_learn.php', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                course_id: parseInt(courseId),
+                teacher_id: parseInt(teacherId)
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log('Active chat set:', data.data);
+            return true;
+        } else {
+            console.error('API error:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('Error setting active chat:', error);
+        return false;
     }
 }
 

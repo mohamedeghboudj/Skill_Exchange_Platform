@@ -6,7 +6,7 @@ session_start();
 require_once '../config/db.php';
 
 if (ob_get_level()) ob_end_clean();
-//Clears any buffered output. This ensures no extra whitespace or output breaks  JSON response.
+//Clears any buffered output. This ensures no extra whitespace or output breaks JSON response.
 
 
 if (!isset($_SESSION['user_id'])) {
@@ -41,7 +41,8 @@ try {
     $age = isset($data['age']) ? intval($data['age']) : 0;
     $skill = isset($data['skill']) ? trim($data['skill']) : '';
     $bio = isset($data['bio']) ? trim($data['bio']) : '';
-    $is_teacher = isset($data['is_teacher']) ? intval($data['is_teacher']) : 0;
+    // HADIL REMOVED: User cannot set is_teacher through profile update
+    // $is_teacher = isset($data['is_teacher']) ? intval($data['is_teacher']) : 0;
     $whatsapp_link = isset($data['whatsapp_link']) ? trim($data['whatsapp_link']) : '';
     $linkedIn_link = isset($data['linkedIn_link']) ? trim($data['linkedIn_link']) : '';
     $insta_link = isset($data['insta_link']) ? trim($data['insta_link']) : '';
@@ -64,15 +65,27 @@ try {
         throw new Exception('Bio is required');
     }
 
-    // ADDED: Check current teacher status and delete certificates if disabling teacher mode
+    // ============================================================
+    // HADIL ADDED: Get current teacher status from database
+    // Teacher mode can ONLY be changed through admin approval system
+    // ============================================================
     $check_sql = "SELECT is_teacher FROM USER WHERE user_id = ?";
     $check_stmt = mysqli_prepare($conn, $check_sql);
     mysqli_stmt_bind_param($check_stmt, "i", $user_id);
     mysqli_stmt_execute($check_stmt);
-    mysqli_stmt_bind_result($check_stmt, $current_is_teacher);
+    mysqli_stmt_bind_result($check_stmt, $is_teacher);
     mysqli_stmt_fetch($check_stmt);
     mysqli_stmt_close($check_stmt);
 
+    // Use the current value from database, ignoring any user input
+    // This prevents users from manually activating teacher mode
+    // ============================================================
+    // END OF HADIL'S ADDITION
+    // ============================================================
+
+    // REMOVED: Check and delete certificates when disabling teacher mode
+    // Users cannot disable teacher mode through profile update
+    /*
     // If changing from teacher (1) to student (0), delete all certificates
     if ($current_is_teacher == 1 && $is_teacher == 0) {
         // Get all certificate URLs to delete files
@@ -103,10 +116,10 @@ try {
             }
         }
     }
-    // END ADDED
+    */
 
     
-    // teacher mode 
+    // teacher mode - validate social links only if user is already a teacher
     if ($is_teacher == 1) {
         if (empty($whatsapp_link) || !filter_var($whatsapp_link, FILTER_VALIDATE_URL)) {
             throw new Exception('Valid WhatsApp link is required for teachers');
@@ -118,25 +131,29 @@ try {
             throw new Exception('Valid Instagram link is required for teachers');
         }
     } else {
-      // not teacher mode 
+        // not teacher mode - clear social links
         $whatsapp_link = '';
         $linkedIn_link = '';
         $insta_link = '';
     }
 
-    // Update database
+    // ============================================================
+    // HADIL MODIFIED: Update database WITHOUT changing is_teacher
+    // is_teacher field is NOT included in UPDATE - it preserves current value
+    // ============================================================
     $sql = "UPDATE USER SET 
                 full_name = ?,
                 age = ?,
                 skill = ?,
                 bio = ?,
-                is_teacher = ?,
                 whatsapp_link = ?,
                 linkedIn_link = ?,
                 insta_link = ?";
     
-    $params = [$full_name, $age, $skill, $bio, $is_teacher, $whatsapp_link, $linkedIn_link, $insta_link];
-    $types = "sississs";
+    $params = [$full_name, $age, $skill, $bio, $whatsapp_link, $linkedIn_link, $insta_link];
+    $types = "sisssss";
+    // Note: is_teacher is NOT in the UPDATE statement
+    // ============================================================
 
     // Add profile picture update if provided
     if (!empty($profile_picture)) {
@@ -169,7 +186,8 @@ try {
     echo json_encode([
         'success' => true,
         'message' => 'Profile updated successfully',
-        'affected_rows' => $affected_rows
+        'affected_rows' => $affected_rows,
+        'is_teacher' => $is_teacher // Return current teacher status
     ]);
 
 } catch (Exception $e) {

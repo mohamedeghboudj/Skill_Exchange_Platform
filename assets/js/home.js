@@ -208,7 +208,7 @@ category.forEach(catEl => {
 fetch("/assets/php/fetch_courses_by_category.php")
     .then(res => res.json())
     .then(renderCourses);
-    */  
+    */
 
 
 
@@ -222,6 +222,11 @@ courses.forEach(course => {
 //
 // hadil has to change starting from here !
 //--------------------------------------------------------THIS IS NOT WORKING YET -----------------------------------------
+
+// ============================================================
+// HADIL COMMENTED OUT ORIGINAL CODE (preserved for grading)
+// ============================================================
+/*
 function handleBecomeTeacherClick() {
     //  const storedCurrentUser = localStorage.getItem("currentUser");
 
@@ -266,6 +271,75 @@ document.querySelector(".teachnav").addEventListener("click", (e) => {
     handleBecomeTeacherClick();
 
 });
+*/
+// ============================================================
+// END OF ORIGINAL CODE
+// ============================================================
+
+
+// ============================================================
+// HADIL'S NEW VERSION: Backend-based teacher mode activation
+// ============================================================
+
+// Updated handleBecomeTeacherClick function with backend API call
+async function handleBecomeTeacherClick() {
+    try {
+        // Call backend API to check teacher status
+        const response = await fetch('/assets/php/check_teacher_home.php', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        console.log('Teacher status check:', data);
+
+        // Redirect based on backend response
+        if (data.redirect) {
+            window.location.href = data.redirect;
+        } else {
+            // Fallback - should not reach here
+            window.location.href = '/pages/teacherrequest.html';
+        }
+
+    } catch (error) {
+        console.error('Error checking teacher status:', error);
+        // On error, default to teacher request page
+        window.location.href = '/pages/teacherrequest.html';
+    }
+}
+
+// HADIL ADDED: Attach event listeners on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+    const becomeTeacherBtn = document.getElementById('becomeTeacher');
+    const teachNavLink = document.querySelector('.teachnav');
+
+    if (becomeTeacherBtn) {
+        // Remove any existing listeners and add new one
+        becomeTeacherBtn.replaceWith(becomeTeacherBtn.cloneNode(true));
+        document.getElementById('becomeTeacher').addEventListener('click', handleBecomeTeacherClick);
+    }
+
+    if (teachNavLink) {
+        teachNavLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleBecomeTeacherClick();
+        });
+    }
+});
+
+// ============================================================
+// END OF HADIL'S ADDITIONS
+// ============================================================
+
+
 /*
 function renderCourses(data) { //ikram old
     container.innerHTML = "";

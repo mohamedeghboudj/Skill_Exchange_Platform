@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupPreExistingCourses();
     await renderAllCourses();
     setupAddCourseButton();
-    setupChatClickHandlers();
+    // setupChatClickHandlers();
 });
 
 // ─── 1. Remove any static/hardcoded course HTML from the page ───────────────
@@ -71,9 +71,9 @@ async function renderAllCourses() {
 // ─── 4. Build one course card ────────────────────────────────────────────────
 async function createCourseElement(course) {
     const courseId = course.course_id || course.id;
-    const title   = course.course_title || course.title;
+    const title = course.course_title || course.title;
 
-    const videos      = await getVideosByCourse(courseId);
+    const videos = await getVideosByCourse(courseId);
     const assignments = await getAssignmentsByCourse(courseId);
 
     const div = document.createElement('div');
@@ -114,16 +114,16 @@ async function createCourseElement(course) {
             </div>
             <div class="vdcards" data-course-id="${courseId}">
                 ${videos.length
-                    ? videos.map(v => videoCardHTML(v, courseId)).join('')
-                    : '<p style="color:#999;font-style:italic;">No videos yet</p>'}
+            ? videos.map(v => videoCardHTML(v, courseId)).join('')
+            : '<p style="color:#999;font-style:italic;">No videos yet</p>'}
             </div>
         </div>
 
         <div class="assignments">
             <p>Assignments</p>
             ${assignments.length
-                ? assignments.map(a => assignmentCardHTML(a)).join('')
-                : '<p style="color:#999;font-style:italic;">No assignments yet</p>'}
+            ? assignments.map(a => assignmentCardHTML(a)).join('')
+            : '<p style="color:#999;font-style:italic;">No assignments yet</p>'}
             <div class="add-assignment-container" style="margin-top:10px;">
                 <button class="addAss add-assignment-btn" data-course-id="${courseId}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -143,10 +143,10 @@ async function createCourseElement(course) {
 
 // ─── 5. HTML card templates ──────────────────────────────────────────────────
 function videoCardHTML(video, courseId) {
-    const id    = video.video_id || video.id;
+    const id = video.video_id || video.id;
     const title = video.video_title || video.title;
     const thumb = video.thumbnail || video.video_url || '../assets/images/webdev.jpg';
-    const show  = deleteMode[courseId] ? 'block' : 'none';
+    const show = deleteMode[courseId] ? 'block' : 'none';
 
     return `
         <div class="video" data-video-id="${id}" style="animation:slideIn 0.3s ease;">
@@ -161,9 +161,9 @@ function videoCardHTML(video, courseId) {
 }
 
 function assignmentCardHTML(a) {
-    const id    = a.assignment_id || a.id;
+    const id = a.assignment_id || a.id;
     const title = a.assignment_title || a.title || 'Assignment';
-    const url   = a.assignment_url || a.fileUrl || '';
+    const url = a.assignment_url || a.fileUrl || '';
 
     return `
         <div class="assignment" data-assignment-id="${id}" style="animation:slideIn 0.3s ease;">
@@ -242,9 +242,9 @@ function handleDeleteCourse(courseId, courseDiv) {
 
 // ─── 8. DELETE videos (checkbox select mode) ─────────────────────────────────
 function handleDeleteVideos(courseId, courseDiv) {
-    const vdcards   = courseDiv.querySelector('.vdcards');
+    const vdcards = courseDiv.querySelector('.vdcards');
     const checkboxes = vdcards.querySelectorAll('.video-checkbox');
-    const btn        = courseDiv.querySelector('.delete-videos-btn');
+    const btn = courseDiv.querySelector('.delete-videos-btn');
 
     const exitDeleteMode = () => {
         deleteMode[courseId] = false;
@@ -310,7 +310,7 @@ function handleAddVideo(courseId, courseDiv) {
         fd.append('video', file);
 
         try {
-            const res  = await fetch(API + '/add_video.php', { method: 'POST', credentials: 'include', body: fd });
+            const res = await fetch(API + '/add_video.php', { method: 'POST', credentials: 'include', body: fd });
             const data = await res.json();
 
             const vdcards = courseDiv.querySelector('.vdcards');
@@ -347,10 +347,10 @@ function handleAddAssignment(courseId, courseDiv) {
         fd.append('assignment', file);
 
         try {
-            const res  = await fetch(API + '/add_assignment.php', { method: 'POST', credentials: 'include', body: fd });
+            const res = await fetch(API + '/add_assignment.php', { method: 'POST', credentials: 'include', body: fd });
             const data = await res.json();
 
-            const assignmentsDiv  = courseDiv.querySelector('.assignments');
+            const assignmentsDiv = courseDiv.querySelector('.assignments');
             const addBtnContainer = assignmentsDiv.querySelector('.add-assignment-container');
 
             const ph = [...assignmentsDiv.querySelectorAll('p')].find(p => /no assignments yet/i.test(p.textContent));
@@ -439,11 +439,11 @@ function setupAddCourseButton() {
     });
 }
 
-// ─── 13. Chat labels → teacherProgress ──────────────────────────────────────
-function setupChatClickHandlers() {
-    document.querySelectorAll('.chat').forEach(el => {
-        el.addEventListener('click', () => {
-            window.location.href = '/html/teacherProgress.html';
-        });
-    });
-}
+// ─── 13. Chat labels → teacherProgress  hadil touched this ──────────────────────────────────────
+//function setupChatClickHandlers() {
+//   document.querySelectorAll('.chat').forEach(el => {
+//     el.addEventListener('click', () => {
+//       window.location.href = '/html/teacherProgress.html';
+//  });
+// });
+//}
