@@ -1,4 +1,4 @@
-body{
+/*body{
     padding: 0;
     margin: 0;
 }
@@ -23,4 +23,81 @@ body{
 }
 .container #cross:hover{
     cursor: pointer;
+}*/
+body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0;
+    background: rgb(40, 39, 39);
+    width: 100vw;
+    height: 100vh;
+}
+
+#videoPlayer {
+    height: 80vh;
+    width: 60vw;
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: 2px 5px 15px 2px rgb(2, 2, 2);
+    border-radius: 15px;
+    object-fit: contain;
+}
+
+/* Close button styling */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    stroke: white;
+}
+
+.close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+    stroke: #ff4444;
+}
+
+.close-btn:active {
+    transform: scale(0.95);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #videoPlayer {
+        width: 95vw;
+        height: auto;
+    }
+    
+    .close-btn {
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Loading state (optional) */
+#videoPlayer:not([src]) {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Custom video controls styling (if needed) */
+#videoPlayer::-webkit-media-controls-panel {
+    background-color: rgba(0, 0, 0, 0.7);
 }
