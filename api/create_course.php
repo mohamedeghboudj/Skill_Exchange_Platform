@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
 $teacher_id = $_SESSION['user_id'];
 
 // 3. Include database connection
-require_once '../assets/php/db.php';
+require_once '../config/db.php';
 
 // 4. Verify user is a teacher
 $checkTeacherStmt = $conn->prepare("SELECT is_teacher FROM USER WHERE user_id = ?");

@@ -5,11 +5,14 @@ let searchcat = document.querySelector("#search-cat");
 const catsection = document.querySelector(".categories");
 const container = document.querySelector("#course-list");
 
-searchcat.addEventListener('click', () => {
-    catsection.classList.toggle('hidden');
-})
+if (searchcat && catsection) {
+    searchcat.addEventListener('click', () => {
+        catsection.classList.toggle('hidden');
+    });
+}
 
-search.addEventListener("input", () => {
+if (search) {
+    search.addEventListener("input", () => {
     const query = search.value.trim();
 
     fetch(`/assets/php/search-courses.php?q=${encodeURIComponent(query)}`)
@@ -19,7 +22,7 @@ search.addEventListener("input", () => {
         })
         .catch(err => console.error("Error searching courses:", err));
 });
-
+}
 category.forEach(catEl => {
     catEl.addEventListener('click', () => {
         const categoryName = catEl.querySelector("h3").innerText.trim();

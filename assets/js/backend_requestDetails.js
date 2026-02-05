@@ -1,8 +1,76 @@
-// File: /assets/js/requestDetails.js (UPDATED)
+// File: /assets/js/backend_requestDetails.js (FIXED)
 let payBtn = document.querySelector(".pay");
 let cancelBtn = document.querySelector(".cancel");
-let parentDialog = window.parent.document.getElementById("popup2");
+let parentDialog = window.parent ? window.parent.document.getElementById("popup2") : null;
 let requestDetails = null;
+
+// Only add event listeners if elements exist
+if (payBtn) {
+    payBtn.addEventListener("click", async () => {
+        if (!requestDetails) {
+            alert("No request data available");
+            return;
+        }
+        
+        const status = requestDetails.request_status || requestDetails.status;
+        if (status !== 'accepted') {
+            alert("This request cannot be paid for yet. Please wait for teacher approval.");
+            return;
+        }
+        
+        // Confirm payment
+        if (!confirm(`Confirm payment of $${requestDetails.price} for "${requestDetails.course_title}"?`)) {
+            return;
+        }
+        
+        try {
+            // Use the new process_payment.php API
+            const response = await fetch('/api/process_payment.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    course_id: requestDetails.course_id,
+                    request_id: requestDetails.request_id,
+                    amount: requestDetails.price
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(result.message || "Payment successful! You are now enrolled in the course.");
+                
+                // Close popups
+                if (window.parent && window.parent.closePop) {
+                    window.parent.closePop();
+                }
+                
+                // Refresh the page to show new enrollment
+                setTimeout(() => {
+                    if (window.parent) {
+                        window.parent.location.reload();
+                    }
+                }, 1500);
+            } else {
+                alert("Error: " + (result.error || "Payment failed. Please try again."));
+            }
+            
+        } catch (error) {
+            console.error("Payment error:", error);
+            alert("An error occurred. Please check your connection and try again.");
+        }
+    });
+}
+
+if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+        if (window.parent && window.parent.closePop) {
+            window.parent.closePop();
+        }
+    });
+}
 
 // Listen for request data from parent
 window.addEventListener('message', function(event) {
@@ -12,10 +80,12 @@ window.addEventListener('message', function(event) {
         
         // Show/hide pay button based on status
         const status = requestDetails.request_status || requestDetails.status;
-        if (status === 'accepted') {
-            payBtn.style.display = 'flex';
-        } else {
-            payBtn.style.display = 'none';
+        if (payBtn) {
+            if (status === 'accepted') {
+                payBtn.style.display = 'flex';
+            } else {
+                payBtn.style.display = 'none';
+            }
         }
     }
 });
@@ -79,67 +149,6 @@ function formatStatus(status) {
     return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
-payBtn.addEventListener("click", async () => {
-    if (!requestDetails) {
-        alert("No request data available");
-        return;
-    }
-    
-    const status = requestDetails.request_status || requestDetails.status;
-    if (status !== 'accepted') {
-        alert("This request cannot be paid for yet. Please wait for teacher approval.");
-        return;
-    }
-    
-    // Confirm payment
-    if (!confirm(`Confirm payment of $${requestDetails.price} for "${requestDetails.course_title}"?`)) {
-        return;
-    }
-    
-    try {
-        // Use the new process_payment.php API
-        const response = await fetch('/api/process_payment.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                course_id: requestDetails.course_id,
-                request_id: requestDetails.request_id,
-                amount: requestDetails.price
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            alert(result.message || "Payment successful! You are now enrolled in the course.");
-            
-            // Close popups
-            if (window.parent.closePop) {
-                window.parent.closePop();
-            }
-            
-            // Refresh the page to show new enrollment
-            setTimeout(() => {
-                window.parent.location.reload();
-            }, 1500);
-        } else {
-            alert("Error: " + (result.error || "Payment failed. Please try again."));
-        }
-        
-    } catch (error) {
-        console.error("Payment error:", error);
-        alert("An error occurred. Please check your connection and try again.");
-    }
-});
-
-cancelBtn.addEventListener("click", () => {
-    if (window.parent.closePop) {
-        window.parent.closePop();
-    }
-});
-
 // Auto-load request data if passed via URL parameters (fallback)
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -152,10 +161,12 @@ document.addEventListener('DOMContentLoaded', function() {
             displayRequestDetails(request);
             
             const status = request.request_status || request.status;
-            if (status === 'accepted') {
-                payBtn.style.display = 'flex';
-            } else {
-                payBtn.style.display = 'none';
+            if (payBtn) {
+                if (status === 'accepted') {
+                    payBtn.style.display = 'flex';
+                } else {
+                    payBtn.style.display = 'none';
+                }
             }
         } catch (e) {
             console.error("Error parsing request data:", e);

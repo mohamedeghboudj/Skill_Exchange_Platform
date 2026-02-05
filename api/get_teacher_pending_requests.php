@@ -1,78 +1,12 @@
 <?php
-// File: /api/get_teacher_requests.php
-/*
-require_once '../config/db.php';
-
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
-    exit;
-}
-
-$teacher_id = $_SESSION['user_id'];
-
-try {
-    $db = new Database();
-    $conn = $db->getConnection();
-    
-    $query = "
-        SELECT 
-            er.request_id,
-            er.student_id,
-            er.course_id,
-            er.status as request_status,
-            er.request_date,
-            er.student_message,
-            c.course_title,
-            c.price,
-            c.category,
-            u.full_name as student_name,
-            u.email as student_email,
-            u.profile_picture as student_picture
-        FROM ENROLLMENT_REQUEST er
-        JOIN COURSE c ON er.course_id = c.course_id
-        JOIN USER u ON er.student_id = u.user_id
-        WHERE c.teacher_id = :teacher_id
-        AND er.status IN ('pending', 'accepted')
-        ORDER BY 
-            CASE er.status 
-                WHEN 'pending' THEN 1 
-                WHEN 'accepted' THEN 2 
-                ELSE 3 
-            END,
-            er.request_date DESC
-    ";
-    
-    $stmt = $conn->prepare($query);
-    $stmt->execute([':teacher_id' => $teacher_id]);
-    $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Format dates
-    foreach ($requests as &$request) {
-        $date = new DateTime($request['request_date']);
-        $request['formatted_date'] = $date->format('M d, Y');
-        $request['formatted_time'] = $date->format('h:i A');
-    }
-    
-    echo json_encode(['success' => true, 'data' => $requests]);
-    
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-}*/
-
-// HADIL CHANGED THIS CODE TO THE ONE BELLOW : 
-
-// File: /api/get_teacher_requests.php
-require_once '../config/db.php';
-
 header('Content-Type: application/json');
 session_start();
 
-// Check authentication
+// Authentication check
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'error' => 'Not authenticated',
         'redirect' => '/auth.html'
     ]);
@@ -81,80 +15,84 @@ if (!isset($_SESSION['user_id'])) {
 
 $teacher_id = $_SESSION['user_id'];
 
+// Use shared DB connection
+require_once __DIR__ . '/../config/db.php';
+
 try {
-    $db = new Database();
-    $conn = $db->getConnection();
-    
-    // First, verify user is a teacher
-    $verifyTeacher = "SELECT is_teacher FROM USER WHERE user_id = :user_id";
-    $stmt = $conn->prepare($verifyTeacher);
-    $stmt->execute([':user_id' => $teacher_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$user || $user['is_teacher'] != 1) {
+    // Verify teacher
+    $verifyTeacher = "SELECT is_teacher FROM USER WHERE user_id = ?";
+    $stmt = mysqli_prepare($conn, $verifyTeacher);
+    mysqli_stmt_bind_param($stmt, "i", $teacher_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user_data = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+
+    if (!$user_data || $user_data['is_teacher'] != 1) {
         echo json_encode([
-            'success' => false, 
+            'success' => false,
             'error' => 'Not a teacher',
             'is_teacher' => false
         ]);
+        mysqli_close($conn);
         exit;
     }
-    
-    // Fetch all enrollment requests for teacher's courses
-    $query = "
-        SELECT 
-            er.request_id,
-            er.student_id,
-            er.course_id,
-            er.status as request_status,
-            er.request_date,
-            er.student_message,
-            er.teacher_decision_date,
-            c.course_title,
-            c.price,
-            c.category,
-            c.duration,
-            u.full_name as student_name,
-            u.email as student_email,
-            u.profile_picture as student_picture,
-            u.bio as student_bio,
-            u.skill as student_skill,
-            -- Count total requests per course
-            (SELECT COUNT(*) 
-             FROM ENROLLMENT_REQUEST er2 
-             WHERE er2.course_id = c.course_id 
-             AND er2.status = 'pending') as pending_count,
-            -- Count enrolled students
-            (SELECT COUNT(*) 
-             FROM ENROLLMENT e 
-             WHERE e.course_id = c.course_id 
-             AND e.is_active = 1) as enrolled_count
-        FROM ENROLLMENT_REQUEST er
-        INNER JOIN COURSE c ON er.course_id = c.course_id
-        INNER JOIN USER u ON er.student_id = u.user_id
-        WHERE c.teacher_id = :teacher_id
-        AND er.status IN ('pending', 'approved', 'rejected')
-        ORDER BY 
-            CASE er.status 
-                WHEN 'pending' THEN 1 
-                WHEN 'approved' THEN 2 
-                ELSE 3 
-            END,
-            er.request_date DESC
-    ";
-    
-    $stmt = $conn->prepare($query);
-    $stmt->execute([':teacher_id' => $teacher_id]);
-    $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Format data for frontend
+
+    // Fetch enrollment requests
+    $query = "SELECT 
+                er.request_id,
+                er.student_id,
+                er.course_id,
+                er.status as request_status,
+                er.request_date,
+                er.student_message,
+                er.teacher_decision_date,
+                c.course_title,
+                c.price,
+                c.category,
+                c.duration,
+                u.full_name as student_name,
+                u.email as student_email,
+                u.profile_picture as student_picture,
+                u.bio as student_bio,
+                u.skill as student_skill,
+                (SELECT COUNT(*) FROM ENROLLMENT_REQUEST er2 
+                 WHERE er2.course_id = c.course_id 
+                 AND er2.status = 'pending') as pending_count,
+                (SELECT COUNT(*) FROM ENROLLMENT e 
+                 WHERE e.course_id = c.course_id 
+                 AND e.is_active = 1) as enrolled_count
+              FROM ENROLLMENT_REQUEST er
+              INNER JOIN COURSE c ON er.course_id = c.course_id
+              INNER JOIN USER u ON er.student_id = u.user_id
+              WHERE c.teacher_id = ?
+              AND er.status IN ('pending','approved','rejected')
+              ORDER BY 
+                CASE er.status 
+                    WHEN 'pending' THEN 1 
+                    WHEN 'approved' THEN 2 
+                    ELSE 3 
+                END,
+                er.request_date DESC";
+
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $teacher_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $requests = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $requests[] = $row;
+    }
+    mysqli_stmt_close($stmt);
+
+    // Format data
     $formatted_requests = [];
     foreach ($requests as $request) {
         $date = new DateTime($request['request_date']);
         $now = new DateTime();
         $interval = $now->diff($date);
-        
-        // Calculate time ago
+
         if ($interval->y > 0) {
             $time_ago = $interval->y . ' year' . ($interval->y > 1 ? 's' : '') . ' ago';
         } elseif ($interval->m > 0) {
@@ -168,7 +106,7 @@ try {
         } else {
             $time_ago = 'Just now';
         }
-        
+
         $formatted_requests[] = [
             'request_id' => (int)$request['request_id'],
             'student_id' => (int)$request['student_id'],
@@ -193,8 +131,8 @@ try {
             'teacher_decision_date' => $request['teacher_decision_date']
         ];
     }
-    
-    // Group by course for frontend
+
+    // Group by course
     $grouped_by_course = [];
     foreach ($formatted_requests as $request) {
         $course_id = $request['course_id'];
@@ -210,7 +148,7 @@ try {
         }
         $grouped_by_course[$course_id]['requests'][] = $request;
     }
-    
+
     echo json_encode([
         'success' => true,
         'data' => array_values($formatted_requests),
@@ -218,18 +156,15 @@ try {
         'total_requests' => count($formatted_requests),
         'total_pending' => count(array_filter($formatted_requests, fn($r) => $r['request_status'] === 'pending'))
     ]);
-    
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false, 
-        'error' => 'Database error: ' . $e->getMessage()
-    ]);
+
+    mysqli_close($conn);
+
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'error' => $e->getMessage()
     ]);
+    mysqli_close($conn);
 }
 ?>

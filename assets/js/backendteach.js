@@ -13,7 +13,7 @@ class TeacherRequestManager {
         this.currentUser = null;
         this.requests = [];
         this.groupedRequests = {};
-
+        
         console.log('TeacherRequestManager initialized');
     }
 
@@ -120,11 +120,11 @@ class TeacherRequestManager {
     createCourseRequestSection(courseGroup) {
         const courseSection = document.createElement('div');
         courseSection.className = 'course-requests';
-
-        const pendingBadge = courseGroup.pending_count > 0
-            ? `<span class="request-badge">${courseGroup.pending_count} pending</span>`
+        
+        const pendingBadge = courseGroup.pending_count > 0 
+            ? `<span class="request-badge">${courseGroup.pending_count} pending</span>` 
             : '';
-
+        
         courseSection.innerHTML = `<p>${courseGroup.course_title} requests ${pendingBadge}</p>`;
 
         courseGroup.requests.forEach(request => {
@@ -161,7 +161,7 @@ class TeacherRequestManager {
         requestDiv.style.borderLeft = `4px solid ${statusColor}`;
         requestDiv.style.cursor = 'pointer';
         requestDiv.style.transition = 'all 0.2s ease';
-
+        
         if (request.request_status !== 'pending') {
             requestDiv.style.opacity = '0.7';
         }
@@ -169,7 +169,7 @@ class TeacherRequestManager {
         requestDiv.addEventListener('mouseenter', () => {
             requestDiv.style.backgroundColor = '#f8f9fa';
         });
-
+        
         requestDiv.addEventListener('mouseleave', () => {
             requestDiv.style.backgroundColor = '';
         });
@@ -292,12 +292,12 @@ class TeacherRequestManager {
         const noRequestsDiv = document.createElement('div');
         noRequestsDiv.className = 'no-requests';
         noRequestsDiv.style.cssText = 'text-align: center; padding: 40px 20px; color: #666;';
-
+        
         noRequestsDiv.innerHTML = `
             <p style="font-size: 18px; font-weight: 600; margin-top: 20px;">No student requests at the moment</p>
             <p style="font-size: 14px; margin-top: 10px;">When students apply to your courses, their requests will appear here.</p>
         `;
-
+        
         this.requestsContainer.appendChild(noRequestsDiv);
     }
 
@@ -306,7 +306,7 @@ class TeacherRequestManager {
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error-message';
             errorDiv.style.cssText = 'text-align: center; padding: 40px 20px; color: #dc3545;';
-
+            
             errorDiv.innerHTML = `
                 <p style="font-weight: 600; margin-top: 20px;">${message}</p>
                 <button onclick="window.location.reload()" 
@@ -315,7 +315,7 @@ class TeacherRequestManager {
                     Retry
                 </button>
             `;
-
+            
             this.requestsContainer.appendChild(errorDiv);
         }
     }
@@ -356,7 +356,7 @@ class CourseManager {
                 credentials: 'include'
             });
             const data = await response.json();
-
+            
             if (data.success && data.user) {
                 this.currentUser = {
                     user_id: data.user.id,
@@ -364,7 +364,7 @@ class CourseManager {
                     full_name: data.user.name,
                     is_teacher: data.user.is_teacher
                 };
-
+                
                 console.log('CourseManager - User loaded:', this.currentUser.full_name);
                 return this.currentUser.is_teacher === 1;
             }
@@ -381,13 +381,13 @@ class CourseManager {
             const response = await fetch('/api/get_courses.php', {
                 credentials: 'include'
             });
-
+            
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
 
             const data = await response.json();
-
+            
             if (Array.isArray(data)) {
                 this.courses = data;
             } else if (data.success && Array.isArray(data.data)) {
@@ -395,7 +395,7 @@ class CourseManager {
             } else {
                 this.courses = [];
             }
-
+            
             console.log(`Loaded ${this.courses.length} courses`);
         } catch (error) {
             console.error('Error loading courses:', error);
@@ -439,7 +439,7 @@ class CourseManager {
                 credentials: 'include'
             });
             if (!response.ok) return [];
-
+            
             const data = await response.json();
             return Array.isArray(data) ? data : (data.data || []);
         } catch (error) {
@@ -454,7 +454,7 @@ class CourseManager {
                 credentials: 'include'
             });
             if (!response.ok) return [];
-
+            
             const data = await response.json();
             return Array.isArray(data) ? data : (data.data || []);
         } catch (error) {
@@ -533,7 +533,7 @@ class CourseManager {
                 </div>
                 <div class="vdcards">
                     ${videos.length > 0 ?
-                videos.map(v => `
+                        videos.map(v => `
                             <div class="video" data-video-id="${v.video_id}">
                                 <div class="one">
                                     <div class="vd-background">
@@ -549,15 +549,15 @@ class CourseManager {
                                 </div>
                             </div>
                         `).join('') :
-                '<p style="color: #999; font-style: italic;">No videos yet</p>'
-            }
+                        '<p style="color: #999; font-style: italic;">No videos yet</p>'
+                    }
                 </div>
             </div>
 
             <div class="assignments">
                 <p>Assignments (${assignments.length})</p>
                 ${assignments.length > 0 ?
-                assignments.map(a => `
+                    assignments.map(a => `
                         <div class="assignment" data-assignment-id="${a.assignment_id}">
                             <div class="pdf assignment-file" data-file-url="${a.assignment_url || ''}" style="cursor: pointer;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -582,8 +582,8 @@ class CourseManager {
                             </div>
                         </div>
                     `).join('') :
-                '<p style="color: #999; font-style: italic;">No assignments yet</p>'
-            }
+                    '<p style="color: #999; font-style: italic;">No assignments yet</p>'
+                }
                 <div class="add-assignment-container" style="margin-top: 10px;">
                     <button class="addAss add-assignment-btn" data-course-id="${course.course_id}">
                         + Add Assignment
@@ -922,7 +922,7 @@ class DeletionManager {
 
                 if (data.success || data.video_id) {
                     const vdcards = courseElement.querySelector('.vdcards');
-
+                    
                     // Remove placeholder if exists
                     const placeholder = Array.from(vdcards.querySelectorAll('p')).find(p => /no videos yet/i.test(p.textContent));
                     if (placeholder) placeholder.remove();
@@ -1100,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('Initializing CourseManager...');
         window.courseManager = new CourseManager();
         await window.courseManager.init();
-
+        
         // Then initialize DeletionManager (after courses are rendered)
         console.log('Initializing DeletionManager...');
         window.deletionManager = new DeletionManager();
