@@ -29,7 +29,8 @@ if ($search === '') {
                 c.price,
                 c.duration,
                 c.rating,
-                u.full_name AS instructor
+                u.full_name AS instructor,
+                u.profile_picture AS teacher_profile
             FROM COURSE c
             JOIN USER u ON u.user_id = c.teacher_id";
     $stmt = $conn->prepare($sql);
@@ -42,7 +43,8 @@ if ($search === '') {
                 c.price,
                 c.duration,
                 c.rating,
-                u.full_name AS instructor
+                u.full_name AS instructor,
+                u.profile_picture AS teacher_profile
             FROM COURSE c
             JOIN USER u ON u.user_id = c.teacher_id
             WHERE c.course_title LIKE ?

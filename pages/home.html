@@ -76,7 +76,7 @@
         <section class="categories hidden">
             <h2>Top Categories</h2>
             <ul>
-                <li class="category">
+                <li class="category" data-category="Computer Science">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-laptop-icon lucide-laptop">
@@ -87,7 +87,7 @@
                     <h3>Computer Science</h3>
                     <p>193 courses</p>
                 </li>
-                <li class="category">
+                <li class="category" data-category="Art">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-palette-icon lucide-palette">
@@ -101,7 +101,7 @@
                     <h3>Art</h3>
                     <p>49 courses</p>
                 </li>
-                <li class="category">
+                <li class="category" data-category="Business">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-briefcase-business-icon lucide-briefcase-business">
@@ -113,7 +113,7 @@
                     <h3>Business</h3>
                     <p>88 courses</p>
                 </li>
-                <li class="category">
+                <li class="category" data-category="Science">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-microscope-icon lucide-microscope">
@@ -127,7 +127,7 @@
                     <h3>Science</h3>
                     <p>104 courses</p>
                 </li>
-                <li class="category">
+                <li class="category" data-category="Languages">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-languages-icon lucide-languages">
@@ -141,7 +141,7 @@
                     <h3>Languages</h3>
                     <p>73 courses</p>
                 </li>
-                <li class="category">
+                <li class="category" data-category="Design">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-layout-panel-left-icon lucide-layout-panel-left">
@@ -254,6 +254,22 @@
     </footer>
     <script src="/js/user.js"></script>
     <script type="module" src="/assets/js/home.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('/assets/php/fetch_category_counts.php')
+                .then(res => res.json())
+                .then(counts => {
+                    document.querySelectorAll('.category').forEach(cat => {
+                        const key = cat.dataset.category;
+                        const p = cat.querySelector('p');
+                        p.textContent = `${counts[key] ?? 0} courses`;
+                    });
+                })
+                .catch(err => console.error(err));
+        });
+    </script>
+
 
 </body>
 
