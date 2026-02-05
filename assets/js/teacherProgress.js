@@ -593,4 +593,3 @@ async function loadTeacherChatInfo() {
     return null;
   }
 }
-

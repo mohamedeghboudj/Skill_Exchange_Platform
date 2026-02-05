@@ -7,15 +7,11 @@ html {
 
 .overlay {
     position: fixed;
-    /* to keep the element even in scrolling in its position */
     inset: 0;
-    /* this is to make sure the overlay will stretch to cover all the page form all directions*/
     background: rgba(158, 152, 152, 0.4);
     display: flex;
     align-items: center;
-    /*center vertically*/
     justify-content: center;
-    /*center horizontally*/
     z-index: 100;
 }
 
@@ -24,7 +20,6 @@ html {
     display: flex;
     flex-direction: column;
     background-color: white;
-
     height: 170px;
     border-radius: 20px;
     margin-bottom: 30px;
@@ -33,7 +28,6 @@ html {
 
 h2 {
     text-align: center;
-
 }
 
 .star-border {
@@ -61,12 +55,11 @@ h2 {
 
 .star {
     align-self: center;
-      margin-top: 10px;
+    margin-top: 10px;
     margin-left: 12px;
     width: 28px;
     height: 28px;
     color: transparent;
-/* background-color: white; */
     stroke: white;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -74,7 +67,6 @@ h2 {
 
 .star:hover {
     color: white;
-
 }
 
 @media (min-width:600px) {
@@ -93,5 +85,4 @@ h2 {
     .rate-page{
         height: 200px;
     }
-
 }
