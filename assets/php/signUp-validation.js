@@ -30,7 +30,7 @@ SignUpBTN.addEventListener("click", async (event) => {
 async function registerUser(name, email, password) {
     try {
 
-        const response = await fetch('./register.php', { // hadil removed the slash here !!!
+        const response = await fetch('../assets/php/register.php', { // hadil removed the slash here !!!
 
             method: 'POST',
             headers: {

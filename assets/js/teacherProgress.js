@@ -1,5 +1,5 @@
 // Configuration
-const API_BASE_URL = 'http://localhost:8000/assets/php';
+//const API_BASE_URL = 'http://localhost:8000/assets/php';
 let currentTeacherId = null;
 let currentCourseId = null;
 let currentStudentId = null; // For when viewing specific student details
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('[TeacherProgress] Page loaded, initializing...');
   try {
     // Get teacher ID from session
-    const userResponse = await fetch(`${API_BASE_URL}/getCurrentUser.php`);
+    const userResponse = await fetch(`../assets/php/getCurrentUser.php`);
     const userData = await userResponse.json();
 
     console.log('[TeacherProgress] getCurrentUser result:', userData.success ? 'OK' : 'FAIL', userData);
@@ -593,4 +593,3 @@ async function loadTeacherChatInfo() {
     return null;
   }
 }
-
