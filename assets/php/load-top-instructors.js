@@ -25,9 +25,9 @@ async function loadTopInstructors() {
 
         console.log('Parsed data:', data);
 
-        if (data.success && data.instructors && data.instructors.length > 0) {
-            console.log('Found', data.instructors.length, 'instructors');
-            populateInstructors(data.instructors);
+        if (data.success && data.data && data.data.length > 0) {
+            console.log('Found', data.data.length, 'instructors');
+            populateInstructors(data.data);
         } else {
             console.warn('No instructors or data.success is false:', data);
         }
@@ -59,7 +59,7 @@ function createInstructorCard(instructor) {
     collector.className = 'collector';
 
     const name = instructor.username || 'Unknown';
-    const avgRating = (instructor.avg_rating || 0).toFixed(1);
+    const avgRating = parseFloat(instructor.avg_rating || 0).toFixed(1);
     const courseCount = instructor.course_count || 0;
     const studentCount = instructor.student_count || 0;
 
