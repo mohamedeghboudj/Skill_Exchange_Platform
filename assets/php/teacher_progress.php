@@ -36,7 +36,7 @@ function getStudentAssignmentProgress($student_id, $course_id) {
     global $teacher_id, $conn;
     
     // Verify teacher owns this course
-    $sql = "SELECT id, title FROM course WHERE id = ? AND teacher_id = ?";
+    $sql = "SELECT course_id as id, course_title as title FROM COURSE WHERE course_id = ? AND teacher_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ii', $course_id, $teacher_id);
     $stmt->execute();
@@ -48,7 +48,7 @@ function getStudentAssignmentProgress($student_id, $course_id) {
     }
     
     // Get student info
-    $sql = "SELECT id, username, email FROM user WHERE id = ?";
+    $sql = "SELECT user_id as id, full_name as username, email FROM USER WHERE user_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $student_id);
     $stmt->execute();
@@ -61,22 +61,22 @@ function getStudentAssignmentProgress($student_id, $course_id) {
     
     // Get all assignments with student submissions and grades
     $sql = "SELECT 
-        a.id as assignment_id,
-        a.title as assignment_title,
+        a.assignment_id,
+        a.assignment_title,
         a.max_score,
         a.due_date,
-        COALESCE(s.id, NULL) as submission_id,
+        COALESCE(s.submission_id, NULL) as submission_id,
         COALESCE(s.submission_url, NULL) as submission_url,
         COALESCE(s.submitted_at, NULL) as submitted_at,
         COALESCE(s.score, NULL) as score,
         COALESCE(s.graded_at, NULL) as graded_at,
         CASE 
-            WHEN s.id IS NULL THEN 'not_submitted'
+            WHEN s.submission_id IS NULL THEN 'not_submitted'
             WHEN s.score IS NULL THEN 'submitted'
             ELSE 'graded'
         END as status
-    FROM assignment a
-    LEFT JOIN student_assignment_submission s ON a.id = s.assignment_id 
+    FROM ASSIGNMENT a
+    LEFT JOIN ASSIGNMENT_SUBMISSION s ON a.assignment_id = s.assignment_id 
         AND s.student_id = ?
     WHERE a.course_id = ?
     ORDER BY a.sequence_number";
@@ -152,7 +152,7 @@ function getStudentsProgress($course_id) {
     global $teacher_id, $conn;
     
     // Verify teacher owns this course
-    $sql = "SELECT id, title FROM course WHERE id = ? AND teacher_id = ?";
+    $sql = "SELECT course_id as id, course_title as title FROM COURSE WHERE course_id = ? AND teacher_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ii', $course_id, $teacher_id);
     $stmt->execute();
@@ -165,21 +165,21 @@ function getStudentsProgress($course_id) {
     
     // Get all enrolled students with their assignment progress
     $sql = "SELECT 
-        u.id as student_id,
-        u.username as student_name,
+        u.user_id as student_id,
+        u.full_name as student_name,
         u.email,
-        COUNT(a.id) as total_assignments,
-        COUNT(CASE WHEN s.id IS NOT NULL THEN 1 END) as submitted_count,
+        COUNT(a.assignment_id) as total_assignments,
+        COUNT(CASE WHEN s.submission_id IS NOT NULL THEN 1 END) as submitted_count,
         COUNT(CASE WHEN s.score IS NOT NULL THEN 1 END) as graded_count,
         COALESCE(AVG(CASE WHEN s.score IS NOT NULL THEN s.score END), 0) as average_score,
         COALESCE(SUM(s.score), 0) as total_score
-    FROM enrollment e
-    JOIN user u ON e.student_id = u.id
-    LEFT JOIN assignment a ON e.course_id = a.course_id
-    LEFT JOIN student_assignment_submission s ON a.id = s.assignment_id 
-        AND s.student_id = u.id
+    FROM ENROLLMENT e
+    JOIN USER u ON e.student_id = u.user_id
+    LEFT JOIN ASSIGNMENT a ON e.course_id = a.course_id
+    LEFT JOIN ASSIGNMENT_SUBMISSION s ON a.assignment_id = s.assignment_id 
+        AND s.student_id = u.user_id
     WHERE e.course_id = ? AND e.is_active = 1
-    GROUP BY u.id, u.username, u.email";
+    GROUP BY u.user_id, u.full_name, u.email";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $course_id);
@@ -219,11 +219,11 @@ function gradeAssignment($submission_id, $score) {
     global $teacher_id, $conn;
     
     // Verify submission exists and belongs to teacher's course
-    $sql = "SELECT s.id, a.max_score, a.course_id, c.teacher_id
-            FROM student_assignment_submission s
-            JOIN assignment a ON s.assignment_id = a.id
-            JOIN course c ON a.course_id = c.id
-            WHERE s.id = ?";
+    $sql = "SELECT s.submission_id as id, a.max_score, a.course_id, c.teacher_id
+            FROM ASSIGNMENT_SUBMISSION s
+            JOIN ASSIGNMENT a ON s.assignment_id = a.assignment_id
+            JOIN COURSE c ON a.course_id = c.course_id
+            WHERE s.submission_id = ?";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $submission_id);
@@ -246,9 +246,9 @@ function gradeAssignment($submission_id, $score) {
     
     // Update score
     $now = date('Y-m-d H:i:s');
-    $sql = "UPDATE student_assignment_submission 
-            SET score = ?, graded_at = ?
-            WHERE id = ?";
+    $sql = "UPDATE ASSIGNMENT_SUBMISSION 
+            SET score = ?, graded_at = ?, submission_status = 'graded'
+            WHERE submission_id = ?";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('dsi', $score, $now, $submission_id);
@@ -275,23 +275,23 @@ function getSubmissionDetails($submission_id) {
     
     // Verify submission belongs to teacher
     $sql = "SELECT 
-        s.id as submission_id,
+        s.submission_id,
         s.student_id,
         s.assignment_id,
         s.submission_url,
         s.submitted_at,
         s.score,
         s.graded_at,
-        u.username as student_name,
+        u.full_name as student_name,
         u.email as student_email,
-        a.title as assignment_title,
+        a.assignment_title,
         a.max_score,
         c.teacher_id
-    FROM student_assignment_submission s
-    JOIN user u ON s.student_id = u.id
-    JOIN assignment a ON s.assignment_id = a.id
-    JOIN course c ON a.course_id = c.id
-    WHERE s.id = ?";
+    FROM ASSIGNMENT_SUBMISSION s
+    JOIN USER u ON s.student_id = u.user_id
+    JOIN ASSIGNMENT a ON s.assignment_id = a.assignment_id
+    JOIN COURSE c ON a.course_id = c.course_id
+    WHERE s.submission_id = ?";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $submission_id);
@@ -332,7 +332,39 @@ function getSubmissionDetails($submission_id) {
 // Route actions
 if ($method === 'GET') {
     switch ($action) {
-        case 'students-progress':
+        case 'get_enrolled_students':
+        // Get all students enrolled in any course taught by this teacher
+        $teacher_id = $_SESSION['user_id'];
+        
+        $sql = "
+            SELECT 
+                u.user_id as student_id,
+                u.full_name as student_name,
+                u.profile_picture,
+                c.course_id,
+                c.course_title,
+                e.enrollment_date
+            FROM ENROLLMENT e
+            JOIN USER u ON e.student_id = u.user_id
+            JOIN COURSE c ON e.course_id = c.course_id
+            WHERE c.teacher_id = ?
+            ORDER BY e.enrollment_date DESC
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $students = [];
+        while ($row = $result->fetch_assoc()) {
+            $students[] = $row;
+        }
+
+        echo json_encode(['success' => true, 'students' => $students]);
+        break;
+
+    case 'students-progress':
             $course_id = $_GET['course_id'] ?? null;
             if (!$course_id) {
                 http_response_code(400);

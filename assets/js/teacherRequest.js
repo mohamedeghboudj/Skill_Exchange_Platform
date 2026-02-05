@@ -216,4 +216,34 @@ function checkInputs() {
 
     return true;
 }
+// ============================================================
+// HADIL ADDED: Check status on page load (for rejected users)
+// ============================================================
+
+// This function already exists in your code, but we're adding to it
+// Update the existing checkTeacherStatus function to handle approved users
+window.addEventListener("DOMContentLoaded", async () => {
+    await checkTeacherStatus();
+
+    // HADIL ADDED: Additional check for approved users
+    try {
+        const res = await fetch('../api/check_teacher_home.php', {
+            credentials: 'include'
+        });
+        const data = await res.json();
+
+        // If user is already a teacher, redirect them
+        if (data.status === 'already_teacher' || data.status === 'approved') {
+            showMessage("✅ You are already a teacher! Redirecting...", "green");
+            setTimeout(() => window.location.href = "/html/teach.html", 1500);
+        }
+    } catch (err) {
+        console.error('Error checking teacher status:', err);
+    }
+});
+
+// ============================================================
+// END OF HADIL'S ADDITIONS
+// ============================================================
+
 

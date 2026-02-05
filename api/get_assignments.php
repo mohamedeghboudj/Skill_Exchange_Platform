@@ -1,17 +1,15 @@
 <?php
-// api/get_assignments.php
+// api/get_assignments.php - TEACHER VERSION (returns plain array)
 session_start();
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Not logged in']);
+    echo json_encode([]);
     exit;
 }
 
 if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Missing or invalid course_id']);
+    echo json_encode([]);
     exit;
 }
 
@@ -28,7 +26,7 @@ $stmt = $conn->prepare("
 $stmt->bind_param("i", $course_id);
 $stmt->execute();
 
-$result      = $stmt->get_result();
+$result = $stmt->get_result();
 $assignments = [];
 
 while ($row = $result->fetch_assoc()) {
@@ -37,5 +35,6 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 
+// Returns plain array - CORRECT FORMAT
 echo json_encode($assignments);
 ?>
