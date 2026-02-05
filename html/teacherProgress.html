@@ -22,12 +22,17 @@
 
         <!-- ===== Sidebar ===== -->
         <aside class="sidebar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x close-chat"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-x-icon lucide-x close-chat">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+            </svg>
             <div id="chat-header">
                 <div class="course-title">Full-Stack Web Development</div>
-            <div class="course-sub">student Alex Johnson</div>
+                <div class="course-sub">student Alex Johnson</div>
             </div>
-        
+
 
             <div class="chat teacher">
                 Hi Alex, let me know if you have any questions about the JavaScript basics video.
@@ -49,8 +54,19 @@
 
         <!-- ===== Main Content ===== -->
         <main class="main">
-<svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-left-icon lucide-move-left " id="left-arrow"><path d="M6 8L2 12L6 16"/><path d="M2 12H22"/></svg>            <div class="progress-box">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle chat-toggle"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-move-left-icon lucide-move-left " id="left-arrow">
+                <path d="M6 8L2 12L6 16" />
+                <path d="M2 12H22" />
+            </svg>
+            <div class="progress-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-message-circle-icon lucide-message-circle chat-toggle">
+                    <path
+                        d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+                </svg>
                 <div class="progress-header">
                     <span>Course progress</span>
                     <span>72% complete</span>
@@ -118,41 +134,71 @@
             <div class="progress-box">
                 <h3>Assignments and marks</h3>
 
-                <div class="row done">
+                <div class="row done assignment" data-id="A1">
                     <span>A1 · HTML structure</span>
                     <span>96 / 100</span>
                 </div>
 
-                <div class="row done">
+                <div class="row done assignment" data-id="A2">
                     <span>A2 · Responsive layout</span>
                     <span>78 / 100</span>
                 </div>
 
-                <div class="row missed">
+                <div class="row missed assignment">
                     <span>Quiz · Semantic HTML</span>
                     <span>0 / 20</span>
                 </div>
 
-                <div class="row done">
+                <div class="row done assignment" data-id="A3">
                     <span>A3 · JavaScript basics</span>
                     <span>86 / 100</span>
                 </div>
 
-                <div class="row pending">
+                <div class="row pending assignment">
                     <span>Checkpoint quiz · JavaScript</span>
                     <span>Pending</span>
                 </div>
 
-                <div class="row locked">
+                <div class="row locked assignment">
                     <span>A4 · DOM manipulation project</span>
-                    <span>Locked</span>
+                    <div id="lockedInfo">
+                        <span id="unlock">unlock</span>
+                        <span>Locked</span>
+                    </div>
                 </div>
+
+                <!--updated for submission-->
+                <div class="progress-box" id="grading-panel" style="display:none;">
+                    <h3 id="assignment-title">Assignment</h3>
+
+                    <div class="submission-box">
+                        <p><strong>Student submission:</strong></p>
+                        <div class="submission-pdf"
+                            onclick="window.open('/assets/images/convergence proba.pdf', '_blank')">
+                            <div class="pdf-thumbnail">
+                                <img src="/assets/images/pdf.jpg" alt="PDF Icon">
+                            </div>
+                            <div class="pdf-info">
+                                <h3>02_Finite_Automata</h3>
+                                <p>Google Slides</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="grading-box">
+                        <label>Score:</label>
+                        <input type="number" id="score-input" min="0" max="100">
+                        <button id="save-grade">Save grade</button>
+                    </div>
+                </div>
+
 
             </div>
 
         </main>
     </div>
-    <script src="../assets/js/teacherProgress.js"></script>
+    <script src="/assets/js/teacherProgress.js"></script>
 </body>
 
 </html>
