@@ -24,7 +24,9 @@ echo json_encode([
         'email' => $_SESSION['user_email'],
         'name' => $_SESSION['user_name'],
         'role' => $_SESSION['user_role'],
-       'is_teacher' => ($_SESSION['user_role'] === 'Teacher') ? 1 : 0
+
+        'is_teacher' => ($_SESSION['user_role'] === 'Teacher') ? 1 : 0 // hadil touched this 
+
     ]
 ]);
 ?>

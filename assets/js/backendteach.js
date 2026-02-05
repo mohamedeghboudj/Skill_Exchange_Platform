@@ -1,141 +1,74 @@
-// File: /assets/js/teach.js - FINAL VERSION WITH DATABASE DELETION
+// File: /assets/js/teach.js
+// COMPLETE TEACH PAGE MANAGER - Handles all functionality
+// =====================================================================
 
 // =====================================================================
-// TEACHER REQUEST MANAGER - HANDLES STUDENT REQUESTS
+// 1. TEACHER REQUEST MANAGER - Handles student enrollment requests
 // =====================================================================
-/*
 
 class TeacherRequestManager {
     constructor() {
         this.requestsContainer = document.querySelector('.requests');
         this.popup = document.getElementById('popup');
         this.currentUser = null;
-
+        this.requests = [];
+        this.groupedRequests = {};
+        
         console.log('TeacherRequestManager initialized');
-
     }
 
     async init() {
-        await this.loadCurrentUser();
-        await this.loadTeacherRequests();
+        try {
+            const isTeacher = await this.loadCurrentUser();
+            if (isTeacher) {
+                await this.loadTeacherRequests();
+                this.setupEventListeners();
+            } else {
+                this.showNotTeacherMessage();
+            }
+        } catch (error) {
+            console.error('Initialization error:', error);
+            this.showErrorMessage(error.message);
+        }
     }
 
-<<<<<<< HEAD
- // In backendteach.js - update loadCurrentUser method
-async loadCurrentUser() {
-    try {
-        console.log('Loading current user from new API...');
-        
-        // ✅ Use your new API endpoint
-        const response = await fetch('/api/get_current_user.php');
-        
-        if (!response.ok) {
-            console.error('HTTP error:', response.status);
-            return false;
-        }
-        
-        const data = await response.json();
-        console.log('New user API response:', data);
-        
-        if (data.success && data.user) {
-            this.currentUser = data.user;
-            
-            // ✅ is_teacher is now guaranteed to be correct
-            console.log('is_teacher from session:', this.currentUser.is_teacher);
-            console.log('Type:', typeof this.currentUser.is_teacher);
-            
-            this.isTeacher = this.currentUser.is_teacher === 1;
-            
-            console.log('User is teacher?', this.isTeacher);
-            
-            if (!this.isTeacher) {
-                console.warn('User is NOT a teacher');
-                this.showNotTeacherMessage();
-                return false;
-            }
-            
-            console.log('✅ User authenticated as teacher');
-            return true;
-            
-        } else {
-            console.warn('API error:', data.error);
-=======
     async loadCurrentUser() {
         try {
-            const response = await fetch('/assets/php/getCurrentUser.php');
+            const response = await fetch('/assets/php/getCurrentUser.php', {
+                credentials: 'include'
+            });
             const data = await response.json();
 
             if (data.success && data.user) {
-                // Transform the user object to match expected structure
                 this.currentUser = {
-                    user_id: data.user.id,           // Map id → user_id
+                    user_id: data.user.id,
                     email: data.user.email,
-                    full_name: data.user.name,       // Map name → full_name
-                    is_teacher: data.user.is_teacher, // This is correct
+                    full_name: data.user.name,
+                    is_teacher: data.user.is_teacher,
                     role: data.user.role
                 };
 
-                console.log('Teacher loaded:', this.currentUser);
+                console.log('User loaded:', this.currentUser.full_name, 'is_teacher:', this.currentUser.is_teacher);
 
-                // Check if user is a teacher - FIXED
                 if (this.currentUser.is_teacher === 1) {
-                    this.isTeacher = true;
-                    console.log('User is a teacher');
                     return true;
-                } else {
-                    console.warn('User is not a teacher - is_teacher value:', this.currentUser.is_teacher);
-                    this.showNotTeacherMessage();
-                    return false;
                 }
-            } else {
-                console.warn('Failed to load user:', data.message);
-                return false;
             }
+            return false;
         } catch (error) {
             console.error('Error loading user:', error);
->>>>>>> 837e4f42d05219917855111ce608aacf7cf61b34
             return false;
         }
     }
-<<<<<<< HEAD
-}
-   // In teach.js - TeacherRequestManager class
-async loadTeacherRequests() {
-    try {
-        console.log('Loading teacher requests from API...');
-        
-        // Make sure this matches your file name
-        const response = await fetch('/api/get_teacher_pending_requests.php');
-        
-        if (!response.ok) {
-            console.log('Request API returned status:', response.status);
-            return;
-        }
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            console.log(`Loaded ${data.data?.length || 0} requests`);
-            if (data.data && data.data.length > 0) {
-                this.displayRequests(data.data);
-            } else {
-                this.showNoRequestsMessage();
-            }
-        } else {
-            console.log('API returned success=false:', data.error);
-            this.showNoRequestsMessage();
-        }
-    } catch (error) {
-        console.log('Could not load requests:', error.message);
-        this.showNoRequestsMessage();
-=======
-    // In teach.js - TeacherRequestManager class
+
     async loadTeacherRequests() {
         try {
             console.log('Loading teacher requests from API...');
 
-            // FIX: Use correct endpoint name
-            const response = await fetch('/api/get_teacher_requests.php');
+            const response = await fetch('/api/get_teacher_pending_requests.php', {
+                credentials: 'include',
+                headers: { 'Accept': 'application/json' }
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -144,70 +77,62 @@ async loadTeacherRequests() {
             const data = await response.json();
 
             if (data.success) {
-                console.log(`Loaded ${data.data?.length || 0} requests`);
-                this.displayRequests(data.data || []);
+                console.log(`Loaded ${data.total_requests || 0} total requests, ${data.total_pending || 0} pending`);
+                this.requests = data.data || [];
+                this.groupedRequests = data.grouped || [];
+                this.displayRequests();
             } else {
-                console.error('API Error loading requests:', data.error);
-                this.showNoRequestsMessage();
+                if (data.is_teacher === false) {
+                    this.showNotTeacherMessage();
+                } else {
+                    throw new Error(data.error || 'Failed to load requests');
+                }
             }
         } catch (error) {
-            console.error('Network error loading teacher requests:', error);
-            this.showErrorMessage('Network error: ' + error.message);
+            console.error('Error loading teacher requests:', error);
+            this.showErrorMessage('Unable to load requests. ' + error.message);
         }
->>>>>>> 837e4f42d05219917855111ce608aacf7cf61b34
     }
-    displayRequests(requests) {
+
+    displayRequests() {
         if (!this.requestsContainer) {
-            console.error('Requests container (.requests) not found in HTML');
+            console.error('Requests container not found');
             return;
         }
 
         // Clear existing content but keep the title
         this.requestsContainer.innerHTML = '<p>Requests to join courses</p>';
 
-        if (!requests || requests.length === 0) {
+        if (this.groupedRequests.length === 0) {
             this.showNoRequestsMessage();
             return;
         }
 
-        // Group requests by course
-        const requestsByCourse = this.groupRequestsByCourse(requests);
-
-        // Display grouped requests
-        Object.keys(requestsByCourse).forEach(courseTitle => {
-            const courseRequests = requestsByCourse[courseTitle];
-
-            const courseSection = document.createElement('div');
-            courseSection.className = 'course-requests';
-            courseSection.innerHTML = `<p>${courseTitle} requests</p>`;
-
-            courseRequests.forEach(request => {
-                const requestElement = this.createRequestElement(request);
-                courseSection.appendChild(requestElement);
-            });
-
-            this.requestsContainer.appendChild(courseSection);
+        // Display requests grouped by course
+        this.groupedRequests.forEach(courseGroup => {
+            this.createCourseRequestSection(courseGroup);
         });
 
         // Attach click listeners
         this.attachRequestClickListeners();
     }
 
+    createCourseRequestSection(courseGroup) {
+        const courseSection = document.createElement('div');
+        courseSection.className = 'course-requests';
+        
+        const pendingBadge = courseGroup.pending_count > 0 
+            ? `<span class="request-badge">${courseGroup.pending_count} pending</span>` 
+            : '';
+        
+        courseSection.innerHTML = `<p>${courseGroup.course_title} requests ${pendingBadge}</p>`;
 
-    groupRequestsByCourse(requests) {
-        const grouped = {};
-
-        requests.forEach(request => {
-            const courseTitle = request.course_title || 'Unknown Course';
-
-            if (!grouped[courseTitle]) {
-                grouped[courseTitle] = [];
-            }
-
-            grouped[courseTitle].push(request);
+        courseGroup.requests.forEach(request => {
+            const requestElement = this.createRequestElement(request);
+            courseSection.appendChild(requestElement);
         });
 
-        return grouped;
+        this.requestsContainer.appendChild(courseSection);
     }
 
     createRequestElement(request) {
@@ -215,39 +140,36 @@ async loadTeacherRequests() {
         requestDiv.className = 'request';
         requestDiv.dataset.requestId = request.request_id;
         requestDiv.dataset.status = request.request_status;
-
-        // Store full request data
         requestDiv.dataset.requestData = JSON.stringify(request);
 
-        // Status styling
-        const status = request.request_status || 'pending';
-        const statusClass = this.formatStatus(status).toLowerCase();
-
-        // Format time
-        const timeAgo = this.getTimeAgo(request.request_date);
+        const statusClass = this.getStatusClass(request.request_status);
+        const statusColor = this.getStatusColor(request.request_status);
 
         requestDiv.innerHTML = `
             <div class="chatImg">
                 <img src="${request.student_picture || '../assets/images/pf4.jpg'}" 
-                     alt="${request.student_name || 'Student'}"
+                     alt="${request.student_name}"
                      onerror="this.src='../assets/images/pf4.jpg'">
             </div>
             <div class="chatInfo">
                 <div class="name">${request.student_name || 'Unknown Student'}</div>
-                <div class="Rcourse ${statusClass}">${this.formatStatus(status)}</div>
-                <div class="time-ago">${timeAgo}</div>
+                <div class="Rcourse ${statusClass}">${this.formatStatus(request.request_status)}</div>
+                ${request.time_ago ? `<div class="time-ago">${request.time_ago}</div>` : ''}
             </div>
         `;
 
-        // Add status indicator
-        requestDiv.style.borderLeft = `4px solid ${this.getStatusColor(status)}`;
+        requestDiv.style.borderLeft = `4px solid ${statusColor}`;
         requestDiv.style.cursor = 'pointer';
-        requestDiv.style.transition = 'background-color 0.2s';
+        requestDiv.style.transition = 'all 0.2s ease';
+        
+        if (request.request_status !== 'pending') {
+            requestDiv.style.opacity = '0.7';
+        }
 
-        // Add hover effect
         requestDiv.addEventListener('mouseenter', () => {
             requestDiv.style.backgroundColor = '#f8f9fa';
         });
+        
         requestDiv.addEventListener('mouseleave', () => {
             requestDiv.style.backgroundColor = '';
         });
@@ -255,12 +177,12 @@ async loadTeacherRequests() {
         return requestDiv;
     }
 
-
     attachRequestClickListeners() {
         const requestElements = this.requestsContainer.querySelectorAll('.request');
 
         requestElements.forEach(requestEl => {
-            requestEl.addEventListener('click', () => {
+            requestEl.addEventListener('click', (e) => {
+                e.preventDefault();
                 const requestData = JSON.parse(requestEl.dataset.requestData);
                 this.openRequestReview(requestData);
             });
@@ -271,612 +193,285 @@ async loadTeacherRequests() {
         console.log('Opening request review:', request);
 
         if (!this.popup) {
-            console.error('Popup dialog (#popup) not found in HTML');
-            window.open(`/requestReview.html?request=${encodeURIComponent(JSON.stringify(request))}`, '_blank');
+            console.error('Popup dialog not found');
+            window.open(
+                `/requestReview.html?request=${encodeURIComponent(JSON.stringify(request))}`,
+                '_blank',
+                'width=600,height=800'
+            );
             return;
         }
 
-        // Set iframe source with request data
         const iframe = this.popup.querySelector('iframe');
         if (iframe) {
-            iframe.src = `/requestReview.html?request=${encodeURIComponent(JSON.stringify(request))}`;
+            const requestParam = encodeURIComponent(JSON.stringify(request));
+            iframe.src = `/requestReview.html?request=${requestParam}`;
             this.popup.showModal();
-        } else {
-            console.error('Iframe not found in popup');
+            this.setupPopupCloseHandler();
         }
     }
 
-    getTimeAgo(dateString) {
-        if (!dateString) return '';
+    setupPopupCloseHandler() {
+        if (!this.popup) return;
 
-        try {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / (1000 * 60));
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-            if (diffMins < 60) {
-                return `${diffMins}m ago`;
-            } else if (diffHours < 24) {
-                return `${diffHours}h ago`;
-            } else if (diffDays < 7) {
-                return `${diffDays}d ago`;
-            } else {
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        this.popup.addEventListener('click', (e) => {
+            if (e.target === this.popup) {
+                this.popup.close();
             }
-        } catch (e) {
-            return '';
+        });
+
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'request_processed') {
+                console.log('Request processed, refreshing...');
+                this.popup.close();
+                this.loadTeacherRequests();
+            } else if (event.data.type === 'close_popup') {
+                this.popup.close();
+            }
+        });
+    }
+
+    setupEventListeners() {
+        const refreshBtn = document.querySelector('.refresh-requests-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => this.loadTeacherRequests());
         }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            console.log('Auto-refreshing requests...');
+            this.loadTeacherRequests();
+        }, 30000);
+    }
+
+    getStatusClass(status) {
+        const classes = {
+            'pending': 'status-pending',
+            'approved': 'status-approved',
+            'accepted': 'status-approved',
+            'rejected': 'status-rejected',
+            'declined': 'status-rejected'
+        };
+        return classes[status] || 'status-unknown';
     }
 
     getStatusColor(status) {
-        switch (status) {
-            case 'pending': return '#ffc107'; // yellow
-            case 'accepted': return '#28a745'; // green
-            case 'declined': return '#dc3545'; // red
-            default: return '#6c757d'; // gray
-        }
+        const colors = {
+            'pending': '#ffc107',
+            'approved': '#28a745',
+            'accepted': '#28a745',
+            'rejected': '#dc3545',
+            'declined': '#dc3545'
+        };
+        return colors[status] || '#6c757d';
     }
 
     formatStatus(status) {
-        if (!status) return 'Pending';
+        if (!status) return 'Unknown';
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
 
     showNotTeacherMessage() {
         if (this.requestsContainer) {
             this.requestsContainer.innerHTML = `
-                <div class="not-teacher">
-                    <p>Teacher access required</p>
-                    <p class="subtext">You need to be a teacher to view student requests.</p>
-                    <a href="/pages/teacherrequest.html" class="become-teacher-btn">Become a Teacher</a>
+                <div class="not-teacher" style="text-align: center; padding: 40px 20px;">
+                    <h3 style="margin-top: 20px; color: #333;">Teacher Access Required</h3>
+                    <p style="color: #666; margin: 10px 0;">You need to be a teacher to view student requests.</p>
+                    <a href="/pages/teacherrequest.html" 
+                       style="display: inline-block; margin-top: 20px; padding: 12px 24px; 
+                              background: linear-gradient(-120deg, rgba(143, 201, 251, 0.301), 20%, #1976d2); 
+                              color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Become a Teacher
+                    </a>
                 </div>
-
             `;
         }
     }
 
     showNoRequestsMessage() {
-        if (this.requestsContainer) {
-            this.requestsContainer.innerHTML += `
-                <div class="no-requests">
-                    <p>No student requests at the moment</p>
-                    <p class="subtext">When students apply to your courses, requests will appear here.</p>
-                </div>
-            `;
-        }
+        const noRequestsDiv = document.createElement('div');
+        noRequestsDiv.className = 'no-requests';
+        noRequestsDiv.style.cssText = 'text-align: center; padding: 40px 20px; color: #666;';
+        
+        noRequestsDiv.innerHTML = `
+            <p style="font-size: 18px; font-weight: 600; margin-top: 20px;">No student requests at the moment</p>
+            <p style="font-size: 14px; margin-top: 10px;">When students apply to your courses, their requests will appear here.</p>
+        `;
+        
+        this.requestsContainer.appendChild(noRequestsDiv);
     }
-
 
     showErrorMessage(message = 'Error loading requests') {
         if (this.requestsContainer) {
-            this.requestsContainer.innerHTML += `
-                <div class="error-message">
-                    <p>${message}</p>
-                    <button onclick="window.location.reload()">Retry</button>
-                </div>
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.style.cssText = 'text-align: center; padding: 40px 20px; color: #dc3545;';
+            
+            errorDiv.innerHTML = `
+                <p style="font-weight: 600; margin-top: 20px;">${message}</p>
+                <button onclick="window.location.reload()" 
+                        style="margin-top: 20px; padding: 10px 20px; background: #1976d2; 
+                               color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    Retry
+                </button>
             `;
+            
+            this.requestsContainer.appendChild(errorDiv);
         }
     }
 }
 
 
-// ─── 5. HTML card templates ──────────────────────────────────────────────────
-function videoCardHTML(video, courseId) {
-    const id = video.video_id || video.id;
-    const title = video.video_title || video.title;
-    const thumb = video.thumbnail || video.video_url || '../assets/images/webdev.jpg';
-    const show = deleteMode[courseId] ? 'block' : 'none';
+// =====================================================================
+// 2. COURSE MANAGER - Handles course display and management
+// =====================================================================
 
-    // =====================================================================
-    // DELETION MANAGER - MATCHES LOCALSTORAGE UI WITH DATABASE FUNCTIONALITY
-    // =====================================================================
+class CourseManager {
+    constructor() {
+        this.contentContainer = document.querySelector('.content');
+        this.currentUser = null;
+        this.courses = [];
 
+        console.log('CourseManager initialized');
+    }
 
-    class DeletionManager {
-        constructor() {
-            this.deleteMode = {}; // Track delete mode per course (matches localStorage behavior)
-            console.log('DeletionManager initialized');
-            this.setupDeleteListeners();
-        }
-
-
-        setupDeleteListeners() {
-            // 1. Course deletion (trash icon)
-            document.querySelectorAll('.delete-course-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const courseElement = btn.closest('.course');
-                    const courseId = courseElement?.dataset.courseId;
-                    if (courseId) {
-                        this.deleteCourse(courseId, courseElement);
-                    }
-                });
-            });
-
-
-            // 2. Video deletion - WITH TOGGLE DELETE MODE (matches localStorage)
-            document.querySelectorAll('.delete-videos-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const courseElement = btn.closest('.course');
-                    const courseId = courseElement?.dataset.courseId;
-                    if (courseId) {
-                        this.handleDeleteVideos(courseId, courseElement, btn);
-                    }
-                });
-            });
-
-            // 3. Assignment deletion
-            document.querySelectorAll('.delete-assignment-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const assignmentElement = btn.closest('.assignment');
-                    const assignmentId = assignmentElement?.dataset.assignmentId;
-                    if (assignmentId) {
-                        this.deleteAssignment(assignmentId, assignmentElement);
-                    }
-                });
-            });
-        }
-
-        // ========== VIDEO DELETION - MATCHES LOCALSTORAGE TOGGLE BEHAVIOR ==========
-        handleDeleteVideos(courseId, courseElement, deleteBtn) {
-            const vdcards = courseElement.querySelector('.vdcards');
-            const checkboxes = vdcards.querySelectorAll('.video-checkbox');
-
-            // Toggle delete mode (same as localStorage version)
-            if (!this.deleteMode[courseId]) {
-                // ENTER delete mode - show checkboxes
-                this.deleteMode[courseId] = true;
-
-                checkboxes.forEach(cb => {
-                    cb.style.display = 'block';
-                });
-
-                // Change button text (same as localStorage)
-                deleteBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-circle-x-icon lucide-circle-x">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="m15 9-6 6" /><path d="m9 9 6 6" />
-                </svg>
-                Remove Selected
-            `;
-            } else {
-                // IN delete mode - check for selections
-                const selectedIds = Array.from(checkboxes)
-                    .filter(cb => cb.checked)
-                    .map(cb => parseInt(cb.getAttribute('data-video-id')));
-
-                if (selectedIds.length > 0) {
-                    // DELETE selected videos via DATABASE API
-                    this.deleteVideosFromServer(selectedIds, courseElement, courseId, deleteBtn);
-                } else {
-                    // EXIT delete mode without deleting
-                    this.exitDeleteMode(courseId, courseElement, deleteBtn);
-                }
-            }
-        }
-
-        async deleteVideosFromServer(videoIds, courseElement, courseId, deleteBtn) {
-            if (!confirm(`Delete ${videoIds.length} selected video(s)?`)) {
+    async init() {
+        try {
+            const isTeacher = await this.loadCurrentUser();
+            if (!isTeacher) {
+                this.showNotTeacherMessage();
                 return;
             }
 
-            try {
-                const response = await fetch('/api/delete_videos.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ video_ids: videoIds })
-                });
-
-
-                // ─── 8. DELETE videos (checkbox select mode) ─────────────────────────────────
-                function handleDeleteVideos(courseId, courseDiv) {
-                    const vdcards = courseDiv.querySelector('.vdcards');
-                    const checkboxes = vdcards.querySelectorAll('.video-checkbox');
-                    const btn = courseDiv.querySelector('.delete-videos-btn');
-
-                    const result = await response.json();
-
-
-                    if (result.success) {
-                        // Remove selected video elements with animation
-                        videoIds.forEach(videoId => {
-                            const videoCard = courseElement.querySelector(`[data-video-id="${videoId}"]`);
-                            if (videoCard) {
-                                videoCard.style.animation = 'slideOut 0.3s ease';
-                                setTimeout(() => videoCard.remove(), 300);
-                            }
-                        });
-
-                        // EXIT delete mode after deletion
-                        setTimeout(() => {
-                            this.exitDeleteMode(courseId, courseElement, deleteBtn);
-
-                            // If no videos remain, show placeholder (same as localStorage)
-                            const vdcards = courseElement.querySelector('.vdcards');
-                            const remainingVideos = vdcards.querySelectorAll('.video');
-                            if (remainingVideos.length === 0) {
-                                const placeholder = document.createElement('p');
-                                placeholder.style.color = '#999';
-                                placeholder.style.fontStyle = 'italic';
-                                placeholder.textContent = 'No videos yet';
-                                vdcards.appendChild(placeholder);
-                            }
-                        }, 350);
-                    } else {
-                        throw new Error(result.error || 'Failed to delete videos');
-                    }
-                } catch (error) {
-                    console.error('Error deleting videos:', error);
-                    alert(`Error: ${error.message}`);
-                    this.exitDeleteMode(courseId, courseElement, deleteBtn);
-                }
-            }
-
-    exitDeleteMode(courseId, courseElement, deleteBtn) {
-                this.deleteMode[courseId] = false;
-                const vdcards = courseElement.querySelector('.vdcards');
-                const checkboxes = vdcards.querySelectorAll('.video-checkbox');
-
-                checkboxes.forEach(cb => cb.style.display = 'none');
-
-                // Reset button text (same as localStorage)
-                deleteBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-circle-x-icon lucide-circle-x">
-                <circle cx="12" cy="12" r="10" />
-                <path d="m15 9-6 6" /><path d="m9 9 6 6" />
-            </svg>
-            delete
-        `;
-            }
-
-    // ========== COURSE DELETION ==========
-    async deleteCourse(courseId, courseElement) {
-                if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
-                    return;
-                }
-
-                try {
-                    const response = await fetch('/api/delete_course.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ course_id: parseInt(courseId) })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        // Remove course element with animation
-                        courseElement.style.animation = 'fadeOut 0.3s ease';
-                        setTimeout(() => {
-                            courseElement.remove();
-                            this.checkEmptyPage();
-                        }, 300);
-                    } else {
-                        throw new Error(result.error || 'Failed to delete course');
-                    }
-                } catch (error) {
-                    console.error('Error deleting course:', error);
-                    alert(`Error: ${error.message}`);
-                }
-            }
-
-    // ========== ASSIGNMENT DELETION ==========
-    async deleteAssignment(assignmentId, assignmentElement) {
-                if (!confirm('Delete this assignment?')) {
-                    return;
-                }
-
-                try {
-                    const response = await fetch('/api/delete_assignment.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ assignment_id: parseInt(assignmentId) })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        // Remove assignment element with animation
-                        assignmentElement.style.animation = 'slideOut 0.3s ease';
-                        setTimeout(() => {
-                            assignmentElement.remove();
-
-                            // If no assignments remain, add placeholder
-                            const assignmentsDiv = assignmentElement.closest('.assignments');
-                            if (assignmentsDiv) {
-                                const remainingAssignments = assignmentsDiv.querySelectorAll('.assignment');
-                                if (remainingAssignments.length === 0) {
-                                    const placeholder = document.createElement('p');
-                                    placeholder.style.color = '#999';
-                                    placeholder.style.fontStyle = 'italic';
-                                    placeholder.textContent = 'No assignments yet';
-                                    const addButtonContainer = assignmentsDiv.querySelector('.add-assignment-container');
-                                    if (addButtonContainer) {
-                                        assignmentsDiv.insertBefore(placeholder, addButtonContainer);
-                                    }
-                                }
-                            }
-                        }, 300);
-                    } else {
-                        throw new Error(result.error || 'Failed to delete assignment');
-                    }
-                } catch (error) {
-                    console.error('Error deleting assignment:', error);
-                    alert(`Error: ${error.message}`);
-                }
-            }
-
-            // ========== HELPER METHODS ==========
-            checkEmptyPage() {
-                const courses = document.querySelectorAll('.course');
-                if (courses.length === 0) {
-                    const contentDiv = document.querySelector('.content');
-                    if (contentDiv) {
-                        contentDiv.innerHTML = `
-                    <div class="no-courses">
-                        <h3>No Courses Yet</h3>
-                        <p>You haven't created any courses.</p>
-                        <a href="/html/addcourse.html" class="create-course-btn">Create Your First Course</a>
-                    </div>
-                `;
-                    }
-                }
-            }
+            await this.loadTeacherCourses();
+            await this.renderCourses();
+        } catch (error) {
+            console.error('CourseManager init error:', error);
         }
+    }
 
-// =====================================================================
-// INITIALIZATION - ADD THIS AT THE VERY END OF THE FILE
-// =====================================================================
-
-// Initialize when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM loaded, initializing teach page managers...');
-
-        // Initialize TeacherRequestManager if on teach page with requests section
-        if (document.querySelector('.requests')) {
-            const teacherRequestManager = new TeacherRequestManager();
-            teacherRequestManager.init();
-        }
-
-        // Initialize DeletionManager if on teach page with courses
-        if (document.querySelector('.course')) {
-            new DeletionManager();
-        }
-    });
-
-
-    const fd = new FormData();
-    fd.append('course_id', courseId);
-    fd.append('video', file);
-
-    try {
-        const res = await fetch(API + '/add_video.php', { method: 'POST', credentials: 'include', body: fd });
-        const data = await res.json();
-
-        const vdcards = courseDiv.querySelector('.vdcards');
-        const ph = [...vdcards.querySelectorAll('p')].find(p => /no videos yet/i.test(p.textContent));
-        if (ph) ph.remove();
-
-        const newVideo = data.video || {
-            video_id: data.video_id,
-            video_title: file.name.replace(/\.[^/.]+$/, ''),
-            video_url: '../assets/images/webdev.jpg'
-        };
-
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = videoCardHTML(newVideo, courseId);
-        vdcards.appendChild(wrapper.firstElementChild);
-    } catch (err) { console.error('Add video failed:', err); }
-});
-
-input.click();
-}
-
-// ─── 10. ADD assignment ──────────────────────────────────────────────────────
-function handleAddAssignment(courseId, courseDiv) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.pdf,.doc,.docx';
-
-    input.addEventListener('change', async e => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const fd = new FormData();
-        fd.append('course_id', courseId);
-        fd.append('assignment', file);
-
+    async loadCurrentUser() {
         try {
-            const res = await fetch(API + '/add_assignment.php', { method: 'POST', credentials: 'include', body: fd });
-            const data = await res.json();
-
-            const assignmentsDiv = courseDiv.querySelector('.assignments');
-            const addBtnContainer = assignmentsDiv.querySelector('.add-assignment-container');
-
-            const ph = [...assignmentsDiv.querySelectorAll('p')].find(p => /no assignments yet/i.test(p.textContent));
-            if (ph) ph.remove();
-
-            const newAssignment = data.assignment || {
-                assignment_id: data.assignment_id,
-                assignment_title: file.name.replace(/\.[^/.]+$/, ''),
-                assignment_url: ''
-            };
-
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = assignmentCardHTML(newAssignment);
-            const newEl = wrapper.firstElementChild;
-            assignmentsDiv.insertBefore(newEl, addBtnContainer);
-
-            // wire new card
-            newEl.querySelector('.assignment-file').addEventListener('click', ev => {
-                ev.stopPropagation();
-                const url = newEl.querySelector('.assignment-file').dataset.fileUrl;
-                url && window.open(url, '_blank');
+            const response = await fetch('/assets/php/getCurrentUser.php', {
+                credentials: 'include'
             });
-            newEl.querySelector('.delete-assignment-btn').addEventListener('click', ev => {
-                ev.stopPropagation();
-                handleDeleteSingleAssignment(parseInt(newEl.dataset.assignmentId), courseDiv);
-            });
-        } catch (err) { console.error('Add assignment failed:', err); }
-    });
-
-    input.click();
-}
-
-// ─── 11. DELETE single assignment ─────────────────────────────────────────────
-function handleDeleteSingleAssignment(assignmentId, courseDiv) {
-    const card = courseDiv.querySelector(`[data-assignment-id="${assignmentId}"]`);
-    if (!card) return;
-
-    card.style.animation = 'slideOut 0.3s ease';
-    setTimeout(async () => {
-        try {
-            await fetch(API + '/delete_assignment.php', {
-                method: 'POST', credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ assignment_id: assignmentId })
-            });
-        } catch (e) { console.error(e); }
-
-        card.remove();
-
-        const assignmentsDiv = courseDiv.querySelector('.assignments');
-        if (!assignmentsDiv.querySelector('.assignment')) {
-            const p = document.createElement('p');
-            p.style.cssText = 'color:#999;font-style:italic;';
-            p.textContent = 'No assignments yet';
-            assignmentsDiv.insertBefore(p, assignmentsDiv.querySelector('.add-assignment-container'));
-
-            // Also initialize if DOM is already loaded
-            if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                setTimeout(() => {
-                    if (document.querySelector('.requests') && !window.teacherRequestManager) {
-                        console.log('DOM already ready, initializing TeacherRequestManager...');
-                        window.teacherRequestManager = new TeacherRequestManager();
-                        window.teacherRequestManager.init();
-
-                    }
-                    if (document.querySelector('.course') && !window.deletionManager) {
-                        console.log('DOM already ready, initializing DeletionManager...');
-                        window.deletionManager = new DeletionManager();
-                    }
-                }, 100);
+            const data = await response.json();
+            
+            if (data.success && data.user) {
+                this.currentUser = {
+                    user_id: data.user.id,
+                    email: data.user.email,
+                    full_name: data.user.name,
+                    is_teacher: data.user.is_teacher
+                };
+                
+                console.log('CourseManager - User loaded:', this.currentUser.full_name);
+                return this.currentUser.is_teacher === 1;
             }
-            // File: /assets/js/backendteach.js - SIMPLIFIED VERSION
-            // =====================================================================
+            return false;
+        } catch (error) {
+            console.error('Error loading user:', error);
+            return false;
+        }
+    }
 
-            class CourseManager {
-                constructor() {
-                    this.contentContainer = document.querySelector('.content');
-                    this.currentUser = null;
-                    this.courses = [];
+    async loadTeacherCourses() {
+        try {
+            console.log('Loading teacher courses...');
+            const response = await fetch('/api/get_teacher_courses.php', {
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
 
-                    console.log('CourseManager initialized');
-                }
+            const data = await response.json();
+            
+            if (Array.isArray(data)) {
+                this.courses = data;
+            } else if (data.success && Array.isArray(data.data)) {
+                this.courses = data.data;
+            } else {
+                this.courses = [];
+            }
+            
+            console.log(`Loaded ${this.courses.length} courses`);
+        } catch (error) {
+            console.error('Error loading courses:', error);
+            this.courses = [];
+        }
+    }
 
-                async init() {
-                    await this.loadCurrentUser();
-                    if (!this.currentUser?.is_teacher) {
-                        this.showNotTeacherMessage();
-                        return;
-                    }
+    async renderCourses() {
+        if (!this.contentContainer) {
+            console.error('Content container not found');
+            return;
+        }
 
-                    await this.loadTeacherCourses();
-                    this.renderCourses();
-                    this.setupEventListeners();
-                }
+        this.contentContainer.innerHTML = '';
 
-                async loadCurrentUser() {
-                    try {
-                        const response = await fetch('/assets/php/getCurrentUser.php');
-                        const data = await response.json();
-                        if (data.success && data.user) {
-                            this.currentUser = data.user;
-                            console.log('Teacher loaded:', this.currentUser.full_name);
-                            return true;
-                        }
-                        return false;
-                    } catch (error) {
-                        console.error('Error loading user:', error);
-                        return false;
-                    }
-                }
+        if (this.courses.length === 0) {
+            this.showNoCoursesMessage();
+            return;
+        }
 
-                async loadTeacherCourses() {
-                    try {
-                        const response = await fetch('/api/get_courses.php');
-                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        for (const course of this.courses) {
+            const [videos, assignments] = await Promise.all([
+                this.loadCourseVideos(course.course_id),
+                this.loadCourseAssignments(course.course_id)
+            ]);
 
-                        this.courses = await response.json();
-                        console.log(`Loaded ${this.courses.length} courses`);
-                    } catch (error) {
-                        console.error('Error loading courses:', error);
-                        this.courses = [];
-                    }
-                }
+            const courseElement = this.createCourseElement(course, videos, assignments);
+            this.contentContainer.appendChild(courseElement);
+        }
 
-                async renderCourses() {
-                    if (!this.contentContainer) return;
+        // After rendering all courses, initialize DeletionManager
+        console.log('Courses rendered, initializing DeletionManager...');
+        if (window.deletionManager) {
+            window.deletionManager.setupDeleteListeners();
+        }
+    }
 
-                    this.contentContainer.innerHTML = '';
+    async loadCourseVideos(courseId) {
+        try {
+            const response = await fetch(`/api/get_videos.php?course_id=${courseId}`, {
+                credentials: 'include'
+            });
+            if (!response.ok) return [];
+            
+            const data = await response.json();
+            return Array.isArray(data) ? data : (data.data || []);
+        } catch (error) {
+            console.error(`Error loading videos for course ${courseId}:`, error);
+            return [];
+        }
+    }
 
-                    if (this.courses.length === 0) {
-                        this.showNoCoursesMessage();
-                        return;
-                    }
+    async loadCourseAssignments(courseId) {
+        try {
+            const response = await fetch(`/api/get_assignments.php?course_id=${courseId}`, {
+                credentials: 'include'
+            });
+            if (!response.ok) return [];
+            
+            const data = await response.json();
+            return Array.isArray(data) ? data : (data.data || []);
+        } catch (error) {
+            console.error(`Error loading assignments for course ${courseId}:`, error);
+            return [];
+        }
+    }
 
-                    for (const course of this.courses) {
-                        const [videos, assignments] = await Promise.all([
-                            this.loadCourseVideos(course.course_id),
-                            this.loadCourseAssignments(course.course_id)
-                        ]);
+    createCourseElement(course, videos, assignments) {
+        const courseDiv = document.createElement('div');
+        courseDiv.className = 'course';
+        courseDiv.dataset.courseId = course.course_id;
 
-                        this.createCourseElement(course, videos, assignments);
-                    }
-                }
+        const durationText = course.duration ? `${course.duration} hours` : 'Not set';
+        const priceText = course.price ? `$${parseFloat(course.price).toFixed(2)}` : 'Free';
 
-                async loadCourseVideos(courseId) {
-                    try {
-                        const response = await fetch(`/api/get_videos.php?course_id=${courseId}`);
-                        if (!response.ok) return [];
-                        return await response.json();
-                    } catch (error) {
-                        console.error(`Error loading videos for course ${courseId}:`, error);
-                        return [];
-                    }
-                }
-
-                async loadCourseAssignments(courseId) {
-                    try {
-                        const response = await fetch(`/api/get_assignments.php?course_id=${courseId}`);
-                        if (!response.ok) return [];
-                        return await response.json();
-                    } catch (error) {
-                        console.error(`Error loading assignments for course ${courseId}:`, error);
-                        return [];
-                    }
-                }
-
-                createCourseElement(course, videos, assignments) {
-                    const courseDiv = document.createElement('div');
-                    courseDiv.className = 'course';
-                    courseDiv.dataset.courseId = course.course_id;
-
-                    const durationText = course.duration ? `${course.duration} hours` : 'Not set';
-                    const priceText = course.price ? `$${parseFloat(course.price).toFixed(2)}` : 'Free';
-
-                    courseDiv.innerHTML = `
+        courseDiv.innerHTML = `
             <div class="coursename">
                 <h3>${course.course_title || 'Untitled Course'}</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -890,30 +485,30 @@ function handleDeleteSingleAssignment(assignmentId, courseDiv) {
                 </svg>
             </div>
             
-            <div class="course-info">
-                <div class="info-row">
-                    <span class="label">Category:</span>
-                    <span class="value">${course.category || 'Not set'}</span>
+            <div class="course-info" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div class="info-row" style="margin: 8px 0;">
+                    <span class="label" style="font-weight: 600; color: #666;">Category:</span>
+                    <span class="value" style="color: #333;">${course.category || 'Not set'}</span>
                 </div>
-                <div class="info-row">
-                    <span class="label">Description:</span>
-                    <span class="value">${course.course_description || 'No description'}</span>
+                <div class="info-row" style="margin: 8px 0;">
+                    <span class="label" style="font-weight: 600; color: #666;">Description:</span>
+                    <span class="value" style="color: #333;">${course.course_description || 'No description'}</span>
                 </div>
-                <div class="info-row">
-                    <span class="label">Duration:</span>
-                    <span class="value">${durationText}</span>
+                <div class="info-row" style="margin: 8px 0;">
+                    <span class="label" style="font-weight: 600; color: #666;">Duration:</span>
+                    <span class="value" style="color: #333;">${durationText}</span>
                 </div>
-                <div class="info-row">
-                    <span class="label">Price:</span>
-                    <span class="value">${priceText}</span>
+                <div class="info-row" style="margin: 8px 0;">
+                    <span class="label" style="font-weight: 600; color: #666;">Price:</span>
+                    <span class="value" style="color: #333;">${priceText}</span>
                 </div>
-                <div class="info-row">
-                    <span class="label">Enrolled:</span>
-                    <span class="value">${course.enrolled_count || 0} students</span>
+                <div class="info-row" style="margin: 8px 0;">
+                    <span class="label" style="font-weight: 600; color: #666;">Enrolled:</span>
+                    <span class="value" style="color: #333;">${course.enrolled_count || 0} students</span>
                 </div>
-                <div class="info-row">
-                    <span class="label">Rating:</span>
-                    <span class="value">${course.rating ? `${course.rating}/5.0` : 'Not rated'}</span>
+                <div class="info-row" style="margin: 8px 0;">
+                    <span class="label" style="font-weight: 600; color: #666;">Rating:</span>
+                    <span class="value" style="color: #333;">${course.rating ? `${course.rating}/5.0` : 'Not rated'}</span>
                 </div>
             </div>
 
@@ -921,7 +516,7 @@ function handleDeleteSingleAssignment(assignmentId, courseDiv) {
                 <div class="vdHead">
                     <p>Course Videos (${videos.length})</p>
                     <div class="edit-buttons">
-                        <button class="delete-videos-btn">
+                        <button class="deletebtn delete-videos-btn">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
@@ -929,63 +524,67 @@ function handleDeleteSingleAssignment(assignmentId, courseDiv) {
                                 <path d="m15 9-6 6" />
                                 <path d="m9 9 6 6" />
                             </svg>
-                            Delete
+                            delete
                         </button>
                         <button class="addVd add-video-btn" data-course-id="${course.course_id}">
-                            + Add Video
+                            + Add
                         </button>
                     </div>
                 </div>
                 <div class="vdcards">
                     ${videos.length > 0 ?
-                            videos.map(v => `
+                        videos.map(v => `
                             <div class="video" data-video-id="${v.video_id}">
                                 <div class="one">
                                     <div class="vd-background">
-                                        <img src="../assets/images/video-thumbnail.jpg" alt="Video">
+                                        <img src="../assets/images/webdev.jpg" alt="Video">
                                     </div>
                                     <div class="vd-info">
                                         <div class="title">${v.video_title}</div>
-                                        <a href="${v.video_url}" target="_blank" class="video-link">View</a>
+                                        ${v.video_url ? `<a href="${v.video_url}" target="_blank" class="video-link" style="font-size: 12px; color: #1976d2;">View</a>` : ''}
                                     </div>
                                 </div>
                                 <div class="two">
-                                    <input type="checkbox" class="video-checkbox" data-video-id="${v.video_id}">
+                                    <input type="checkbox" class="video-checkbox" data-video-id="${v.video_id}" style="display: none;">
                                 </div>
                             </div>
                         `).join('') :
-                            '<p class="no-content">No videos yet</p>'
-                        }
+                        '<p style="color: #999; font-style: italic;">No videos yet</p>'
+                    }
                 </div>
             </div>
 
             <div class="assignments">
                 <p>Assignments (${assignments.length})</p>
-                <div class="assignments-list">
-                    ${assignments.length > 0 ?
-                            assignments.map(a => `
-                            <div class="assignment" data-assignment-id="${a.assignment_id}">
-                                <div class="pdf">
+                ${assignments.length > 0 ?
+                    assignments.map(a => `
+                        <div class="assignment" data-assignment-id="${a.assignment_id}">
+                            <div class="pdf assignment-file" data-file-url="${a.assignment_url || ''}" style="cursor: pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-file-icon lucide-file">
+                                    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+                                    <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                                </svg>
+                                ${a.assignment_title}
+                            </div>
+                            <div class="edit-buttons">
+                                <button class="deletebtn delete-assignment-btn" data-assignment-id="${a.assignment_id}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-file-icon lucide-file">
-                                        <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-                                        <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                                        stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="m15 9-6 6" />
+                                        <path d="m9 9 6 6" />
                                     </svg>
-                                    ${a.assignment_title}
-                                    <span class="status ${a.assignment_status}">${a.assignment_status}</span>
-                                </div>
-                                <div class="edit-buttons">
-                                    <button class="delete-assignment-btn" data-assignment-id="${a.assignment_id}">
-                                        Delete
-                                    </button>
-                                </div>
+                                    delete
+                                </button>
                             </div>
-                        `).join('') :
-                            '<p class="no-content">No assignments yet</p>'
-                        }
-                </div>
-                <div class="add-assignment-container">
+                        </div>
+                    `).join('') :
+                    '<p style="color: #999; font-style: italic;">No assignments yet</p>'
+                }
+                <div class="add-assignment-container" style="margin-top: 10px;">
                     <button class="addAss add-assignment-btn" data-course-id="${course.course_id}">
                         + Add Assignment
                     </button>
@@ -993,279 +592,537 @@ function handleDeleteSingleAssignment(assignmentId, courseDiv) {
             </div>
         `;
 
-                    this.contentContainer.appendChild(courseDiv);
-                }
+        return courseDiv;
+    }
 
-                setupEventListeners() {
-                    // Copy event listeners from your existing teach.js
-                    // or integrate with your existing DeletionManager
-                }
-
-                showNoCoursesMessage() {
-                    this.contentContainer.innerHTML = `
-            <div class="no-courses">
-                <h3>No Courses Yet</h3>
-                <p>You haven't created any courses.</p>
-                <a href="/html/addcourse.html" class="create-course-btn">Create Your First Course</a>
+    showNoCoursesMessage() {
+        this.contentContainer.innerHTML = `
+            <div class="no-courses" style="text-align: center; padding: 60px 20px;">
+                <h3 style="color: #333; margin-bottom: 15px;">No Courses Yet</h3>
+                <p style="color: #666; margin-bottom: 25px;">You haven't created any courses.</p>
+                <a href="/html/addcourse.html" 
+                   style="display: inline-block; padding: 12px 24px; 
+                          background: linear-gradient(-120deg, rgba(143, 201, 251, 0.301), 20%, #1976d2); 
+                          color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Create Your First Course
+                </a>
             </div>
         `;
-                }
-
-                showNotTeacherMessage() {
-                    this.contentContainer.innerHTML = `
-            <div class="not-teacher">
-                <h3>Teacher Access Required</h3>
-                <p>You need to be a teacher to view and manage courses.</p>
-                <a href="/pages/teacherrequest.html" class="become-teacher-btn">Become a Teacher</a>
-            </div>
-        `;
-                }
-            }
-
-
-            // ─── 13. Chat labels → teacherProgress  hadil touched this ──────────────────────────────────────
-            //function setupChatClickHandlers() {
-            //   document.querySelectorAll('.chat').forEach(el => {
-            //     el.addEventListener('click', () => {
-            //       window.location.href = '/html/teacherProgress.html';
-            //  });
-            // });
-            //}
-
-            // Initialize
-            document.addEventListener('DOMContentLoaded', () => {
-                new CourseManager().init();
-            });
-        }
-    })
-}*/
-
-// File: /assets/js/teach.js
-// =====================================================================
-// TEACHER REQUEST MANAGER
-// =====================================================================
-
-class TeacherRequestManager {
-    constructor() {
-        this.requestsContainer = document.querySelector('.requests');
-        this.popup = document.getElementById('popup');
-        this.currentUser = null;
-        this.isTeacher = false;
-        console.log('TeacherRequestManager initialized');
-    }
-
-    async init() {
-        const ok = await this.loadCurrentUser();
-        if (ok) await this.loadTeacherRequests();
-    }
-
-    async loadCurrentUser() {
-        try {
-            const response = await fetch('/assets/php/getCurrentUser.php');
-            const data = await response.json();
-
-            if (data.success && data.user) {
-                this.currentUser = {
-                    user_id: data.user.id,
-                    email: data.user.email,
-                    full_name: data.user.name,
-                    is_teacher: data.user.is_teacher,
-                    role: data.user.role
-                };
-
-                if (this.currentUser.is_teacher === 1) {
-                    this.isTeacher = true;
-                    return true;
-                } else {
-                    this.showNotTeacherMessage();
-                }
-            }
-        } catch (err) {
-            console.error(err);
-        }
-        return false;
-    }
-
-    async loadTeacherRequests() {
-        try {
-            const response = await fetch('/api/get_teacher_requests.php');
-            const data = await response.json();
-
-            if (data.success) {
-                this.displayRequests(data.data || []);
-            } else {
-                this.showNoRequestsMessage();
-            }
-        } catch (err) {
-            console.error(err);
-            this.showErrorMessage();
-        }
-    }
-
-    displayRequests(requests) {
-        this.requestsContainer.innerHTML = '<p>Requests to join courses</p>';
-        if (!requests.length) return this.showNoRequestsMessage();
-
-        const grouped = {};
-        requests.forEach(r => {
-            const title = r.course_title || 'Unknown Course';
-            if (!grouped[title]) grouped[title] = [];
-            grouped[title].push(r);
-        });
-
-        Object.keys(grouped).forEach(title => {
-            const section = document.createElement('div');
-            section.className = 'course-requests';
-            section.innerHTML = `<p>${title} requests</p>`;
-
-            grouped[title].forEach(req => {
-                const div = document.createElement('div');
-                div.className = 'request';
-                div.dataset.requestData = JSON.stringify(req);
-                div.innerHTML = `
-                    <div class="chatImg">
-                        <img src="${req.student_picture || '../assets/images/pf4.jpg'}">
-                    </div>
-                    <div class="chatInfo">
-                        <div class="name">${req.student_name}</div>
-                        <div class="Rcourse">${req.request_status}</div>
-                    </div>
-                `;
-                div.addEventListener('click', () => this.openRequestReview(req));
-                section.appendChild(div);
-            });
-
-            this.requestsContainer.appendChild(section);
-        });
-    }
-
-    openRequestReview(request) {
-        const iframe = this.popup.querySelector('iframe');
-        iframe.src = `/requestReview.html?request=${encodeURIComponent(JSON.stringify(request))}`;
-        this.popup.showModal();
     }
 
     showNotTeacherMessage() {
-        this.requestsContainer.innerHTML = `<p>Teacher access required</p>`;
-    }
-
-    showNoRequestsMessage() {
-        this.requestsContainer.innerHTML += `<p>No student requests</p>`;
-    }
-
-    showErrorMessage() {
-        this.requestsContainer.innerHTML += `<p>Error loading requests</p>`;
+        this.contentContainer.innerHTML = `
+            <div class="not-teacher" style="text-align: center; padding: 60px 20px;">
+                <h3 style="color: #333; margin-bottom: 15px;">Teacher Access Required</h3>
+                <p style="color: #666; margin-bottom: 25px;">You need to be a teacher to view and manage courses.</p>
+                <a href="/pages/teacherrequest.html" 
+                   style="display: inline-block; padding: 12px 24px; 
+                          background: linear-gradient(-120deg, rgba(143, 201, 251, 0.301), 20%, #1976d2); 
+                          color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Become a Teacher
+                </a>
+            </div>
+        `;
     }
 }
 
 
 // =====================================================================
-// DELETION MANAGER
+// 3. DELETION MANAGER - Handles all deletion operations
 // =====================================================================
 
 class DeletionManager {
     constructor() {
-        this.deleteMode = {};
-        this.setupListeners();
+        this.deleteMode = {}; // Track delete mode per course
+        console.log('DeletionManager initialized');
     }
 
-    setupListeners() {
+    setupDeleteListeners() {
+        console.log('Setting up delete listeners...');
+
+        // 1. Course deletion (trash icon)
         document.querySelectorAll('.delete-course-btn').forEach(btn => {
-            btn.addEventListener('click', e => {
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const course = btn.closest('.course');
-                this.deleteCourse(course.dataset.courseId, course);
+                const courseElement = btn.closest('.course');
+                const courseId = courseElement?.dataset.courseId;
+                if (courseId) {
+                    this.deleteCourse(courseId, courseElement);
+                }
             });
         });
 
+        // 2. Video deletion - WITH TOGGLE DELETE MODE
         document.querySelectorAll('.delete-videos-btn').forEach(btn => {
-            btn.addEventListener('click', e => {
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const course = btn.closest('.course');
-                this.handleDeleteVideos(course.dataset.courseId, course, btn);
+                const courseElement = btn.closest('.course');
+                const courseId = courseElement?.dataset.courseId;
+                if (courseId) {
+                    this.handleDeleteVideos(courseId, courseElement, btn);
+                }
             });
         });
 
+        // 3. Assignment deletion
         document.querySelectorAll('.delete-assignment-btn').forEach(btn => {
-            btn.addEventListener('click', e => {
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const el = btn.closest('.assignment');
-                this.deleteAssignment(el.dataset.assignmentId, el);
+                const assignmentElement = btn.closest('.assignment');
+                const assignmentId = assignmentElement?.dataset.assignmentId;
+                if (assignmentId) {
+                    this.deleteAssignment(assignmentId, assignmentElement);
+                }
             });
         });
-    }
 
-    async deleteCourse(courseId, el) {
-        if (!confirm('Delete this course?')) return;
-        const res = await fetch('/api/delete_course.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ course_id: parseInt(courseId) })
+        // 4. Assignment file click to view
+        document.querySelectorAll('.assignment-file').forEach(fileDiv => {
+            fileDiv.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const fileUrl = fileDiv.getAttribute('data-file-url');
+                if (fileUrl && fileUrl !== '') {
+                    window.open(fileUrl, '_blank');
+                } else {
+                    alert('No file available for this assignment');
+                }
+            });
         });
-        const data = await res.json();
-        if (data.success) el.remove();
+
+        // 5. Add video buttons
+        document.querySelectorAll('.add-video-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const courseId = btn.dataset.courseId;
+                const courseElement = btn.closest('.course');
+                if (courseId && courseElement) {
+                    this.handleAddVideo(courseId, courseElement);
+                }
+            });
+        });
+
+        // 6. Add assignment buttons
+        document.querySelectorAll('.add-assignment-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const courseId = btn.dataset.courseId;
+                const courseElement = btn.closest('.course');
+                if (courseId && courseElement) {
+                    this.handleAddAssignment(courseId, courseElement);
+                }
+            });
+        });
+
+        console.log('Delete listeners setup complete');
     }
 
-    handleDeleteVideos(courseId, courseEl, btn) {
-        const boxes = courseEl.querySelectorAll('.video-checkbox');
+    // ========== VIDEO DELETION - TOGGLE BEHAVIOR ==========
+    handleDeleteVideos(courseId, courseElement, deleteBtn) {
+        const vdcards = courseElement.querySelector('.vdcards');
+        const checkboxes = vdcards.querySelectorAll('.video-checkbox');
 
         if (!this.deleteMode[courseId]) {
+            // ENTER delete mode - show checkboxes
             this.deleteMode[courseId] = true;
-            boxes.forEach(b => b.style.display = 'block');
-            btn.textContent = 'Remove Selected';
-        } else {
-            const ids = [...boxes].filter(b => b.checked).map(b => parseInt(b.dataset.videoId));
-            if (!ids.length) return this.exitDeleteMode(courseId, courseEl, btn);
-            this.deleteVideos(ids, courseId, courseEl, btn);
-        }
-    }
 
-    async deleteVideos(ids, courseId, courseEl, btn) {
-        if (!confirm(`Delete ${ids.length} videos?`)) return;
-
-        const res = await fetch('/api/delete_videos.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ video_ids: ids })
-        });
-
-        const data = await res.json();
-        if (data.success) {
-            ids.forEach(id => {
-                const card = courseEl.querySelector(`[data-video-id="${id}"]`);
-                if (card) card.remove();
+            checkboxes.forEach(cb => {
+                cb.style.display = 'block';
             });
-            this.exitDeleteMode(courseId, courseEl, btn);
+
+            deleteBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-circle-x-icon lucide-circle-x">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+                </svg>
+                Remove Selected
+            `;
+        } else {
+            // IN delete mode - check for selections
+            const selectedIds = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => parseInt(cb.getAttribute('data-video-id')));
+
+            if (selectedIds.length > 0) {
+                this.deleteVideosFromServer(selectedIds, courseElement, courseId, deleteBtn);
+            } else {
+                this.exitDeleteMode(courseId, courseElement, deleteBtn);
+            }
         }
     }
 
-    exitDeleteMode(courseId, courseEl, btn) {
-        this.deleteMode[courseId] = false;
-        courseEl.querySelectorAll('.video-checkbox').forEach(b => b.style.display = 'none');
-        btn.textContent = 'Delete';
+    async deleteVideosFromServer(videoIds, courseElement, courseId, deleteBtn) {
+        if (!confirm(`Delete ${videoIds.length} selected video(s)?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/delete_videos.php', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ video_ids: videoIds })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Remove selected video elements
+                videoIds.forEach(videoId => {
+                    const videoCard = courseElement.querySelector(`[data-video-id="${videoId}"]`);
+                    if (videoCard) {
+                        videoCard.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => videoCard.remove(), 300);
+                    }
+                });
+
+                // EXIT delete mode after deletion
+                setTimeout(() => {
+                    this.exitDeleteMode(courseId, courseElement, deleteBtn);
+
+                    // If no videos remain, show placeholder
+                    const vdcards = courseElement.querySelector('.vdcards');
+                    const remainingVideos = vdcards.querySelectorAll('.video');
+                    if (remainingVideos.length === 0) {
+                        vdcards.innerHTML = '<p style="color: #999; font-style: italic;">No videos yet</p>';
+                    }
+                }, 350);
+            } else {
+                throw new Error(result.error || 'Failed to delete videos');
+            }
+        } catch (error) {
+            console.error('Error deleting videos:', error);
+            alert(`Error: ${error.message}`);
+            this.exitDeleteMode(courseId, courseElement, deleteBtn);
+        }
     }
 
-    async deleteAssignment(id, el) {
-        if (!confirm('Delete assignment?')) return;
-        await fetch('/api/delete_assignment.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ assignment_id: parseInt(id) })
+    exitDeleteMode(courseId, courseElement, deleteBtn) {
+        this.deleteMode[courseId] = false;
+        const vdcards = courseElement.querySelector('.vdcards');
+        const checkboxes = vdcards.querySelectorAll('.video-checkbox');
+
+        checkboxes.forEach(cb => {
+            cb.style.display = 'none';
+            cb.checked = false;
         });
-        el.remove();
+
+        deleteBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-circle-x-icon lucide-circle-x">
+                <circle cx="12" cy="12" r="10" />
+                <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+            </svg>
+            delete
+        `;
+    }
+
+    // ========== COURSE DELETION ==========
+    async deleteCourse(courseId, courseElement) {
+        if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/delete_course.php', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ course_id: parseInt(courseId) })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                courseElement.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => {
+                    courseElement.remove();
+                    this.checkEmptyPage();
+                }, 300);
+            } else {
+                throw new Error(result.error || 'Failed to delete course');
+            }
+        } catch (error) {
+            console.error('Error deleting course:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    // ========== ASSIGNMENT DELETION ==========
+    async deleteAssignment(assignmentId, assignmentElement) {
+        if (!confirm('Delete this assignment?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/delete_assignment.php', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ assignment_id: parseInt(assignmentId) })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                assignmentElement.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    assignmentElement.remove();
+
+                    // Check if placeholder needed
+                    const assignmentsDiv = assignmentElement.closest('.assignments');
+                    if (assignmentsDiv) {
+                        const remainingAssignments = assignmentsDiv.querySelectorAll('.assignment');
+                        if (remainingAssignments.length === 0) {
+                            const placeholder = document.createElement('p');
+                            placeholder.style.cssText = 'color: #999; font-style: italic;';
+                            placeholder.textContent = 'No assignments yet';
+                            const addButtonContainer = assignmentsDiv.querySelector('.add-assignment-container');
+                            if (addButtonContainer) {
+                                assignmentsDiv.insertBefore(placeholder, addButtonContainer);
+                            }
+                        }
+                    }
+                }, 300);
+            } else {
+                throw new Error(result.error || 'Failed to delete assignment');
+            }
+        } catch (error) {
+            console.error('Error deleting assignment:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    // ========== ADD VIDEO ==========
+    handleAddVideo(courseId, courseElement) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'video/mp4,video/webm,video/mov';
+
+        input.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('course_id', courseId);
+            formData.append('video', file);
+
+            try {
+                const response = await fetch('/api/add_video.php', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success || data.video_id) {
+                    const vdcards = courseElement.querySelector('.vdcards');
+                    
+                    // Remove placeholder if exists
+                    const placeholder = Array.from(vdcards.querySelectorAll('p')).find(p => /no videos yet/i.test(p.textContent));
+                    if (placeholder) placeholder.remove();
+
+                    const newVideo = data.video || {
+                        video_id: data.video_id,
+                        video_title: file.name.replace(/\.[^/.]+$/, ''),
+                        video_url: data.video_url || ''
+                    };
+
+                    // Create video element
+                    const videoDiv = document.createElement('div');
+                    videoDiv.className = 'video';
+                    videoDiv.dataset.videoId = newVideo.video_id;
+                    videoDiv.innerHTML = `
+                        <div class="one">
+                            <div class="vd-background">
+                                <img src="../assets/images/webdev.jpg" alt="Video">
+                            </div>
+                            <div class="vd-info">
+                                <div class="title">${newVideo.video_title}</div>
+                                ${newVideo.video_url ? `<a href="${newVideo.video_url}" target="_blank" class="video-link" style="font-size: 12px; color: #1976d2;">View</a>` : ''}
+                            </div>
+                        </div>
+                        <div class="two">
+                            <input type="checkbox" class="video-checkbox" data-video-id="${newVideo.video_id}" style="display: none;">
+                        </div>
+                    `;
+
+                    vdcards.appendChild(videoDiv);
+                    alert('Video added successfully!');
+                } else {
+                    throw new Error(data.error || 'Failed to add video');
+                }
+            } catch (error) {
+                console.error('Error adding video:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        input.click();
+    }
+
+    // ========== ADD ASSIGNMENT ==========
+    handleAddAssignment(courseId, courseElement) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.pdf,.doc,.docx';
+
+        input.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('course_id', courseId);
+            formData.append('assignment', file);
+
+            try {
+                const response = await fetch('/api/add_assignment.php', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success || data.assignment_id) {
+                    const assignmentsDiv = courseElement.querySelector('.assignments');
+                    const addButtonContainer = assignmentsDiv.querySelector('.add-assignment-container');
+
+                    // Remove placeholder if exists
+                    const placeholder = Array.from(assignmentsDiv.querySelectorAll('p')).find(p => /no assignments yet/i.test(p.textContent));
+                    if (placeholder) placeholder.remove();
+
+                    const newAssignment = data.assignment || {
+                        assignment_id: data.assignment_id,
+                        assignment_title: file.name.replace(/\.[^/.]+$/, ''),
+                        assignment_url: data.assignment_url || ''
+                    };
+
+                    // Create assignment element
+                    const assignmentDiv = document.createElement('div');
+                    assignmentDiv.className = 'assignment';
+                    assignmentDiv.dataset.assignmentId = newAssignment.assignment_id;
+                    assignmentDiv.innerHTML = `
+                        <div class="pdf assignment-file" data-file-url="${newAssignment.assignment_url || ''}" style="cursor: pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-file-icon lucide-file">
+                                <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+                                <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                            </svg>
+                            ${newAssignment.assignment_title}
+                        </div>
+                        <div class="edit-buttons">
+                            <button class="deletebtn delete-assignment-btn" data-assignment-id="${newAssignment.assignment_id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="m15 9-6 6" />
+                                    <path d="m9 9 6 6" />
+                                </svg>
+                                delete
+                            </button>
+                        </div>
+                    `;
+
+                    assignmentsDiv.insertBefore(assignmentDiv, addButtonContainer);
+
+                    // Setup event listeners for new assignment
+                    const fileDiv = assignmentDiv.querySelector('.assignment-file');
+                    fileDiv.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const fileUrl = fileDiv.getAttribute('data-file-url');
+                        if (fileUrl && fileUrl !== '') {
+                            window.open(fileUrl, '_blank');
+                        } else {
+                            alert('No file available for this assignment');
+                        }
+                    });
+
+                    const deleteBtn = assignmentDiv.querySelector('.delete-assignment-btn');
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.deleteAssignment(newAssignment.assignment_id, assignmentDiv);
+                    });
+
+                    alert('Assignment added successfully!');
+                } else {
+                    throw new Error(data.error || 'Failed to add assignment');
+                }
+            } catch (error) {
+                console.error('Error adding assignment:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        input.click();
+    }
+
+    // ========== HELPER METHODS ==========
+    checkEmptyPage() {
+        const courses = document.querySelectorAll('.course');
+        if (courses.length === 0) {
+            const contentDiv = document.querySelector('.content');
+            if (contentDiv) {
+                contentDiv.innerHTML = `
+                    <div class="no-courses" style="text-align: center; padding: 60px 20px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">No Courses Yet</h3>
+                        <p style="color: #666; margin-bottom: 25px;">You haven't created any courses.</p>
+                        <a href="/html/addcourse.html" 
+                           style="display: inline-block; padding: 12px 24px; 
+                                  background: linear-gradient(-120deg, rgba(143, 201, 251, 0.301), 20%, #1976d2); 
+                                  color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                            Create Your First Course
+                        </a>
+                    </div>
+                `;
+            }
+        }
     }
 }
 
 
 // =====================================================================
-// INIT
+// 4. INITIALIZATION - Initialize everything when DOM loads
 // =====================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('.requests')) {
-        new TeacherRequestManager().init();
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('DOM loaded, initializing teach page...');
+
+    // Initialize CourseManager first (renders courses)
+    if (document.querySelector('.content')) {
+        console.log('Initializing CourseManager...');
+        window.courseManager = new CourseManager();
+        await window.courseManager.init();
+        
+        // Then initialize DeletionManager (after courses are rendered)
+        console.log('Initializing DeletionManager...');
+        window.deletionManager = new DeletionManager();
+        window.deletionManager.setupDeleteListeners();
     }
-    if (document.querySelector('.course')) {
-        new DeletionManager();
+
+    // Initialize TeacherRequestManager (independent)
+    if (document.querySelector('.requests')) {
+        console.log('Initializing TeacherRequestManager...');
+        window.teacherRequestManager = new TeacherRequestManager();
+        await window.teacherRequestManager.init();
+    }
+
+    console.log('All managers initialized successfully');
+});
+
+// Also handle chat click events
+document.addEventListener('DOMContentLoaded', () => {
+    let chatLabels = document.getElementsByClassName('chat');
+    for (let chatLabel of chatLabels) {
+        chatLabel.addEventListener('click', () => {
+            window.location.href = '/html/teacherProgress.html';
+        });
     }
 });

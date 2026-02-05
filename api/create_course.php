@@ -1,3 +1,4 @@
+create course
 <?php
 // api/create_course.php
 session_start();

@@ -1,70 +1,129 @@
 <?php
-// api/teacher_chat.php
-ob_start();
 session_start();
-
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Credentials: true');
-
-ob_clean();
-
 require_once '../config/db.php';
 
-try {
-    // Check if user is logged in
-    if (!isset($_SESSION['user_id'])) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Not authenticated'
-        ]);
-        exit;
-    }
+header('Content-Type: application/json');
 
-    $teacher_id = $_SESSION['user_id'];
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+    exit;
+}
 
-    // Query to get all students enrolled in teacher's courses
-    $query = "
-        SELECT 
-            c.course_id,
-            c.course_title,
-            s.user_id as student_id,
-            s.full_name as student_name,
-            s.profile_picture as student_picture
-        FROM COURSE c
-        INNER JOIN ENROLLMENT e ON c.course_id = e.course_id
-        INNER JOIN USER s ON e.student_id = s.user_id
-        WHERE c.teacher_id = ? AND e.is_active = 1
-        ORDER BY c.course_title, s.full_name
-    ";
+$student_id = $_SESSION['user_id'];
 
-    $stmt = mysqli_prepare($conn, $query);
-    if (!$stmt) {
-        throw new Exception('Prepare failed: ' . mysqli_error($conn));
-    }
+// Get POST data
+$course_id = isset($_POST['course_id']) ? intval($_POST['course_id']) : 0;
+$current_level = isset($_POST['current_level']) ? $_POST['current_level'] : 'beginner';
+$available_days = isset($_POST['available_days']) ? $_POST['available_days'] : '';
+$available_time = isset($_POST['available_time']) ? $_POST['available_time'] : '';
+$student_message = isset($_POST['student_message']) ? trim($_POST['student_message']) : '';
 
-    mysqli_stmt_bind_param($stmt, "i", $teacher_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+// Optional old fields
+$student_name = isset($_POST['student_name']) ? trim($_POST['student_name']) : null;
+$student_skill = isset($_POST['student_skill']) ? trim($_POST['student_skill']) : null;
 
-    $chats = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $chats[] = $row;
-    }
+// Validate required fields
+if ($course_id <= 0 || empty($available_days) || empty($available_time) || empty($student_message)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Please fill all required fields']);
+    exit;
+}
+
+if (strlen($student_message) < 50) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Message must be at least 50 characters']);
+    exit;
+}
+
+// Check if user exists and is a student
+$check_user_sql = "SELECT full_name, is_teacher FROM USER WHERE user_id = ?";
+$check_stmt = $conn->prepare($check_user_sql);
+$check_stmt->bind_param("i", $student_id);
+$check_stmt->execute();
+$check_result = $check_stmt->get_result();
+
+if ($check_result->num_rows === 0) {
+    http_response_code(404);
+    echo json_encode(['success' => false, 'message' => 'User not found']);
+    exit;
+}
+
+$user_data = $check_result->fetch_assoc();
+if ((int)$user_data['is_teacher'] === 1) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Teachers cannot enroll as students']);
+    exit;
+}
+$check_stmt->close();
+
+// Use full name if not provided
+if (!$student_name) {
+    $student_name = $user_data['full_name'];
+}
+
+// Check if course exists
+$course_sql = "SELECT course_id FROM COURSE WHERE course_id = ?";
+$course_stmt = $conn->prepare($course_sql);
+$course_stmt->bind_param("i", $course_id);
+$course_stmt->execute();
+$course_result = $course_stmt->get_result();
+if ($course_result->num_rows === 0) {
+    http_response_code(404);
+    echo json_encode(['success' => false, 'message' => 'Course not found']);
+    exit;
+}
+$course_stmt->close();
+
+// Check if already enrolled
+$enrollment_sql = "SELECT enrollment_id FROM ENROLLMENT WHERE student_id = ? AND course_id = ?";
+$enrollment_stmt = $conn->prepare($enrollment_sql);
+$enrollment_stmt->bind_param("ii", $student_id, $course_id);
+$enrollment_stmt->execute();
+$enrollment_result = $enrollment_stmt->get_result();
+if ($enrollment_result->num_rows > 0) {
+    http_response_code(409);
+    echo json_encode(['success' => false, 'message' => 'Already enrolled in this course']);
+    exit;
+}
+$enrollment_stmt->close();
+
+// Check if pending request exists
+$request_sql = "SELECT request_id FROM ENROLLMENT_REQUEST WHERE student_id = ? AND course_id = ? AND status = 'pending'";
+$request_stmt = $conn->prepare($request_sql);
+$request_stmt->bind_param("ii", $student_id, $course_id);
+$request_stmt->execute();
+$request_result = $request_stmt->get_result();
+if ($request_result->num_rows > 0) {
+    http_response_code(409);
+    echo json_encode(['success' => false, 'message' => 'You already have a pending request for this course']);
+    exit;
+}
+$request_stmt->close();
+
+// Insert enrollment request
+$insert_sql = "INSERT INTO ENROLLMENT_REQUEST 
+               (student_id, course_id, current_level, available_days, available_time, student_message, status) 
+               VALUES (?, ?, ?, ?, ?, ?, 'pending')";
+$insert_stmt = $conn->prepare($insert_sql);
+$insert_stmt->bind_param("iissss", $student_id, $course_id, $current_level, $available_days, $available_time, $student_message);
+
+if ($insert_stmt->execute()) {
+    $request_id = $insert_stmt->insert_id;
+    $insert_stmt->close();
+    $conn->close();
 
     echo json_encode([
         'success' => true,
-        'chats' => $chats,
-        'count' => count($chats)
+        'message' => 'Enrollment request submitted successfully',
+        'request_id' => $request_id,
+        'student_name' => $student_name
     ]);
-
-} catch (Exception $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error fetching chats',
-        'error' => $e->getMessage()
-    ]);
+} else {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Failed to submit request: ' . $conn->error]);
+    $insert_stmt->close();
+    $conn->close();
 }
-
-ob_end_flush();
 ?>
