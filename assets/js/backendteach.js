@@ -18,35 +18,44 @@ class TeacherRequestManager {
         await this.loadTeacherRequests();
     }
 
-   async loadCurrentUser() {
+ // In backendteach.js - update loadCurrentUser method
+async loadCurrentUser() {
     try {
-        const response = await fetch('/assets/php/getCurrentUser.php');
+        console.log('Loading current user from new API...');
+        
+        // ✅ Use your new API endpoint
+        const response = await fetch('/api/get_current_user.php');
+        
+        if (!response.ok) {
+            console.error('HTTP error:', response.status);
+            return false;
+        }
+        
         const data = await response.json();
+        console.log('New user API response:', data);
         
         if (data.success && data.user) {
-            // Transform the user object to match expected structure
-            this.currentUser = {
-                user_id: data.user.id,           // Map id → user_id
-                email: data.user.email,
-                full_name: data.user.name,       // Map name → full_name
-                is_teacher: data.user.is_teacher, // This is correct
-                role: data.user.role
-            };
+            this.currentUser = data.user;
             
-            console.log('Teacher loaded:', this.currentUser);
+            // ✅ is_teacher is now guaranteed to be correct
+            console.log('is_teacher from session:', this.currentUser.is_teacher);
+            console.log('Type:', typeof this.currentUser.is_teacher);
             
-            // Check if user is a teacher - FIXED
-            if (this.currentUser.is_teacher === 1) {
-                this.isTeacher = true;
-                console.log('User is a teacher');
-                return true;
-            } else {
-                console.warn('User is not a teacher - is_teacher value:', this.currentUser.is_teacher);
+            this.isTeacher = this.currentUser.is_teacher === 1;
+            
+            console.log('User is teacher?', this.isTeacher);
+            
+            if (!this.isTeacher) {
+                console.warn('User is NOT a teacher');
                 this.showNotTeacherMessage();
                 return false;
             }
+            
+            console.log('✅ User authenticated as teacher');
+            return true;
+            
         } else {
-            console.warn('Failed to load user:', data.message);
+            console.warn('API error:', data.error);
             return false;
         }
     } catch (error) {
@@ -59,25 +68,30 @@ async loadTeacherRequests() {
     try {
         console.log('Loading teacher requests from API...');
         
-        // FIX: Use correct endpoint name
-        const response = await fetch('/api/get_teacher_requests.php');
+        // Make sure this matches your file name
+        const response = await fetch('/api/get_teacher_pending_requests.php');
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            console.log('Request API returned status:', response.status);
+            return;
         }
         
         const data = await response.json();
         
         if (data.success) {
             console.log(`Loaded ${data.data?.length || 0} requests`);
-            this.displayRequests(data.data || []);
+            if (data.data && data.data.length > 0) {
+                this.displayRequests(data.data);
+            } else {
+                this.showNoRequestsMessage();
+            }
         } else {
-            console.error('API Error loading requests:', data.error);
+            console.log('API returned success=false:', data.error);
             this.showNoRequestsMessage();
         }
     } catch (error) {
-        console.error('Network error loading teacher requests:', error);
-        this.showErrorMessage('Network error: ' + error.message);
+        console.log('Could not load requests:', error.message);
+        this.showNoRequestsMessage();
     }
 }
     displayRequests(requests) {

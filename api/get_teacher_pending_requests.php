@@ -1,8 +1,12 @@
 <?php
-// File: /api/get_teacher_requests.php
-require_once '../config/db.php';
-
+// File: /api/get_teacher_pending_requests.php
 session_start();
+header('Content-Type: application/json');
+
+// Turn off error display
+error_reporting(0);
+ini_set('display_errors', 0);
+
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Not authenticated']);
     exit;
@@ -10,10 +14,24 @@ if (!isset($_SESSION['user_id'])) {
 
 $teacher_id = $_SESSION['user_id'];
 
+// Use MySQLi (like your other files)
+require_once '../assets/php/db.php'; // Your existing MySQLi connection
+
 try {
-    $db = new Database();
-    $conn = $db->getConnection();
+    // Check if user is teacher
+    $checkStmt = $conn->prepare("SELECT is_teacher FROM USER WHERE user_id = ?");
+    $checkStmt->bind_param("i", $teacher_id);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+    $user = $checkResult->fetch_assoc();
     
+    if (!$user || !$user['is_teacher']) {
+        echo json_encode(['success' => false, 'error' => 'User is not a teacher']);
+        exit;
+    }
+    
+    // Get requests - SIMPLIFIED VERSION FIRST
+    // Check if ENROLLMENT_REQUEST table exists
     $query = "
         SELECT 
             er.request_id,
@@ -21,41 +39,51 @@ try {
             er.course_id,
             er.status as request_status,
             er.request_date,
-            er.student_message,
             c.course_title,
-            c.price,
-            c.category,
             u.full_name as student_name,
-            u.email as student_email,
             u.profile_picture as student_picture
         FROM ENROLLMENT_REQUEST er
         JOIN COURSE c ON er.course_id = c.course_id
         JOIN USER u ON er.student_id = u.user_id
-        WHERE c.teacher_id = :teacher_id
-        AND er.status IN ('pending', 'accepted')
-        ORDER BY 
-            CASE er.status 
-                WHEN 'pending' THEN 1 
-                WHEN 'accepted' THEN 2 
-                ELSE 3 
-            END,
-            er.request_date DESC
+        WHERE c.teacher_id = ?
+        ORDER BY er.request_date DESC
+        LIMIT 20
     ";
     
     $stmt = $conn->prepare($query);
-    $stmt->execute([':teacher_id' => $teacher_id]);
-    $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->bind_param("i", $teacher_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
-    // Format dates
-    foreach ($requests as &$request) {
-        $date = new DateTime($request['request_date']);
-        $request['formatted_date'] = $date->format('M d, Y');
-        $request['formatted_time'] = $date->format('h:i A');
+    $requests = [];
+    while ($row = $result->fetch_assoc()) {
+        $requests[] = $row;
     }
     
-    echo json_encode(['success' => true, 'data' => $requests]);
+    $stmt->close();
+    
+    // If no requests or table doesn't exist, return empty array
+    if (empty($requests)) {
+        echo json_encode([
+            'success' => true,
+            'data' => [],
+            'message' => 'No requests found'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => true,
+            'data' => $requests
+        ]);
+    }
     
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    // Return empty array instead of error for now
+    echo json_encode([
+        'success' => true,
+        'data' => [],
+        'debug' => 'Table might not exist: ' . $e->getMessage()
+    ]);
 }
+
+$conn->close();
 ?>

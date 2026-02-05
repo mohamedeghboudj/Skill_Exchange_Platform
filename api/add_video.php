@@ -21,7 +21,7 @@ if (!isset($_FILES['video']) || $_FILES['video']['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
-require_once '../assets/php/db.php';
+require_once '../config/db.php';
 
 $course_id  = (int)$_POST['course_id'];
 $teacher_id = $_SESSION['user_id'];

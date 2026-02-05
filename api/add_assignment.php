@@ -21,7 +21,7 @@ if (!isset($_FILES['assignment']) || $_FILES['assignment']['error'] !== UPLOAD_E
     exit;
 }
 
-require_once '../assets/php/db.php';
+require_once '../config/db.php';
 
 $course_id  = (int)$_POST['course_id'];
 $teacher_id = $_SESSION['user_id'];
