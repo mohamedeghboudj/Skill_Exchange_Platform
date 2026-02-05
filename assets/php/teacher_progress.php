@@ -15,7 +15,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Check if user is a teacher
-if ($_SESSION['user_role'] !== 'Teacher') {
+$role = $_SESSION['user_role'] ?? '';
+if (strtolower($role) !== 'teacher') {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Only teachers can access this']);
     exit();
@@ -36,7 +37,7 @@ function getStudentAssignmentProgress($student_id, $course_id) {
     global $teacher_id, $conn;
     
     // Verify teacher owns this course
-    $sql = "SELECT course_id as id, course_title as title FROM COURSE WHERE course_id = ? AND teacher_id = ?";
+    $sql = "SELECT course_id, course_title FROM COURSE WHERE course_id = ? AND teacher_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ii', $course_id, $teacher_id);
     $stmt->execute();
@@ -47,10 +48,13 @@ function getStudentAssignmentProgress($student_id, $course_id) {
         return ['success' => false, 'message' => 'Course not found or access denied'];
     }
     
-    // Get student info
-    $sql = "SELECT user_id as id, full_name as username, email FROM USER WHERE user_id = ?";
+    // Get student info and enrollment progress
+    $sql = "SELECT u.user_id as id, u.full_name as username, u.email, e.progress_percentage
+            FROM USER u
+            LEFT JOIN ENROLLMENT e ON e.student_id = u.user_id AND e.course_id = ?
+            WHERE u.user_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $student_id);
+    $stmt->bind_param('ii', $course_id, $student_id);
     $stmt->execute();
     $student = $stmt->get_result()->fetch_assoc();
     $stmt->close();
@@ -59,27 +63,58 @@ function getStudentAssignmentProgress($student_id, $course_id) {
         return ['success' => false, 'message' => 'Student not found'];
     }
     
-    // Get all assignments with student submissions and grades
+    $student['progress_percentage'] = $student['progress_percentage'] ?? 0;
+    
+    // Get video progress for stepper
+    $sql = "SELECT v.video_id, v.video_title,
+            CASE WHEN vw.video_id IS NOT NULL AND vw.is_watched = 1 THEN 1 ELSE 0 END as watched
+            FROM VIDEO v
+            LEFT JOIN VIDEO_WATCH vw ON v.video_id = vw.video_id AND vw.student_id = ?
+            WHERE v.course_id = ?
+            ORDER BY v.video_id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ii', $student_id, $course_id);
+    $stmt->execute();
+    $video_result = $stmt->get_result();
+    $videos = [];
+    while ($v = $video_result->fetch_assoc()) {
+        $videos[] = [
+            'video_id' => (int)$v['video_id'],
+            'video_title' => $v['video_title'],
+            'watched' => (int)$v['watched'] === 1
+        ];
+    }
+    $stmt->close();
+    
+    $watched_videos = count(array_filter($videos, fn($x) => $x['watched']));
+    
+    // Get all assignments with student submissions (pick latest submission if duplicates exist)
     $sql = "SELECT 
         a.assignment_id,
         a.assignment_title,
         a.max_score,
-        a.due_date,
-        COALESCE(s.submission_id, NULL) as submission_id,
-        COALESCE(s.submission_url, NULL) as submission_url,
-        COALESCE(s.submitted_at, NULL) as submitted_at,
-        COALESCE(s.score, NULL) as score,
-        COALESCE(s.graded_at, NULL) as graded_at,
+        s.submission_id,
+        s.submission_url,
+        s.score,
         CASE 
             WHEN s.submission_id IS NULL THEN 'not_submitted'
-            WHEN s.score IS NULL THEN 'submitted'
-            ELSE 'graded'
+            WHEN s.submission_status = 'submitted' THEN 'submitted'
+            WHEN s.submission_status = 'marked' THEN 'graded'
+            ELSE 'submitted'
         END as status
     FROM ASSIGNMENT a
-    LEFT JOIN ASSIGNMENT_SUBMISSION s ON a.assignment_id = s.assignment_id 
-        AND s.student_id = ?
+    LEFT JOIN (
+        SELECT s1.* FROM ASSIGNMENT_SUBMISSION s1
+        INNER JOIN (
+            SELECT assignment_id, student_id, MAX(submission_id) as max_id
+            FROM ASSIGNMENT_SUBMISSION
+            WHERE student_id = ?
+            GROUP BY assignment_id, student_id
+        ) latest ON s1.assignment_id = latest.assignment_id 
+            AND s1.student_id = latest.student_id AND s1.submission_id = latest.max_id
+    ) s ON a.assignment_id = s.assignment_id
     WHERE a.course_id = ?
-    ORDER BY a.sequence_number";
+    ORDER BY a.assignment_id";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ii', $student_id, $course_id);
@@ -89,18 +124,21 @@ function getStudentAssignmentProgress($student_id, $course_id) {
     $assignments = [];
     $submitted_count = 0;
     $graded_count = 0;
+    $missed_count = 0;
     $total_score = 0;
     $max_total_score = 0;
     
     while ($assignment = $result->fetch_assoc()) {
         $max_total_score += (float)$assignment['max_score'];
         
-        if ($assignment['score'] !== null) {
+        if ($assignment['score'] !== null && $assignment['status'] === 'graded') {
             $total_score += (float)$assignment['score'];
             $graded_count++;
+        } elseif ($assignment['status'] === 'not_submitted') {
+            $missed_count++;
         }
         
-        if ($assignment['submitted_at'] !== null) {
+        if ($assignment['submission_id'] !== null) {
             $submitted_count++;
         }
         
@@ -113,12 +151,9 @@ function getStudentAssignmentProgress($student_id, $course_id) {
             'assignment_id' => (int)$assignment['assignment_id'],
             'assignment_title' => $assignment['assignment_title'],
             'max_score' => (float)$assignment['max_score'],
-            'due_date' => $assignment['due_date'],
             'submission_id' => $assignment['submission_id'] ? (int)$assignment['submission_id'] : null,
             'submission_url' => $assignment['submission_url'],
-            'submitted_at' => $assignment['submitted_at'],
-            'score' => $assignment['score'] ? (float)$assignment['score'] : null,
-            'graded_at' => $assignment['graded_at'],
+            'score' => $assignment['score'] !== null ? (float)$assignment['score'] : null,
             'status' => $assignment['status'],
             'percentage' => $percentage
         ];
@@ -126,21 +161,31 @@ function getStudentAssignmentProgress($student_id, $course_id) {
     
     $stmt->close();
     
-    $average_score = $graded_count > 0 ? round($total_score / $graded_count, 2) : null;
+    $average_mark = $graded_count > 0 ? round($total_score / $graded_count, 2) : 0;
     
     return [
         'success' => true,
         'course_id' => (int)$course_id,
-        'course_title' => $course['title'],
+        'course_title' => $course['course_title'],
         'student_id' => (int)$student_id,
-        'student_name' => $student['username'],
+        'student' => [
+            'student_id' => (int)$student_id,
+            'student_name' => $student['username'],
+            'progress_percentage' => (float)$student['progress_percentage']
+        ],
         'student_email' => $student['email'],
+        'videos' => $videos,
+        'stats' => [
+            'watched_videos' => $watched_videos,
+            'total_videos' => count($videos),
+            'graded_assignments' => $graded_count,
+            'done_count' => $graded_count,
+            'missed_count' => $missed_count,
+            'average_mark' => $average_mark
+        ],
         'total_assignments' => count($assignments),
         'submitted_count' => $submitted_count,
         'graded_count' => $graded_count,
-        'average_score' => $average_score,
-        'total_score' => round($total_score, 2),
-        'max_total_score' => round($max_total_score, 2),
         'assignments' => $assignments
     ];
 }
@@ -152,7 +197,7 @@ function getStudentsProgress($course_id) {
     global $teacher_id, $conn;
     
     // Verify teacher owns this course
-    $sql = "SELECT course_id as id, course_title as title FROM COURSE WHERE course_id = ? AND teacher_id = ?";
+    $sql = "SELECT course_id, course_title FROM COURSE WHERE course_id = ? AND teacher_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ii', $course_id, $teacher_id);
     $stmt->execute();
@@ -170,8 +215,8 @@ function getStudentsProgress($course_id) {
         u.email,
         COUNT(a.assignment_id) as total_assignments,
         COUNT(CASE WHEN s.submission_id IS NOT NULL THEN 1 END) as submitted_count,
-        COUNT(CASE WHEN s.score IS NOT NULL THEN 1 END) as graded_count,
-        COALESCE(AVG(CASE WHEN s.score IS NOT NULL THEN s.score END), 0) as average_score,
+        COUNT(CASE WHEN s.submission_status IN ('marked', 'graded') THEN 1 END) as graded_count,
+        COALESCE(AVG(CASE WHEN s.submission_status IN ('marked', 'graded') THEN s.score END), 0) as average_score,
         COALESCE(SUM(s.score), 0) as total_score
     FROM ENROLLMENT e
     JOIN USER u ON e.student_id = u.user_id
@@ -205,7 +250,7 @@ function getStudentsProgress($course_id) {
     return [
         'success' => true,
         'course_id' => (int)$course_id,
-        'course_title' => $course['title'],
+        'course_title' => $course['course_title'] ?? 'Course',
         'total_students' => count($students),
         'students' => $students
     ];
@@ -245,13 +290,12 @@ function gradeAssignment($submission_id, $score) {
     }
     
     // Update score
-    $now = date('Y-m-d H:i:s');
     $sql = "UPDATE ASSIGNMENT_SUBMISSION 
-            SET score = ?, graded_at = ?, submission_status = 'graded'
+            SET score = ?, submission_status = 'marked'
             WHERE submission_id = ?";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('dsi', $score, $now, $submission_id);
+    $stmt->bind_param('di', $score, $submission_id);
     
     if ($stmt->execute()) {
         $stmt->close();
@@ -279,9 +323,8 @@ function getSubmissionDetails($submission_id) {
         s.student_id,
         s.assignment_id,
         s.submission_url,
-        s.submitted_at,
         s.score,
-        s.graded_at,
+        s.submission_status,
         u.full_name as student_name,
         u.email as student_email,
         a.assignment_title,
@@ -321,9 +364,8 @@ function getSubmissionDetails($submission_id) {
         'assignment_id' => (int)$submission['assignment_id'],
         'assignment_title' => $submission['assignment_title'],
         'submission_url' => $submission['submission_url'],
-        'submitted_at' => $submission['submitted_at'],
-        'score' => $submission['score'] ? (float)$submission['score'] : null,
-        'graded_at' => $submission['graded_at'],
+        'score' => $submission['score'] !== null ? (float)$submission['score'] : null,
+        'status' => $submission['submission_status'],
         'max_score' => (float)$submission['max_score'],
         'percentage' => $percentage
     ];
@@ -342,13 +384,12 @@ if ($method === 'GET') {
                 u.full_name as student_name,
                 u.profile_picture,
                 c.course_id,
-                c.course_title,
-                e.enrollment_date
+                c.course_title
             FROM ENROLLMENT e
             JOIN USER u ON e.student_id = u.user_id
             JOIN COURSE c ON e.course_id = c.course_id
             WHERE c.teacher_id = ?
-            ORDER BY e.enrollment_date DESC
+            ORDER BY u.full_name ASC
         ";
 
         $stmt = $conn->prepare($sql);

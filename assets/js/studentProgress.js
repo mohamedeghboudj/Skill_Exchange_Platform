@@ -40,40 +40,65 @@ let currentCourseId = null;
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('[StudentProgress] Page loaded, initializing...');
   try {
     // Get student ID from session
     const userResponse = await fetch(`${API_BASE_URL}/getCurrentUser.php`);
     const userData = await userResponse.json();
 
     if (!userData.success) {
+      console.warn('[StudentProgress] Not logged in');
       showError('Please log in to view your progress');
       return;
     }
 
     currentStudentId = userData.user.id;
+    console.log('[StudentProgress] Student ID:', currentStudentId);
 
-    // Get course ID from URL parameter (required)
+    // Get parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     currentCourseId = urlParams.get('courseId');
 
+    console.log('[StudentProgress] URL param - courseId:', currentCourseId);
+
+    // If missing from URL, try to recover from session
     if (!currentCourseId) {
+      console.log('[StudentProgress] courseId missing from URL, trying session recovery...');
+      const sessionData = await loadStudentChatInfo();
+      if (sessionData && sessionData.course_id) {
+        currentCourseId = sessionData.course_id;
+        console.log('[StudentProgress] Recovered from session - courseId:', currentCourseId);
+      }
+    }
+
+    if (!currentCourseId) {
+      console.warn('[StudentProgress] courseId required but not found in URL or session');
       showError('Course ID is required. Please select a course from your chat.');
       return;
     }
 
-    // Load all progress data
-    await loadCourseProgress();
-    await loadVideoProgress();
-    await loadAssignments();
-
-    // Load Sidebar (My Instructors/Courses)
-    await loadSidebarInstructors();
+    // Continue loading
+    await initializeView();
+    console.log('[StudentProgress] Init complete');
 
   } catch (error) {
-    console.error('Initialization error:', error);
+    console.error('[StudentProgress] Initialization error:', error);
     showError('Failed to initialize page. Please try again.');
   }
 });
+
+/**
+ * Common View Initialization
+ */
+async function initializeView() {
+  // Load all progress data
+  await loadCourseProgress();
+  await loadVideoProgress();
+  await loadAssignments();
+
+  // Load Sidebar (My Instructors/Courses)
+  await loadSidebarInstructors();
+}
 
 /**
  * Load Sidebar with My Instructors/Courses
@@ -200,14 +225,27 @@ async function loadVideoProgress() {
       // PHP returns 'video_steps' array
       const videos = result.video_steps || result.data || [];
 
+      // DYNAMIC GRID: Set grid columns based on video count
+      stepper.style.gridTemplateColumns = `repeat(${videos.length}, 1fr)`;
+
+      let foundActive = false;
       videos.forEach((video, index) => {
         const stepDiv = document.createElement('div');
-        // Map PHP status (watched, not_yet, locked) to CSS classes (completed, active, etc)
-        // CSS expects: completed, active, or plain (locked).
+        // Map PHP status to CSS: 
+        // 1. watched -> completed
+        // 2. First unwatched -> active
+        // 3. Rest unwatched -> plain (locked/grey)
+
         let cssClass = 'step';
-        if (video.status === 'watched') cssClass += ' completed';
-        else if (video.status === 'not_yet') cssClass += ' active';
-        // else locked/plain
+        if (video.status === 'watched') {
+          cssClass += ' completed';
+        } else if (!foundActive) {
+          cssClass += ' active';
+          foundActive = true;
+          video.status = 'active'; // Update status for click logic if needed
+        } else {
+          video.status = 'locked'; // Treat as locked for UI consistency
+        }
 
         stepDiv.className = cssClass;
         stepDiv.innerHTML = `
@@ -530,35 +568,17 @@ async function loadStudentChatInfo() {
         userDiv.textContent = data.student_name;
       }
 
-      // Update progress percentage if available
-      if (data.progress_percentage) {
-        const progressBar = document.querySelector('.progress-bar div');
-        const progressText = document.querySelector('.progress-header span:last-child');
-
-        if (progressBar) {
-          progressBar.style.width = data.progress_percentage + '%';
-        }
-        if (progressText) {
-          progressText.textContent = data.progress_percentage + '% complete';
-        }
-      }
-
-      console.log('Chat info loaded successfully');
+      console.log('[StudentProgress] Chat info loaded successfully');
+      return data;
     } else {
-      console.error('Error loading chat info:', result.message);
-      // Redirect back to learn page if no active chat
-      alert('Please select a chat first');
-      window.location.href = '/html/learn.html';
+      console.warn('[StudentProgress] Chat info: no active chat', result.message);
+      return null;
     }
   } catch (error) {
-    console.error('Error fetching chat info:', error);
-    alert('Error loading chat information');
+    console.warn('[StudentProgress] Error fetching chat info:', error);
+    return null;
   }
 }
 
-// Keep the DOMContentLoaded listener
-document.addEventListener('DOMContentLoaded', loadStudentChatInfo);
-
-// Load chat information when page loads
-document.addEventListener('DOMContentLoaded', loadStudentChatInfo);
+// DOMContentLoaded listener removed - handled by main initialization
 // ========== END OF ADDED CODE ==========
