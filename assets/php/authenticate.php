@@ -2,10 +2,11 @@
 session_start();
 header('Content-Type: application/json'); //informs client bli response will be in json
 // hadil touched this   header('Access-Control-Allow-Origin: *');//to allow requests from any domain
-header('Access-Control-Allow-Origin: http://localhost');
+header('Access-Control-Allow-Origin: http://localhost:8000');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST');//allows post requests only 
 header('Access-Control-Allow-Headers: Content-Type'); //allows requests that include the Content-Type header.
+
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -62,7 +63,12 @@ if ($result->num_rows > 0) {
         http_response_code(200);
         echo json_encode([
             'success' => true,
-            'message' => 'Login successful'
+            'message' => 'Login successful',
+            'user' => [
+                'id' => $user['user_id'],
+                'name' => $user['full_name'],
+                'role' => $user['is_teacher'] ? 'Teacher' : 'Student'
+            ]
         ]);
     } else {
         http_response_code(401);
