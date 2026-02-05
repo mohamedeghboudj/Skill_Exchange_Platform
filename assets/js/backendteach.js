@@ -3,7 +3,7 @@
 // =====================================================================
 // TEACHER REQUEST MANAGER - HANDLES STUDENT REQUESTS
 // =====================================================================
-
+/*
 
 class TeacherRequestManager {
     constructor() {
@@ -964,4 +964,234 @@ function handleDeleteSingleAssignment(assignmentId, courseDiv) {
             });
         }
     })
+}*/
+
+// File: /assets/js/teach.js
+// =====================================================================
+// TEACHER REQUEST MANAGER
+// =====================================================================
+
+class TeacherRequestManager {
+    constructor() {
+        this.requestsContainer = document.querySelector('.requests');
+        this.popup = document.getElementById('popup');
+        this.currentUser = null;
+        this.isTeacher = false;
+        console.log('TeacherRequestManager initialized');
+    }
+
+    async init() {
+        const ok = await this.loadCurrentUser();
+        if (ok) await this.loadTeacherRequests();
+    }
+
+    async loadCurrentUser() {
+        try {
+            const response = await fetch('/assets/php/getCurrentUser.php');
+            const data = await response.json();
+
+            if (data.success && data.user) {
+                this.currentUser = {
+                    user_id: data.user.id,
+                    email: data.user.email,
+                    full_name: data.user.name,
+                    is_teacher: data.user.is_teacher,
+                    role: data.user.role
+                };
+
+                if (this.currentUser.is_teacher === 1) {
+                    this.isTeacher = true;
+                    return true;
+                } else {
+                    this.showNotTeacherMessage();
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        return false;
+    }
+
+    async loadTeacherRequests() {
+        try {
+            const response = await fetch('/api/get_teacher_requests.php');
+            const data = await response.json();
+
+            if (data.success) {
+                this.displayRequests(data.data || []);
+            } else {
+                this.showNoRequestsMessage();
+            }
+        } catch (err) {
+            console.error(err);
+            this.showErrorMessage();
+        }
+    }
+
+    displayRequests(requests) {
+        this.requestsContainer.innerHTML = '<p>Requests to join courses</p>';
+        if (!requests.length) return this.showNoRequestsMessage();
+
+        const grouped = {};
+        requests.forEach(r => {
+            const title = r.course_title || 'Unknown Course';
+            if (!grouped[title]) grouped[title] = [];
+            grouped[title].push(r);
+        });
+
+        Object.keys(grouped).forEach(title => {
+            const section = document.createElement('div');
+            section.className = 'course-requests';
+            section.innerHTML = `<p>${title} requests</p>`;
+
+            grouped[title].forEach(req => {
+                const div = document.createElement('div');
+                div.className = 'request';
+                div.dataset.requestData = JSON.stringify(req);
+                div.innerHTML = `
+                    <div class="chatImg">
+                        <img src="${req.student_picture || '../assets/images/pf4.jpg'}">
+                    </div>
+                    <div class="chatInfo">
+                        <div class="name">${req.student_name}</div>
+                        <div class="Rcourse">${req.request_status}</div>
+                    </div>
+                `;
+                div.addEventListener('click', () => this.openRequestReview(req));
+                section.appendChild(div);
+            });
+
+            this.requestsContainer.appendChild(section);
+        });
+    }
+
+    openRequestReview(request) {
+        const iframe = this.popup.querySelector('iframe');
+        iframe.src = `/requestReview.html?request=${encodeURIComponent(JSON.stringify(request))}`;
+        this.popup.showModal();
+    }
+
+    showNotTeacherMessage() {
+        this.requestsContainer.innerHTML = `<p>Teacher access required</p>`;
+    }
+
+    showNoRequestsMessage() {
+        this.requestsContainer.innerHTML += `<p>No student requests</p>`;
+    }
+
+    showErrorMessage() {
+        this.requestsContainer.innerHTML += `<p>Error loading requests</p>`;
+    }
 }
+
+
+// =====================================================================
+// DELETION MANAGER
+// =====================================================================
+
+class DeletionManager {
+    constructor() {
+        this.deleteMode = {};
+        this.setupListeners();
+    }
+
+    setupListeners() {
+        document.querySelectorAll('.delete-course-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const course = btn.closest('.course');
+                this.deleteCourse(course.dataset.courseId, course);
+            });
+        });
+
+        document.querySelectorAll('.delete-videos-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const course = btn.closest('.course');
+                this.handleDeleteVideos(course.dataset.courseId, course, btn);
+            });
+        });
+
+        document.querySelectorAll('.delete-assignment-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const el = btn.closest('.assignment');
+                this.deleteAssignment(el.dataset.assignmentId, el);
+            });
+        });
+    }
+
+    async deleteCourse(courseId, el) {
+        if (!confirm('Delete this course?')) return;
+        const res = await fetch('/api/delete_course.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ course_id: parseInt(courseId) })
+        });
+        const data = await res.json();
+        if (data.success) el.remove();
+    }
+
+    handleDeleteVideos(courseId, courseEl, btn) {
+        const boxes = courseEl.querySelectorAll('.video-checkbox');
+
+        if (!this.deleteMode[courseId]) {
+            this.deleteMode[courseId] = true;
+            boxes.forEach(b => b.style.display = 'block');
+            btn.textContent = 'Remove Selected';
+        } else {
+            const ids = [...boxes].filter(b => b.checked).map(b => parseInt(b.dataset.videoId));
+            if (!ids.length) return this.exitDeleteMode(courseId, courseEl, btn);
+            this.deleteVideos(ids, courseId, courseEl, btn);
+        }
+    }
+
+    async deleteVideos(ids, courseId, courseEl, btn) {
+        if (!confirm(`Delete ${ids.length} videos?`)) return;
+
+        const res = await fetch('/api/delete_videos.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ video_ids: ids })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            ids.forEach(id => {
+                const card = courseEl.querySelector(`[data-video-id="${id}"]`);
+                if (card) card.remove();
+            });
+            this.exitDeleteMode(courseId, courseEl, btn);
+        }
+    }
+
+    exitDeleteMode(courseId, courseEl, btn) {
+        this.deleteMode[courseId] = false;
+        courseEl.querySelectorAll('.video-checkbox').forEach(b => b.style.display = 'none');
+        btn.textContent = 'Delete';
+    }
+
+    async deleteAssignment(id, el) {
+        if (!confirm('Delete assignment?')) return;
+        await fetch('/api/delete_assignment.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ assignment_id: parseInt(id) })
+        });
+        el.remove();
+    }
+}
+
+
+// =====================================================================
+// INIT
+// =====================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('.requests')) {
+        new TeacherRequestManager().init();
+    }
+    if (document.querySelector('.course')) {
+        new DeletionManager();
+    }
+});
