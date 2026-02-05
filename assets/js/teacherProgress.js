@@ -10,7 +10,7 @@ const chatToggle = document.querySelector(".chat-toggle");
 const sidebar = document.querySelector(".sidebar");
 const closeChat = document.querySelector(".close-chat");
 
-const leftArrow = document.getElementById("left-arrow");
+
 
 
 // Initialize page
@@ -394,7 +394,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-<<<<<<< HEAD
 leftArrow.addEventListener('click', () => {
   window.location.href = "/html/teach.html";
 });
