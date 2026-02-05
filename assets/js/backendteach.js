@@ -378,7 +378,7 @@ class CourseManager {
     async loadTeacherCourses() {
         try {
             console.log('Loading teacher courses...');
-            const response = await fetch('/api/get_courses.php', {
+            const response = await fetch('/api/get_teacher_courses.php', {
                 credentials: 'include'
             });
             
@@ -463,60 +463,89 @@ class CourseManager {
         }
     }
 
-    createCourseElement(course, videos, assignments) {
-        const courseDiv = document.createElement('div');
-        courseDiv.className = 'course';
-        courseDiv.dataset.courseId = course.course_id;
+   createCourseElement(course, videos, assignments) {
+    const courseDiv = document.createElement('div');
+    courseDiv.className = 'course';
+    courseDiv.dataset.courseId = course.course_id;
 
-        const durationText = course.duration ? `${course.duration} hours` : 'Not set';
-        const priceText = course.price ? `$${parseFloat(course.price).toFixed(2)}` : 'Free';
+    // Course title + delete button
+    courseDiv.innerHTML = `
+        <div class="coursename" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>${course.course_title || 'Untitled Course'}</h3>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="#b7b4b4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-trash2-icon lucide-trash-2 delete-course-btn">
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                <path d="M3 6h18" />
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+        </div>
 
-        courseDiv.innerHTML = `
-            <div class="coursename">
-                <h3>${course.course_title || 'Untitled Course'}</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="#b7b4b4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-trash2-icon lucide-trash-2 delete-course-btn">
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                    <path d="M3 6h18" />
-                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
+        <div class="course-info" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <div class="info-row" style="margin: 8px 0;">
+                <span class="label" style="font-weight: 600; color: #666;">Enrolled:</span>
+                <span class="value" style="color: #333;">${course.enrolled_count || 0} students</span>
             </div>
-            
-            <div class="course-info" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                <div class="info-row" style="margin: 8px 0;">
-                    <span class="label" style="font-weight: 600; color: #666;">Category:</span>
-                    <span class="value" style="color: #333;">${course.category || 'Not set'}</span>
-                </div>
-                <div class="info-row" style="margin: 8px 0;">
-                    <span class="label" style="font-weight: 600; color: #666;">Description:</span>
-                    <span class="value" style="color: #333;">${course.course_description || 'No description'}</span>
-                </div>
-                <div class="info-row" style="margin: 8px 0;">
-                    <span class="label" style="font-weight: 600; color: #666;">Duration:</span>
-                    <span class="value" style="color: #333;">${durationText}</span>
-                </div>
-                <div class="info-row" style="margin: 8px 0;">
-                    <span class="label" style="font-weight: 600; color: #666;">Price:</span>
-                    <span class="value" style="color: #333;">${priceText}</span>
-                </div>
-                <div class="info-row" style="margin: 8px 0;">
-                    <span class="label" style="font-weight: 600; color: #666;">Enrolled:</span>
-                    <span class="value" style="color: #333;">${course.enrolled_count || 0} students</span>
-                </div>
-                <div class="info-row" style="margin: 8px 0;">
-                    <span class="label" style="font-weight: 600; color: #666;">Rating:</span>
-                    <span class="value" style="color: #333;">${course.rating ? `${course.rating}/5.0` : 'Not rated'}</span>
+            <div class="info-row" style="margin: 8px 0;">
+                <span class="label" style="font-weight: 600; color: #666;">Rating:</span>
+                <span class="value" style="color: #333;">${course.rating ? `${course.rating}/5.0` : 'Not rated'}</span>
+            </div>
+        </div>
+
+        <div class="videos">
+            <div class="vdHead">
+                <p>Course Videos (${videos.length})</p>
+                <div class="edit-buttons">
+                    <button class="deletebtn delete-videos-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="m15 9-6 6" />
+                            <path d="m9 9 6 6" />
+                        </svg>
+                        delete
+                    </button>
+                    <button class="addVd add-video-btn" data-course-id="${course.course_id}">+ Add</button>
                 </div>
             </div>
+            <div class="vdcards">
+                ${videos.length > 0 ? videos.map(v => `
+                    <div class="video" data-video-id="${v.video_id}">
+                        <div class="one">
+                            <div class="vd-background">
+                                <img src="../assets/images/webdev.jpg" alt="Video">
+                            </div>
+                            <div class="vd-info">
+                                <div class="title">${v.video_title}</div>
+                                ${v.video_url ? `<a href="${v.video_url}" target="_blank" class="video-link" style="font-size: 12px; color: #1976d2;">View</a>` : ''}
+                            </div>
+                        </div>
+                        <div class="two">
+                            <input type="checkbox" class="video-checkbox" data-video-id="${v.video_id}" style="display: none;">
+                        </div>
+                    </div>
+                `).join('') : '<p style="color: #999; font-style: italic;">No videos yet</p>'}
+            </div>
+        </div>
 
-            <div class="videos">
-                <div class="vdHead">
-                    <p>Course Videos (${videos.length})</p>
+        <div class="assignments">
+            <p>Assignments (${assignments.length})</p>
+            ${assignments.length > 0 ? assignments.map(a => `
+                <div class="assignment" data-assignment-id="${a.assignment_id}">
+                    <div class="pdf assignment-file" data-file-url="${a.assignment_url || ''}" style="cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-file-icon lucide-file">
+                            <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+                            <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                        </svg>
+                        ${a.assignment_title}
+                    </div>
                     <div class="edit-buttons">
-                        <button class="deletebtn delete-videos-btn">
+                        <button class="deletebtn delete-assignment-btn" data-assignment-id="${a.assignment_id}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
@@ -526,74 +555,18 @@ class CourseManager {
                             </svg>
                             delete
                         </button>
-                        <button class="addVd add-video-btn" data-course-id="${course.course_id}">
-                            + Add
-                        </button>
                     </div>
                 </div>
-                <div class="vdcards">
-                    ${videos.length > 0 ?
-                        videos.map(v => `
-                            <div class="video" data-video-id="${v.video_id}">
-                                <div class="one">
-                                    <div class="vd-background">
-                                        <img src="../assets/images/webdev.jpg" alt="Video">
-                                    </div>
-                                    <div class="vd-info">
-                                        <div class="title">${v.video_title}</div>
-                                        ${v.video_url ? `<a href="${v.video_url}" target="_blank" class="video-link" style="font-size: 12px; color: #1976d2;">View</a>` : ''}
-                                    </div>
-                                </div>
-                                <div class="two">
-                                    <input type="checkbox" class="video-checkbox" data-video-id="${v.video_id}" style="display: none;">
-                                </div>
-                            </div>
-                        `).join('') :
-                        '<p style="color: #999; font-style: italic;">No videos yet</p>'
-                    }
-                </div>
+            `).join('') : '<p style="color: #999; font-style: italic;">No assignments yet</p>'}
+            <div class="add-assignment-container" style="margin-top: 10px;">
+                <button class="addAss add-assignment-btn" data-course-id="${course.course_id}">+ Add Assignment</button>
             </div>
+        </div>
+    `;
 
-            <div class="assignments">
-                <p>Assignments (${assignments.length})</p>
-                ${assignments.length > 0 ?
-                    assignments.map(a => `
-                        <div class="assignment" data-assignment-id="${a.assignment_id}">
-                            <div class="pdf assignment-file" data-file-url="${a.assignment_url || ''}" style="cursor: pointer;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-file-icon lucide-file">
-                                    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-                                    <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-                                </svg>
-                                ${a.assignment_title}
-                            </div>
-                            <div class="edit-buttons">
-                                <button class="deletebtn delete-assignment-btn" data-assignment-id="${a.assignment_id}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="m15 9-6 6" />
-                                        <path d="m9 9 6 6" />
-                                    </svg>
-                                    delete
-                                </button>
-                            </div>
-                        </div>
-                    `).join('') :
-                    '<p style="color: #999; font-style: italic;">No assignments yet</p>'
-                }
-                <div class="add-assignment-container" style="margin-top: 10px;">
-                    <button class="addAss add-assignment-btn" data-course-id="${course.course_id}">
-                        + Add Assignment
-                    </button>
-                </div>
-            </div>
-        `;
+    return courseDiv;
+}
 
-        return courseDiv;
-    }
 
     showNoCoursesMessage() {
         this.contentContainer.innerHTML = `

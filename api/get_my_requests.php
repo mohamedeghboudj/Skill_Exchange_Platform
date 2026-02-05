@@ -1,7 +1,7 @@
 <?php
 // File: /api/get_my_requests.php
 require_once '../config/db.php';
-
+//this is the file responsible of getting the enrollemnt request for the logged in student
 header('Content-Type: application/json');
 session_start();
 
