@@ -15,95 +15,134 @@ const closeChat = document.querySelector(".close-chat");
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('[TeacherProgress] Page loaded, initializing...');
   try {
     // Get teacher ID from session
     const userResponse = await fetch(`${API_BASE_URL}/getCurrentUser.php`);
     const userData = await userResponse.json();
 
+    console.log('[TeacherProgress] getCurrentUser result:', userData.success ? 'OK' : 'FAIL', userData);
+
     if (!userData.success) {
+      console.warn('[TeacherProgress] Not logged in');
       showError('Please log in to view progress');
       return;
     }
 
-
     // Verify user is a teacher
-    if (userData.user.role !== 'teacher') {
-      showError('Only teachers can access this page');
+    const isTeacher = (userData.user.role === 'teacher' || userData.user.role === 'Teacher');
+    if (!isTeacher) {
+      console.warn('[TeacherProgress] Page is only for teachers. Current role:', userData.user.role);
       return;
     }
+    console.log('[TeacherProgress] User is teacher, OK');
 
     currentTeacherId = userData.user.id;
 
-    // Get course ID and optional student ID from URL
+    // Get parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     currentCourseId = urlParams.get('courseId');
     currentStudentId = urlParams.get('studentId');
 
+    console.log('[TeacherProgress] URL params - courseId:', currentCourseId, 'studentId:', currentStudentId);
+
+    // If missing from URL, try to recover from session (chat context)
     if (!currentCourseId) {
+      console.log('[TeacherProgress] courseId missing from URL, trying session recovery...');
+      const sessionData = await loadTeacherChatInfo();
+      if (sessionData && sessionData.course_id) {
+        currentCourseId = sessionData.course_id;
+        currentStudentId = currentStudentId || sessionData.student_id;
+        console.log('[TeacherProgress] Recovered from session - courseId:', currentCourseId, 'studentId:', currentStudentId);
+      }
+    }
+
+    if (!currentCourseId) {
+      console.warn('[TeacherProgress] courseId required but not found in URL or session');
       showError('Course ID is required. Please select a course.');
       return;
     }
 
-    // Load appropriate view
-    if (currentStudentId) {
-      // Show specific student's progress
-      await loadStudentDetails();
-    } else {
-      // Show all students in the course
-      await loadStudentsProgress();
-    }
-
-    // Load Sidebar (Enrolled Students)
-    await loadSidebarStudents();
+    // Continue loading with identified IDs
+    await initializeView();
+    console.log('[TeacherProgress] Init complete');
 
   } catch (error) {
-    console.error('Initialization error:', error);
+    console.error('[TeacherProgress] Initialization error:', error);
     showError('Failed to initialize page. Please try again.');
   }
 });
+
+/**
+ * Common View Initialization
+ */
+async function initializeView() {
+  // Load appropriate view
+  if (currentStudentId) {
+    console.log('[TeacherProgress] Loading student details...');
+    await loadStudentDetails();
+  } else {
+    console.log('[TeacherProgress] Loading students progress list...');
+    await loadStudentsProgress();
+  }
+
+  // Load Sidebar (Enrolled Students)
+  await loadSidebarStudents();
+}
 
 /**
  * Load Sidebar with Enrolled Students
  */
 async function loadSidebarStudents() {
   const listContainer = document.querySelector('.list-friend');
-  if (!listContainer) return;
+  if (!listContainer) {
+    console.warn('[TeacherProgress] loadSidebarStudents: no .list-friend container');
+    return;
+  }
 
   try {
+    console.log('[TeacherProgress] Fetching get_enrolled_students...');
     const response = await fetch(`${API_BASE_URL}/teacher_progress.php?action=get_enrolled_students`);
     const result = await response.json();
 
-    if (result.success && result.students.length > 0) {
-      listContainer.innerHTML = ''; // Clear hardcoded items
+    console.log('[TeacherProgress] get_enrolled_students:', result.success ? 'OK' : 'FAIL', result.students?.length ?? 0, 'students');
+
+    if (result.success && result.students?.length > 0) {
+      listContainer.innerHTML = '';
 
       result.students.forEach(student => {
         const li = document.createElement('li');
         li.className = 'friend-item';
         if (student.student_id == currentStudentId) {
-          li.classList.add('active'); // Highlight current
+          li.classList.add('active');
         }
+
+        const dateStr = student.enrollment_date ? new Date(student.enrollment_date).toLocaleDateString() : '—';
 
         li.innerHTML = `
                     <img src="${student.profile_picture || '/assets/images/default-profile.png'}" alt="Profile" onerror="this.src='https://via.placeholder.com/40'">
                     <div class="message-content">
                         <div class="name-header">
                             <span class="friend-name">${student.student_name}</span>
-                            <span class="time">${new Date(student.enrollment_date).toLocaleDateString()}</span>
+                            <span class="time">${dateStr}</span>
                         </div>
                         <p class="last-message">${student.course_title}</p>
                     </div>
                 `;
 
         li.addEventListener('click', () => {
-          // Navigate to this student's progress
           window.location.href = `/html/teacherProgress.html?courseId=${student.course_id}&studentId=${student.student_id}`;
         });
 
         listContainer.appendChild(li);
       });
+      console.log('[TeacherProgress] Sidebar students loaded');
+    } else {
+      console.log('[TeacherProgress] No enrolled students or API failed');
+      listContainer.innerHTML = '<li class="empty">No students enrolled</li>';
     }
   } catch (error) {
-    console.error("Error loading sidebar students:", error);
+    console.error('[TeacherProgress] Error loading sidebar students:', error);
   }
 }
 
@@ -130,10 +169,14 @@ if (chatToggle && sidebar && closeChat) {
  */
 async function loadStudentsProgress() {
   try {
+    console.log('[TeacherProgress] Fetching students-progress...', { courseId: currentCourseId });
     const response = await fetch(`${API_BASE_URL}/teacher_progress.php?action=students-progress&course_id=${currentCourseId}`);
     const result = await response.json();
 
+    console.log('[TeacherProgress] students-progress API response:', result.success ? 'OK' : 'FAIL', result);
+
     if (!result.success) {
+      console.warn('[TeacherProgress] students-progress failed:', result.message);
       showError(result.message || 'Failed to load students progress');
       return;
     }
@@ -147,23 +190,43 @@ async function loadStudentsProgress() {
     if (courseTitle) courseTitle.textContent = result.course_title;
 
     const courseSub = document.querySelector('.course-sub');
-    if (courseSub) courseSub.textContent = `${result.total_students} students enrolled`;
+    if (courseSub) courseSub.textContent = `${result.total_students || 0} students enrolled`;
 
-    // Display students list
-    displayStudentsList(result.students, result.course_title);
+    // Display students list in main (replace hardcoded content)
+    displayStudentsList(result.students || [], result.course_title);
+    console.log('[TeacherProgress] loadStudentsProgress complete');
 
   } catch (error) {
-    console.error('Error loading students progress:', error);
+    console.error('[TeacherProgress] Error loading students progress:', error);
     showError('Failed to load students progress');
   }
 }
 
 /**
- * Display list of all students with their progress
+ * Display list of all students with their progress (when no student selected)
  */
 function displayStudentsList(students, courseTitle) {
-  // ... (No change needed here ideally, but for safety I can't leave hole)
-  // Actually I will keep this function as is in the file if I don't select it.
+  const main = document.querySelector('main');
+  if (!main) return;
+
+  // Replace main with "select a student" view - no hardcoded stats
+  main.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-left-icon lucide-move-left" id="left-arrow">
+      <path d="M6 8L2 12L6 16"/><path d="M2 12H22"/>
+    </svg>
+    <div class="progress-box" style="padding: 40px;">
+      <h3>Select a student</h3>
+      <p>Choose a student from the sidebar to view their course progress, videos watched, and assignment grades.</p>
+      ${students.length > 0 ? `<p><strong>${students.length} students</strong> enrolled in this course.</p>` : ''}
+    </div>
+  `;
+
+  const newLeftArrow = document.getElementById("left-arrow");
+  if (newLeftArrow) {
+    newLeftArrow.addEventListener('click', () => {
+      window.location.href = "/html/teach.html";
+    });
+  }
 }
 
 /**
@@ -171,33 +234,39 @@ function displayStudentsList(students, courseTitle) {
  */
 async function loadStudentDetails() {
   try {
+    console.log('[TeacherProgress] Fetching student-assignments...', { courseId: currentCourseId, studentId: currentStudentId });
     const response = await fetch(`${API_BASE_URL}/teacher_progress.php?action=student-assignments&course_id=${currentCourseId}&student_id=${currentStudentId}`);
     const result = await response.json();
 
+    console.log('[TeacherProgress] student-assignments API response:', result);
+
     if (!result.success) {
+      console.warn('[TeacherProgress] student-assignments failed:', result.message);
       showError(result.message || 'Failed to load student details');
       return;
     }
+    console.log('[TeacherProgress] student-assignments OK, stats:', result.stats, 'videos:', result.videos?.length, 'assignments:', result.assignments?.length);
 
     // Update header
     const headerTitle = document.querySelector('header h1');
     if (headerTitle) headerTitle.textContent = result.course_title;
 
     const userElement = document.querySelector('.user');
-    if (userElement) userElement.textContent = result.student.student_name;
+    if (userElement) userElement.textContent = result.student?.student_name || 'Student';
 
     // Update sidebar
     const courseTitle = document.querySelector('.course-title');
     if (courseTitle) courseTitle.textContent = result.course_title;
 
     const courseSub = document.querySelector('.course-sub');
-    if (courseSub) courseSub.textContent = `Student: ${result.student.student_name}`;
+    if (courseSub) courseSub.textContent = `Student: ${result.student?.student_name || ''}`;
 
     // Display student progress
     displayStudentProgress(result);
+    console.log('[TeacherProgress] loadStudentDetails complete');
 
   } catch (error) {
-    console.error('Error loading student details:', error);
+    console.error('[TeacherProgress] Error loading student details:', error);
     showError('Failed to load student details');
   }
 }
@@ -207,10 +276,20 @@ async function loadStudentDetails() {
  */
 function displayStudentProgress(data) {
   const main = document.querySelector('main');
-  if (!main) return;
+  if (!main) {
+    console.warn('[TeacherProgress] displayStudentProgress: no main element');
+    return;
+  }
 
-  const stats = data.stats;
-  const student = data.student;
+  const stats = data.stats || {};
+  const student = data.student || {};
+  const watchedVideos = stats.watched_videos ?? 0;
+  const totalVideos = stats.total_videos ?? 0;
+  const doneCount = stats.done_count ?? stats.graded_assignments ?? 0;
+  const missedCount = stats.missed_count ?? 0;
+  const averageMark = stats.average_mark ?? 0;
+
+  console.log('[TeacherProgress] displayStudentProgress - stats:', { watchedVideos, totalVideos, doneCount, missedCount, averageMark });
 
   main.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-left-icon lucide-move-left" id="left-arrow">
@@ -223,16 +302,16 @@ function displayStudentProgress(data) {
         <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/>
       </svg>
       <div class="progress-header">
-        <span>Course progress - ${student.student_name}</span>
-        <span>${Math.round(student.progress_percentage)}% complete</span>
+        <span>Course progress - ${student.student_name || 'Student'}</span>
+        <span>${Math.round(student.progress_percentage || 0)}% complete</span>
       </div>
       <div class="progress-bar">
-        <div style="width: ${student.progress_percentage}%"></div>
+        <div style="width: ${student.progress_percentage || 0}%"></div>
       </div>
       <p class="stats">
-        Videos watched: <b>${stats.watched_videos} / ${stats.total_videos}</b> &nbsp; | &nbsp;
-        Assignments: <b>${stats.graded_assignments} graded</b> &nbsp; | &nbsp;
-        Average mark: <b>${stats.average_mark}%</b>
+        Videos watched: <b>${watchedVideos} / ${totalVideos}</b> &nbsp; | &nbsp;
+        Assignments: <b>${doneCount} done · ${missedCount} missed</b> &nbsp; | &nbsp;
+        Average mark: <b>${averageMark}%</b>
       </p>
     </div>
     
@@ -432,11 +511,9 @@ function attachGradingHandlers() {
 
 
 
-// Helper: Show Error
+// Helper: Show Error (console only, no alert)
 function showError(message) {
-  console.error(message);
-  // You could replace this with a nice UI toast/alert
-  alert(message);
+  console.error('[TeacherProgress] Error:', message);
 }
 
 // Event for unlock spans in locked assignments
@@ -473,7 +550,7 @@ leftArrow.addEventListener('click', () => {
 
 // ========== UPDATED CODE FOR DYNAMIC CHAT INFO (Session-Based) ==========
 
-// Function to load chat information from session (teacher view)
+// Load chat information from session (returns data for recovery)
 async function loadTeacherChatInfo() {
   try {
     const response = await fetch(
@@ -492,56 +569,28 @@ async function loadTeacherChatInfo() {
     if (result.success) {
       const data = result.data;
 
-      // Update course title in header
+      // Update UI elements
       const headerTitle = document.querySelector('header h1');
-      if (headerTitle) {
-        headerTitle.textContent = data.course_title;
-      }
+      if (headerTitle) headerTitle.textContent = data.course_title;
 
-      // Update course title in chat header
       const chatCourseTitle = document.querySelector('#chat-header .course-title');
-      if (chatCourseTitle) {
-        chatCourseTitle.textContent = data.course_title;
-      }
+      if (chatCourseTitle) chatCourseTitle.textContent = data.course_title;
 
-      // Update student name in chat header
       const chatCourseSub = document.querySelector('#chat-header .course-sub');
-      if (chatCourseSub) {
-        chatCourseSub.textContent = `student ${data.student_name}`;
-      }
+      if (chatCourseSub) chatCourseSub.textContent = `student ${data.student_name}`;
 
-      // Update student name in top right corner
       const userDiv = document.querySelector('.user');
-      if (userDiv) {
-        userDiv.textContent = data.student_name;
-      }
+      if (userDiv) userDiv.textContent = data.student_name;
 
-      // Update progress percentage if available
-      if (data.progress_percentage) {
-        const progressBar = document.querySelector('.progress-bar div');
-        const progressText = document.querySelector('.progress-header span:last-child');
-
-        if (progressBar) {
-          progressBar.style.width = data.progress_percentage + '%';
-        }
-        if (progressText) {
-          progressText.textContent = data.progress_percentage + '% complete';
-        }
-      }
-
-      console.log('Teacher chat info loaded successfully');
+      console.log('[TeacherProgress] Teacher chat info loaded successfully');
+      return data;
     } else {
-      console.error('Error loading chat info:', result.message);
-      // Redirect back to teach page if no active chat
-      alert('Please select a student first');
-      window.location.href = '/html/teach.html';
+      console.warn('[TeacherProgress] Chat info: no active chat', result.message);
+      return null;
     }
   } catch (error) {
-    console.error('Error fetching teacher chat info:', error);
-    alert('Error loading chat information');
+    console.warn('[TeacherProgress] Error fetching teacher chat info:', error);
+    return null;
   }
 }
-
-// Load chat information when page loads
-document.addEventListener('DOMContentLoaded', loadTeacherChatInfo);
 
