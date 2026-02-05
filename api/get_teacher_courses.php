@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once '../assets/php/db.php';
+require_once '../config/db.php';
 
 $teacher_id = $_SESSION['user_id'];
 

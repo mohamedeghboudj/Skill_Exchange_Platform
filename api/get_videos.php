@@ -13,7 +13,7 @@ if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
     exit;
 }
 
-require_once '../assets/php/db.php';
+require_once '../config/db.php';
 
 $course_id = (int)$_GET['course_id'];
 

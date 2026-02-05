@@ -378,7 +378,7 @@ class CourseManager {
     async loadTeacherCourses() {
         try {
             console.log('Loading teacher courses...');
-            const response = await fetch('/api/get_courses.php', {
+            const response = await fetch('/api/get_teacher_courses.php', {
                 credentials: 'include'
             });
             
