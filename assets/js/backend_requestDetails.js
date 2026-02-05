@@ -1,175 +1,200 @@
-// File: /assets/js/backend_requestDetails.js (FIXED)
-let payBtn = document.querySelector(".pay");
-let cancelBtn = document.querySelector(".cancel");
-let parentDialog = window.parent ? window.parent.document.getElementById("popup2") : null;
-let requestDetails = null;
+/**
+ * File: /assets/js/backend_requestDetails.js
+ * Purpose: Handle displaying request details in popup and processing payments
+ * 
+ * UPDATED BY: Backend Implementation for Dynamic Student Requests Display
+ * 
+ * This script loads the selected request details and handles the payment flow
+ */
 
-// Only add event listeners if elements exist
-if (payBtn) {
-    payBtn.addEventListener("click", async () => {
-        if (!requestDetails) {
-            alert("No request data available");
-            return;
-        }
-        
-        const status = requestDetails.request_status || requestDetails.status;
-        if (status !== 'accepted') {
-            alert("This request cannot be paid for yet. Please wait for teacher approval.");
-            return;
-        }
-        
-        // Confirm payment
-        if (!confirm(`Confirm payment of $${requestDetails.price} for "${requestDetails.course_title}"?`)) {
-            return;
-        }
-        
-        try {
-            // Use the new process_payment.php API
-            const response = await fetch('/api/process_payment.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    course_id: requestDetails.course_id,
-                    request_id: requestDetails.request_id,
-                    amount: requestDetails.price
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                alert(result.message || "Payment successful! You are now enrolled in the course.");
-                
-                // Close popups
-                if (window.parent && window.parent.closePop) {
-                    window.parent.closePop();
-                }
-                
-                // Refresh the page to show new enrollment
-                setTimeout(() => {
-                    if (window.parent) {
-                        window.parent.location.reload();
-                    }
-                }, 1500);
-            } else {
-                alert("Error: " + (result.error || "Payment failed. Please try again."));
-            }
-            
-        } catch (error) {
-            console.error("Payment error:", error);
-            alert("An error occurred. Please check your connection and try again.");
-        }
-    });
-}
-
-if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => {
-        if (window.parent && window.parent.closePop) {
-            window.parent.closePop();
-        }
-    });
-}
-
-// Listen for request data from parent
-window.addEventListener('message', function(event) {
-    if (event.data.type === 'LOAD_REQUEST') {
-        requestDetails = event.data.request;
-        displayRequestDetails(requestDetails);
-        
-        // Show/hide pay button based on status
-        const status = requestDetails.request_status || requestDetails.status;
-        if (payBtn) {
-            if (status === 'accepted') {
-                payBtn.style.display = 'flex';
-            } else {
-                payBtn.style.display = 'none';
-            }
-        }
-    }
-});
-
-function displayRequestDetails(request) {
-    // Update all available elements
-    const elements = {
-        '.teacher-name': request.teacher_name || 'Unknown Teacher',
-        '.course-title': request.course_title || 'Unknown Course',
-        '.course-price': request.price ? `$${parseFloat(request.price).toFixed(2)}` : 'Free',
-        '.request-date': request.formatted_date || formatDate(request.request_date),
-        '.request-status': formatStatus(request.request_status || request.status)
-    };
-    
-    // Update each element
-    Object.keys(elements).forEach(selector => {
-        const element = document.querySelector(selector);
-        if (element) {
-            element.textContent = elements[selector];
-            
-            // Add status class for styling
-            if (selector === '.request-status') {
-                const status = request.request_status || request.status || 'pending';
-                element.className = 'request-status ' + status;
-            }
-        }
-    });
-    
-    // Update message paragraph based on status
-    const messagePara = document.querySelector('.inputs p');
-    if (messagePara) {
-        const status = request.request_status || request.status;
-        if (status === 'accepted') {
-            messagePara.textContent = 'Your request has been accepted! Click "Pay" to complete enrollment and access the course.';
-        } else if (status === 'pending') {
-            messagePara.textContent = 'You will be notified when the teacher accepts your request. You can cancel any time before approval.';
-        } else if (status === 'completed') {
-            messagePara.textContent = 'You are already enrolled in this course.';
-        }
-    }
-}
-
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    
+/**
+ * Load request details from database
+ * Called when popup opens
+ */
+async function loadRequestDetails() {
     try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
+        // Get request info from session storage (set when request is clicked)
+        const requestId = sessionStorage.getItem('currentRequestId');
+        const courseId = sessionStorage.getItem('currentCourseId');
+        const status = sessionStorage.getItem('currentRequestStatus');
+        
+        if (!requestId || !courseId) {
+            console.error('No request selected');
+            return;
+        }
+        
+        console.log('Loading details for request:', requestId);
+        
+        // Fetch full request details
+        const response = await fetch(`/api/get_request_details.php?request_id=${requestId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json'
+            }
         });
-    } catch (e) {
-        return dateString;
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            console.error('Failed to load request details:', result.error);
+            return;
+        }
+        
+        // Display the details in the popup iframe or modal
+        displayRequestDetails(result.data);
+        
+    } catch (error) {
+        console.error('Error loading request details:', error);
     }
 }
 
-function formatStatus(status) {
-    if (!status) return 'Pending';
+/**
+ * Display request details in the UI
+ * @param {Object} requestData - Full request details
+ */
+function displayRequestDetails(requestData) {
+    // This function can send data to the iframe if needed
+    // Or you can populate modal content directly
     
-    return status.charAt(0).toUpperCase() + status.slice(1);
+    console.log('Request details loaded:', requestData);
+    
+    // Example: Send data to iframe using postMessage
+    const iframe = document.querySelector('#popup iframe');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({
+            type: 'REQUEST_DETAILS',
+            data: requestData
+        }, '*');
+    }
 }
 
-// Auto-load request data if passed via URL parameters (fallback)
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const requestData = urlParams.get('request');
+/**
+ * Handle payment button click
+ * Opens payment popup for accepted requests
+ */
+function handlePaymentClick(requestId, courseId) {
+    // Store payment info
+    sessionStorage.setItem('paymentRequestId', requestId);
+    sessionStorage.setItem('paymentCourseId', courseId);
     
-    if (requestData) {
-        try {
-            const request = JSON.parse(decodeURIComponent(requestData));
-            requestDetails = request;
-            displayRequestDetails(request);
-            
-            const status = request.request_status || request.status;
-            if (payBtn) {
-                if (status === 'accepted') {
-                    payBtn.style.display = 'flex';
-                } else {
-                    payBtn.style.display = 'none';
-                }
-            }
-        } catch (e) {
-            console.error("Error parsing request data:", e);
+    // Open payment popup
+    const paymentPopup = document.getElementById('popup2');
+    if (paymentPopup) {
+        paymentPopup.showModal();
+    }
+}
+
+/**
+ * Process payment and create enrollment
+ */
+async function processPayment() {
+    try {
+        const requestId = sessionStorage.getItem('paymentRequestId');
+        const courseId = sessionStorage.getItem('paymentCourseId');
+        
+        if (!requestId || !courseId) {
+            alert('Payment information missing');
+            return;
         }
+        
+        // Call the payment processing API
+        const response = await fetch('/api/process_payment.php', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                request_id: parseInt(requestId),
+                course_id: parseInt(courseId)
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Payment successful! You are now enrolled in the course.');
+            
+            // Close popups
+            closePop();
+            closePop2();
+            
+            // Refresh the requests list
+            if (typeof loadStudentRequests === 'function') {
+                loadStudentRequests();
+            }
+            
+            // Reload enrolled courses
+            if (typeof loadEnrolledCourses === 'function') {
+                loadEnrolledCourses();
+            }
+            
+            // Clear session storage
+            sessionStorage.removeItem('paymentRequestId');
+            sessionStorage.removeItem('paymentCourseId');
+            
+        } else {
+            alert('Payment failed: ' + (result.error || 'Unknown error'));
+        }
+        
+    } catch (error) {
+        console.error('Payment processing error:', error);
+        alert('Payment processing failed. Please try again.');
+    }
+}
+
+/**
+ * Close popup functions (keeping original functionality)
+ */
+function closePop() {
+    const popup = document.getElementById('popup');
+    if (popup) {
+        popup.close();
+    }
+}
+
+function closePop2() {
+    const popup2 = document.getElementById('popup2');
+    if (popup2) {
+        popup2.close();
+    }
+}
+
+// Keep the original click handlers from your friend's code
+document.addEventListener('DOMContentLoaded', function() {
+    const popup = document.getElementById('popup');
+    const popup2 = document.getElementById('popup2');
+    
+    // ORIGINAL CODE: Close popup on background click
+    if (popup) {
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                closePop();
+            }
+        });
+    }
+    
+    if (popup2) {
+        popup2.addEventListener('click', (e) => {
+            if (e.target === popup2) {
+                closePop2();
+            }
+        });
+    }
+    
+    // ADDED: Load request details when popup opens
+    if (popup) {
+        popup.addEventListener('open', loadRequestDetails);
     }
 });
+
+// Export functions for global access
+if (typeof window !== 'undefined') {
+    window.closePop = closePop;
+    window.closePop2 = closePop2;
+    window.handlePaymentClick = handlePaymentClick;
+    window.processPayment = processPayment;
+}
+// hadil changed this 
