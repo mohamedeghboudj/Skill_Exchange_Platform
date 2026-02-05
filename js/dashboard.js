@@ -834,7 +834,7 @@ document.addEventListener('DOMContentLoaded', function () {
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .teacher-details-box {
-            background: #ffffff;
+            background: #dbdbdb;
             border: 1px solid #e2e8f0;
             border-radius: 10px;
             margin-top: 8px;
@@ -859,7 +859,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         .detail-label {
             font-weight: 600;
-            color: #475569;
+            color: #5a626d;
             font-size: 14px;
             min-width: 130px;
             flex-shrink: 0;
