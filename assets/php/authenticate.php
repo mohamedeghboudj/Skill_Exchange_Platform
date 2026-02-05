@@ -1,4 +1,4 @@
-<?php
+<?php //authenticate.php
 session_start();
 header('Content-Type: application/json'); //informs client bli response will be in json
 // hadil touched this   header('Access-Control-Allow-Origin: *');//to allow requests from any domain

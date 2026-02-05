@@ -23,11 +23,12 @@ export function handleCourseSubmission() {
 
     // 4. Create FormData object
     const formData = new FormData();
-    formData.append('course_title', courseName);
-    formData.append('duration', timeToComplete);
-    formData.append('price', price);
-    formData.append('course_description', description);
-    formData.append('category', categoryText);
+   // In backend_addcourse.js, ensure formData uses correct keys:
+formData.append('course_title', courseName);
+formData.append('duration', timeToComplete); // Make sure this is a number
+formData.append('price', price.replace('$', '')); // Remove $ sign if present
+formData.append('course_description', description);
+formData.append('category', categoryText);
     
     // 5. Add video files
     for (let i = 0; i < videosList.length; i++) {
