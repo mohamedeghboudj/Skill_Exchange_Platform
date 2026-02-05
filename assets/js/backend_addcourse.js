@@ -1,73 +1,83 @@
-// assets/js/backend_addcourse.js - Backend Handler
+// assets/js/backend_addcourse.js
 export function handleCourseSubmission() {
-    // 1. Get all form values
-    const courseName = document.querySelector("#courseName").value;
-    const timeToComplete = document.querySelector("#timeToComplete").value;
-    const price = document.querySelector("#price").value;
-    const description = document.querySelector("#description").value;
-    const categoryText = document.querySelector('.select-txt').textContent;
-    const videosList = document.querySelector("#vdFiles").files;
-    const assignmentFile = document.querySelector("#assignment").files[0];
+    // 1. Get form values
+    const courseName = document.querySelector("#courseName").value.trim();
+    const timeToComplete = document.querySelector("#timeToComplete").value.trim();
+    const price = document.querySelector("#price").value.trim().replace('$','');
+    const description = document.querySelector("#description").value.trim();
+    const categoryText = document.querySelector('.select-txt').textContent.trim();
 
-    // 2. Validate category (double-check)
-    if (categoryText === "select a category" || categoryText.trim() === "") {
-        alert("Please select a category");
+    const videosList = document.querySelector("#vdFiles").files;
+    const assignmentFiles = document.querySelector("#assignment").files;
+
+    // 2. Validation
+    if (!courseName || !timeToComplete || !price || !description || categoryText === "select a category") {
+        alert("Please fill all required fields and select a category.");
         return;
     }
 
-    // 3. Show loading state
+    if (isNaN(timeToComplete) || timeToComplete <= 0) {
+        alert("Duration must be a positive number.");
+        return;
+    }
+
+    if (isNaN(price) || price < 0) {
+        alert("Price must be a valid number.");
+        return;
+    }
+
+    // 3. Loading state
     const submitBtn = document.querySelector("#submit");
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Creating course...';
+    submitBtn.textContent = "Creating course...";
 
-    // 4. Create FormData object
+    // 4. FormData
     const formData = new FormData();
-   // In backend_addcourse.js, ensure formData uses correct keys:
-formData.append('course_title', courseName);
-formData.append('duration', timeToComplete); // Make sure this is a number
-formData.append('price', price.replace('$', '')); // Remove $ sign if present
-formData.append('course_description', description);
-formData.append('category', categoryText);
-    
+    formData.append('course_title', courseName);
+    formData.append('duration', timeToComplete);
+    formData.append('price', price);
+    formData.append('course_description', description);
+    formData.append('category', categoryText);
+
     // 5. Add video files
     for (let i = 0; i < videosList.length; i++) {
         formData.append('videos[]', videosList[i]);
     }
-    
-    // 6. Add assignment file (if exists)
-    if (assignmentFile) {
-        formData.append('assignments[]', assignmentFile);
+
+    // 6. Add assignment files
+    for (let i = 0; i < assignmentFiles.length; i++) {
+        formData.append('assignments[]', assignmentFiles[i]);
     }
-    
-    // 7. Send to backend API
+
+    // 7. Send to backend
     fetch('/api/create_course.php', {
         method: 'POST',
         body: formData,
-        credentials: 'include' // Important for sessions
+        credentials: 'include'
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // Store course info for next page
             sessionStorage.setItem('new_course', JSON.stringify({
                 id: data.course_id,
                 title: courseName,
                 category: categoryText,
                 created_at: new Date().toLocaleString()
             }));
-            
-            // Redirect to teach page
             window.location.href = "teach.html";
         } else {
-            alert(` Error: ${data.error || 'Unknown error'}`);
+            alert(`Error: ${data.error || 'Unknown error'}`);
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     })
-    .catch(error => {
-        alert(` Network error: ${error.message}`);
+    .catch(err => {
+        alert(`Network error: ${err.message}`);
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     });
 }
+
+// --- Add this at the end to bind the click ---
+document.getElementById('submit').addEventListener('click', handleCourseSubmission);
