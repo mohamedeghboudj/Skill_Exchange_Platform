@@ -58,15 +58,18 @@ function createInstructorCard(instructor) {
     const collector = document.createElement('div');
     collector.className = 'collector';
 
-    const name = instructor.username || 'Unknown';
+    const name = instructor.full_name || 'Unknown';
     const avgRating = parseFloat(instructor.avg_rating || 0).toFixed(1);
     const courseCount = instructor.course_count || 0;
     const studentCount = instructor.student_count || 0;
+    const profilePic = instructor.profile_picture
+        ? `/uploads/${instructor.profile_picture}`
+        : `/assets/default-instructor.png`;
 
     collector.innerHTML = `
         <div class="pic">
             <div class="image">
-                <img src="assets/default-instructor.png" alt="prof-img">
+                <img src="${profilePic}" alt="prof-img">
             </div>
         </div>
         <div class="prof">
