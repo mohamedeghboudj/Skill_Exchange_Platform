@@ -36,7 +36,7 @@ function getCourseProgressOverview($course_id) {
     $stmt->close();
     
     if (!$course) {
-        return null;
+        return ['success' => false, 'message' => 'Course not found'];
     }
     
     // Get video statistics
@@ -57,7 +57,7 @@ function getCourseProgressOverview($course_id) {
     $videos_watched = (int)($video_stats['videos_watched'] ?? 0);
     $video_completion = $total_videos > 0 ? ($videos_watched / $total_videos * 100) : 0;
     
-    // Update enrollment record (progress_percentage only)
+    // Update enrollment record
     $sql = "UPDATE ENROLLMENT 
             SET progress_percentage = ?,
                 videos_watched = ?
@@ -93,7 +93,7 @@ function getCourseVideoTimeline($course_id) {
     $course = $stmt->get_result()->fetch_assoc();
     $stmt->close();
     
-    if (!$course) return null;
+    if (!$course) return ['success' => false, 'message' => 'Course not found'];
     
     $sql = "SELECT 
         v.video_id,
@@ -138,7 +138,9 @@ function getCourseVideoTimeline($course_id) {
 function updateVideoProgress($video_id, $status) {
     global $student_id, $conn;
     
-    if (!in_array($status, ['watched', 'not_yet', 'locked'])) return ['success' => false];
+    if (!in_array($status, ['watched', 'not_yet', 'locked'])) {
+        return ['success' => false, 'message' => 'Invalid status'];
+    }
     
     $sql = "SELECT course_id FROM VIDEO WHERE video_id = ?";
     $stmt = $conn->prepare($sql);
@@ -204,6 +206,7 @@ function getStudentDashboard() {
             'total_videos' => (int)$course['total_videos']
         ];
     }
+    $stmt->close();
     return ['success' => true, 'courses' => $courses];
 }
 
@@ -226,6 +229,7 @@ function submitAssignment($assignment_id, $file) {
         $stmt->bind_param('ii', $student_id, $assignment_id);
         $stmt->execute();
         $existing = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
         
         if ($existing) {
             $sql = "UPDATE ASSIGNMENT_SUBMISSION SET submission_url = ?, submission_status = 'submitted' WHERE submission_id = ?";
@@ -237,9 +241,10 @@ function submitAssignment($assignment_id, $file) {
             $stmt->bind_param('iis', $student_id, $assignment_id, $db_path);
         }
         $stmt->execute();
+        $stmt->close();
         return ['success' => true];
     }
-    return ['success' => false];
+    return ['success' => false, 'message' => 'File upload failed'];
 }
 
 /**
@@ -272,6 +277,7 @@ function getAssignments($student_id, $course_id) {
     $total_score = 0;
     $done_count = 0;
     $missed_count = 0;
+    
     while ($row = $result->fetch_assoc()) {
         $score = $row['score'] !== null ? (float)$row['score'] : null;
         if ($row['status'] === 'done' && $score !== null) {
@@ -288,6 +294,8 @@ function getAssignments($student_id, $course_id) {
             'status' => $row['status']
         ];
     }
+    $stmt->close();
+    
     $average_mark = $done_count > 0 ? round($total_score / $done_count, 1) : 0;
     $stats = [
         'done' => $done_count,
@@ -298,7 +306,102 @@ function getAssignments($student_id, $course_id) {
     return ['success' => true, 'data' => $assignments, 'stats' => $stats, 'total_score' => $total_score];
 }
 
-// Route actions
+/**
+ * Get existing rating for a course
+ */
+function getRating($course_id) {
+    global $student_id, $conn;
+    
+    $sql = "SELECT rating FROM RATING WHERE user_id = ? AND course_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ii', $student_id, $course_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return [
+            'success' => true,
+            'has_rated' => true,
+            'rating' => (float)$row['rating']
+        ];
+    } else {
+        $stmt->close();
+        return [
+            'success' => true,
+            'has_rated' => false,
+            'rating' => 0
+        ];
+    }
+}
+
+/**
+ * Submit a rating
+ */
+function submitRating($course_id, $rating) {
+    global $student_id, $conn;
+    
+    // Validate rating
+    if ($rating < 1 || $rating > 5) {
+        return ['success' => false, 'message' => 'Rating must be between 1 and 5'];
+    }
+    
+    // Check enrollment
+    $sql = "SELECT enrollment_id FROM ENROLLMENT WHERE student_id = ? AND course_id = ? AND is_active = 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ii', $student_id, $course_id);
+    $stmt->execute();
+    $enrollment = $stmt->get_result();
+    
+    if ($enrollment->num_rows === 0) {
+        $stmt->close();
+        return ['success' => false, 'message' => 'You must be enrolled in this course to rate it'];
+    }
+    $stmt->close();
+    
+    // Check if rating exists
+    $sql = "SELECT rating FROM RATING WHERE user_id = ? AND course_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ii', $student_id, $course_id);
+    $stmt->execute();
+    $existing = $stmt->get_result();
+    
+    if ($existing->num_rows > 0) {
+        $stmt->close();
+        // Update existing rating
+        $sql = "UPDATE RATING SET rating = ? WHERE user_id = ? AND course_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('dii', $rating, $student_id, $course_id);
+        $message = 'Rating updated successfully!';
+    } else {
+        $stmt->close();
+        // Insert new rating
+        $sql = "INSERT INTO RATING (user_id, course_id, rating) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('iid', $student_id, $course_id, $rating);
+        $message = 'Thank you for rating this course!';
+    }
+    
+    if ($stmt->execute()) {
+        $stmt->close();
+        
+        // Update course average rating
+        $sql = "UPDATE COURSE SET rating = (SELECT AVG(rating) FROM RATING WHERE course_id = ?) WHERE course_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ii', $course_id, $course_id);
+        $stmt->execute();
+        $stmt->close();
+        
+        return ['success' => true, 'message' => $message, 'rating' => $rating];
+    } else {
+        $stmt->close();
+        return ['success' => false, 'message' => 'Database error'];
+    }
+}
+
+// ==================== ROUTE ACTIONS ====================
+
 if ($method === 'GET') {
     switch ($action) {
         case 'get_my_instructors':
@@ -313,20 +416,52 @@ if ($method === 'GET') {
             $res = $stmt->get_result();
             $instructors = [];
             while ($row = $res->fetch_assoc()) $instructors[] = $row;
+            $stmt->close();
             echo json_encode(['success' => true, 'instructors' => $instructors]);
             break;
-        case 'dashboard': echo json_encode(getStudentDashboard()); break;
-        case 'course-progress': echo json_encode(getCourseProgressOverview($_GET['course_id'] ?? 0)); break;
-        case 'video-timeline': echo json_encode(getCourseVideoTimeline($_GET['course_id'] ?? 0)); break;
-        case 'get-assignments': echo json_encode(getAssignments($student_id, $_GET['course_id'] ?? 0)); break;
-        default: echo json_encode(['success' => false, 'message' => 'Invalid action']);
+            
+        case 'dashboard':
+            echo json_encode(getStudentDashboard());
+            break;
+            
+        case 'course-progress':
+            echo json_encode(getCourseProgressOverview($_GET['course_id'] ?? 0));
+            break;
+            
+        case 'video-timeline':
+            echo json_encode(getCourseVideoTimeline($_GET['course_id'] ?? 0));
+            break;
+            
+        case 'get-assignments':
+            echo json_encode(getAssignments($student_id, $_GET['course_id'] ?? 0));
+            break;
+            
+        case 'get-rating':
+            echo json_encode(getRating($_GET['course_id'] ?? 0));
+            break;
+            
+        default:
+            echo json_encode(['success' => false, 'message' => 'Invalid action']);
     }
+    
 } elseif ($method === 'POST') {
     switch ($action) {
-        case 'update-video-progress': echo json_encode(updateVideoProgress($data['video_id'] ?? 0, $data['status'] ?? '')); break;
-        case 'submit-assignment': echo json_encode(submitAssignment($_POST['assignment_id'] ?? 0, $_FILES['file'] ?? [])); break;
-        default: echo json_encode(['success' => false]);
+        case 'update-video-progress':
+            echo json_encode(updateVideoProgress($data['video_id'] ?? 0, $data['status'] ?? ''));
+            break;
+            
+        case 'submit-assignment':
+            echo json_encode(submitAssignment($_POST['assignment_id'] ?? 0, $_FILES['file'] ?? []));
+            break;
+            
+        case 'submit-rating':
+            echo json_encode(submitRating($data['course_id'] ?? 0, $data['rating'] ?? 0));
+            break;
+            
+        default:
+            echo json_encode(['success' => false, 'message' => 'Invalid action']);
     }
 }
+
 $conn->close();
 ?>
