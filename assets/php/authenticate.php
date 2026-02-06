@@ -58,6 +58,9 @@ if ($result->num_rows > 0) {
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name'] = $user['full_name'];
+        $_SESSION['full_name'] = $user['full_name']; // ADDED: for check_session.php consistency
+        $_SESSION['profile_picture'] = $user['profile_picture'] ?? '../assets/images/person.webp'; // ADDED: for navbar display
+        $_SESSION['is_teacher'] = $user['is_teacher']; // ADDED: for check_session.php consistency
         $_SESSION['user_role'] = $user['is_teacher'] ? 'Teacher' : 'Student';
         
         http_response_code(200);

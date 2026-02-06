@@ -21,7 +21,8 @@ $_SESSION = [];
 
 // Return JSON response (frontend will handle redirect)
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://localhost:8000'); // CHANGED: from * for credentials support
+header('Access-Control-Allow-Credentials: true'); // ADDED: to allow cookies/sessions
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
