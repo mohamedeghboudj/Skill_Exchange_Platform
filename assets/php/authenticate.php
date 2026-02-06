@@ -55,6 +55,28 @@ if ($result->num_rows > 0) {
     // Verify password using password_hash
     if (password_verify($password, $user['password_hash'])) { 
         // Store user data in session - use correct column names
+        $admin_email = 'admin@skillexchange.com'; 
+        if ($email === $admin_email) {
+             // Admin login - set admin session
+        $_SESSION['user_id'] = $user['user_id'];
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_name'] = $user['full_name'];
+        $_SESSION['user_role'] = 'Admin';
+        $_SESSION['is_admin'] = true;
+        
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Admin login successful',
+            'redirect' => 'dashboard.html', // Admin dashboard
+            'user' => [
+                'id' => $user['user_id'],
+                'name' => $user['full_name'],
+                'role' => 'Admin'
+            ]
+        ]);
+        exit(); // Important: stop execution here
+    }
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name'] = $user['full_name'];
