@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let EmailError = document.querySelector("#emailError");
     let passError = document.querySelector("#passwordError");
     let SignInBTN = document.querySelector("#SIGNIN");
+    let serverRedirect = null;
+
 
     SignInBTN.addEventListener("click", async (event) => {
         event.preventDefault();
@@ -16,7 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (validationResult.isValid) {
             const result = await authenticateUser(EmailIn.value, PasswordIn.value);
             if (result.success) {
-                window.location.href = "/pages/home.html";
+                if (serverRedirect) {
+                    window.location.href = serverRedirect; // 👈 ADMIN
+                } else {
+                    window.location.href = "/pages/home.html";   // 👈 NORMAL USER
+                }
+
             } else {
                 setErrorFor(EmailIn, "Invalid email or password.", EmailError);
                 setErrorFor(PasswordIn, "Invalid email or password.", passError);
@@ -47,6 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.success) {
                 console.log("User authenticated successfully via PHP sessions");
+                if (data.redirect) {
+                    window.location.href = data.redirect; // ADMIN
+                    return { success: true }; // stop further processing
+                }
+
                 return { success: true };
             } else {
                 console.log("Authentication failed:", data.message);

@@ -111,8 +111,7 @@ function createRequestElement(request) {
         <div class="chatInfo">
             <div class="name">${request.teacher_name || 'Unknown Teacher'}</div>
             <div class="Rcourse">${request.course_title || 'Unknown Course'}</div>
-            <div class="price">${price}</div>
-            <div class="status-badge ${statusClass}">${status}</div>
+          
         </div>
     `;
     

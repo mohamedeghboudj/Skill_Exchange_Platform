@@ -189,7 +189,19 @@
     </script>
     <script src="../assets/js/load_chats.js"></script>
     <script src="../assets/js/studentProgress.js"></script>
-      
+    <script>
+document.getElementById('rateCourse').addEventListener('click', function () {
+    const params = new URLSearchParams(window.location.search);
+    const courseId = params.get('course_id');
+
+    if (courseId) {
+        window.location.href = `ratcourse.htm?course_id=${courseId}`;
+    } else {
+        alert('Course ID not found');
+    }
+});
+</script>
+
 </body>
 
 </html>

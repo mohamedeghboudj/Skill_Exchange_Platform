@@ -1,5 +1,7 @@
 // assets/js/backend_addcourse.js
-export function handleCourseSubmission() {
+
+// Handles the course submission
+function handleCourseSubmission() {
     // 1. Get form values
     const courseName = document.querySelector("#courseName").value.trim();
     const timeToComplete = document.querySelector("#timeToComplete").value.trim();
@@ -79,5 +81,10 @@ export function handleCourseSubmission() {
     });
 }
 
-// --- Add this at the end to bind the click ---
-document.getElementById('submit').addEventListener('click', handleCourseSubmission);
+// Bind the click event after DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    const submitBtn = document.getElementById('submit');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', handleCourseSubmission);
+    }
+});
