@@ -1,4 +1,4 @@
-// File: /assets/js/learn.js (UPDATED)
+// File: /assets/js/learn.js 
 let mydialog = document.getElementById("popup");
 let mydialog2 = document.getElementById("popup2");
 let requestsContainer = document.querySelector(".requests");
@@ -6,12 +6,12 @@ let currentUser = null;
 
 console.log("js is working");
 
-// Load current user and requests on page load
+
 document.addEventListener("DOMContentLoaded", async () => {
     await loadCurrentUser();
     await loadEnrollmentRequests();
     
-    // Existing navigation code...
+    
     document.querySelector(".teachnav")?.addEventListener("click", (e) => {
         e.preventDefault();
         handleBecomeTeacherClick();
@@ -20,17 +20,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadCurrentUser() {
     try {
-        // Use your existing getCurrentUser API
+       
         const response = await fetch('/assets/php/getCurrentUser.php');
         const data = await response.json();
         
         if (data.success && data.user) {
             currentUser = data.user;
-            // Store in localStorage for compatibility
+           
             localStorage.setItem("currentUser", JSON.stringify(data.user));
         } else {
             console.warn("User not logged in:", data.error);
-            // Redirect to login if not authenticated
+          
             if (data.redirect || data.error === 'Not authenticated') {
                 window.location.href = "/auth.html";
             }
@@ -42,12 +42,12 @@ async function loadCurrentUser() {
 
 async function loadEnrollmentRequests() {
     try {
-        // Use the new get_my_requests.php API
+       
         const response = await fetch('/api/get_my_requests.php');
         const data = await response.json();
         
         if (data.success) {
-            // Clear existing hardcoded requests
+           
             requestsContainer.innerHTML = '<p>Your requests</p>';
             
             if (!data.data || data.data.length === 0) {
@@ -55,12 +55,12 @@ async function loadEnrollmentRequests() {
                 return;
             }
             
-            // Populate with dynamic data
+           
             data.data.forEach(request => {
                 createRequestElement(request);
             });
             
-            // Re-attach click event listeners
+       
             attachRequestClickListeners();
         } else {
             console.error("Error loading requests:", data.error);
@@ -90,16 +90,16 @@ function createRequestElement(request) {
     requestDiv.dataset.courseId = request.course_id;
     requestDiv.dataset.status = request.request_status;
     
-    // Store request data for popup
+   
     requestDiv.dataset.requestData = JSON.stringify(request);
     
-    // Status badge styling
+    
     const status = request.request_status || 'pending';
     const statusClass = status === 'accepted' ? 'accepted' : 
                        status === 'pending' ? 'pending' : 
                        status === 'completed' ? 'completed' : 'other';
     
-    // Format price
+   
     const price = request.price ? `$${parseFloat(request.price).toFixed(2)}` : 'Free';
     
     requestDiv.innerHTML = `
@@ -129,13 +129,13 @@ function attachRequestClickListeners() {
 }
 
 function openRequestDetails(request) {
-    // Store current request data
+   
     window.currentRequest = request;
     
-    // Open the popup
+  
     mydialog.showModal();
     
-    // Pass request data to iframe
+    
     const iframe = mydialog.querySelector('iframe');
     if (iframe && iframe.contentWindow) {
         iframe.contentWindow.postMessage({
@@ -145,7 +145,7 @@ function openRequestDetails(request) {
     }
 }
 
-// Existing popup functions (keep these)
+
 const requestElements = document.querySelectorAll('.request');
 requestElements.forEach(request => {
     request.addEventListener('click', () => {

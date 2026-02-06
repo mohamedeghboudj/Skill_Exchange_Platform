@@ -1,5 +1,5 @@
 // assets/js/teach_navigation.js
-// HADIL ADDED: Backend-based teach mode navigation
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const teachNavLink = document.querySelector('.teachnav');

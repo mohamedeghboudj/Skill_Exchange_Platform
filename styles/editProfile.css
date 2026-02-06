@@ -9,15 +9,15 @@ html {
 
 .overlay {
 
-    /* to keep the element even in scrolling in its position */
+   
     inset: 0;
-    /* this is to make sure the overlay will stretch to cover all the page form all directions*/
+   
    background: rgb(208 205 205 / 40%);
     display: flex;
     align-items: center;
-    /*center vertically*/
+  
     justify-content: center;
-    /*center horizontally*/
+   
 
 
 

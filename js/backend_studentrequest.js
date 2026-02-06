@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // backend_studentrequest.js
 console.log("=== Enrollment Script Loading ===");
 console.log("📍 Running in:", window.location.pathname);
@@ -5,6 +6,16 @@ console.log("📍 Running in:", window.location.pathname);
 // DECIDE WHERE WE'RE RUNNING
 
 // If we're in the parent window (not in iframe), exit early
+=======
+// backend_studentrequest.js - FINAL VERSION (IFRAME ONLY)
+// ONLY sends: course_id and student_message (as per PHP API requirements)
+console.log("=== Enrollment Script Loading ===");
+console.log("📍 Running in:", window.location.pathname);
+
+// ============================================================
+// 1. EXIT IF NOT IN IFRAME
+// ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 if (window === window.parent) {
     console.log("⚠️ Script loaded in parent window - exiting (should only run in iframe)");
     return;
@@ -12,7 +23,13 @@ if (window === window.parent) {
 
 console.log("✅ Running inside iframe");
 
+<<<<<<< HEAD
 // MAIN INITIALIZATION , ONLY FOR IFRAME
+=======
+// ============================================================
+// 2. MAIN INITIALIZATION
+// ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 document.addEventListener("DOMContentLoaded", function() {
     console.log("📄 Iframe DOM loaded");
     setTimeout(() => {
@@ -20,39 +37,34 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 300);
 });
 
+<<<<<<< HEAD
 // FORM SETUP FUNCTIONS
+=======
+// ============================================================
+// 3. FORM SETUP - MINIMAL
+// ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 function initializeEnrollmentForm() {
     console.log("🔧 Initializing enrollment form...");
 
     const elements = {
         submitBtn: document.getElementById("SubmitButton"),
         form: document.querySelector("form"),
-        message: document.getElementById("message"),
-        startTime: document.getElementById("startTime"),
-        endTime: document.getElementById("endTime"),
-        defaultLevel: document.getElementById("default"),
-        defaultDays: document.getElementById("DEFAULT"),
-        resultDiv: document.getElementById("submissionResult"),
-        levelSelect: document.getElementById("selected"),
-        levelList: document.getElementById("level-list"),
-        daysSelect: document.getElementById("selected-day"),
-        daysList: document.getElementById("days-list")
+        message: document.getElementById("message"), // ONLY field we need
+        resultDiv: document.getElementById("submissionResult")
     };
 
     // Log what we found
     console.log("🔍 Form elements check:");
-    Object.entries(elements).forEach(([name, element]) => {
-        console.log(`  ${name}:`, element ? "✅ FOUND" : "❌ MISSING");
-    });
+    console.log(`  submitBtn:`, elements.submitBtn ? "✅ FOUND" : "❌ MISSING");
+    console.log(`  form:`, elements.form ? "✅ FOUND" : "❌ MISSING");
+    console.log(`  message:`, elements.message ? "✅ FOUND" : "❌ MISSING");
+    console.log(`  resultDiv:`, elements.resultDiv ? "✅ FOUND" : "❌ MISSING");
 
-    if (!elements.submitBtn || !elements.form) {
+    if (!elements.submitBtn || !elements.form || !elements.message) {
         console.error("❌ Essential form elements missing!");
         return;
     }
-
-    console.log("✅ All form elements found");
-
-    setupDropdowns(elements);
 
     elements.form.addEventListener("submit", async function(event) {
         event.preventDefault();
@@ -63,6 +75,7 @@ function initializeEnrollmentForm() {
     console.log("🎉 Enrollment form setup complete!");
 }
 
+<<<<<<< HEAD
 function setupDropdowns(elements) {
     // Level dropdown
     if (elements.levelSelect && elements.levelList && elements.defaultLevel) {
@@ -110,33 +123,30 @@ function setupDropdowns(elements) {
 //  FORM SUBMISSION HANDLER
 
 
+=======
+// ============================================================
+// 4. FORM SUBMISSION - ONLY WHAT PHP EXPECTS
+// ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 async function handleEnrollmentSubmit(elements) {
     console.log("🚀 Starting enrollment submission...");
 
     const courseId = getCourseId();
     console.log("📌 Course ID:", courseId);
 
-    const formData = {
-        course_id: courseId,
-        current_level: elements.defaultLevel?.textContent.toLowerCase() || 'beginner',
-        available_days: elements.defaultDays?.textContent || '',
-        available_time: `${elements.startTime?.value || '17:00'} to ${elements.endTime?.value || '20:00'}`,
-        student_message: elements.message?.value || ''
-    };
+    // ONLY get the message (the only field PHP uses from form)
+    const studentMessage = elements.message.value.trim();
+    console.log("📝 Student message length:", studentMessage.length);
 
-    console.log("📋 Form data:", formData);
-
-    // Validation
-    if (formData.student_message.length < 50) {
+    // Validation (matches PHP validation)
+    if (studentMessage.length < 50) {
         showResult(elements.resultDiv, "error", "Message must be at least 50 characters long");
         return;
     }
 
     // Disable button and show loading
     elements.submitBtn.disabled = true;
-    const originalHtml = elements.submitBtn.innerHTML;
-    const originalBgColor = elements.submitBtn.style.backgroundColor;
-    const originalColor = elements.submitBtn.style.color;
+    const originalText = elements.submitBtn.textContent;
 
     elements.submitBtn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -147,10 +157,19 @@ async function handleEnrollmentSubmit(elements) {
     `;
 
     try {
+<<<<<<< HEAD
         // API submission 
+=======
+        // Create FormData with EXACTLY the 2 fields PHP expects
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
         const apiFormData = new FormData();
-        apiFormData.append('course_id', formData.course_id);
-        apiFormData.append('student_message', formData.student_message);
+        apiFormData.append('course_id', courseId);          // Field 1: course_id (int)
+        apiFormData.append('student_message', studentMessage); // Field 2: student_message (string)
+
+        console.log("📤 Sending to API:", {
+            course_id: courseId,
+            student_message_length: studentMessage.length
+        });
 
         const response = await fetch('/api/submit_enrollment_request.php', {
             method: 'POST',
@@ -178,12 +197,8 @@ async function handleEnrollmentSubmit(elements) {
             elements.submitBtn.style.color = "white";
             elements.submitBtn.style.cursor = "default";
 
-            setTimeout(() => {
-                elements.form.reset();
-                if (elements.defaultLevel) elements.defaultLevel.textContent = "Select level";
-                if (elements.defaultDays) elements.defaultDays.textContent = "Select available days";
-                document.querySelectorAll('.Day:checked').forEach(cb => cb.checked = false);
-            }, 3000);
+            // Clear only the message field (the only one we use)
+            elements.message.value = '';
 
             setTimeout(() => {
                 notifyParentToClose();
@@ -192,43 +207,44 @@ async function handleEnrollmentSubmit(elements) {
         } else {
             showResult(elements.resultDiv, "error", 
                 `✗ ${data.message}<br>
-                 <small style="color: #666; font-size: 14px;">Please check your information and try again.</small>`);
+                 <small style="color: #666; font-size: 14px;">Please try again.</small>`);
             elements.submitBtn.disabled = false;
-            elements.submitBtn.innerHTML = originalHtml;
-            elements.submitBtn.style.backgroundColor = originalBgColor;
-            elements.submitBtn.style.color = originalColor;
+            elements.submitBtn.textContent = originalText;
         }
 
     } catch (error) {
         console.error("❌ Submission error:", error);
         showResult(elements.resultDiv, "error", 
             `Network error: ${error.message}<br>
-             <small style="color: #666; font-size: 14px;">Please check your internet connection.</small>`);
+             <small style="color: #666; font-size: 14px;">Please check your connection.</small>`);
         elements.submitBtn.disabled = false;
-        elements.submitBtn.innerHTML = originalHtml;
-        elements.submitBtn.style.backgroundColor = originalBgColor;
-        elements.submitBtn.style.color = originalColor;
+        elements.submitBtn.textContent = originalText;
     }
 }
 
+<<<<<<< HEAD
 // HELPER FUNCTIONS
 
+=======
+// ============================================================
+// 5. HELPER FUNCTIONS
+// ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 function getCourseId() {
-    let courseId = null;
+    // Try URL parameters first
     const urlParams = new URLSearchParams(window.location.search);
-    courseId = urlParams.get('course_id');
-    if (courseId) return courseId;
-
-    try {
-        if (window.parent && window.parent.localStorage) {
-            courseId = window.parent.localStorage.getItem('current_course_id');
-            if (courseId) return courseId;
-        }
-    } catch (e) {
-        console.log("Cannot access parent localStorage (cross-origin restriction)");
+    const courseIdFromUrl = urlParams.get('course_id');
+    
+    if (courseIdFromUrl) {
+        return parseInt(courseIdFromUrl);
     }
 
+<<<<<<< HEAD
     return 2; 
+=======
+    // Default fallback
+    return 2;
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 }
 
 function showResult(element, type, message) {
@@ -241,9 +257,11 @@ function showResult(element, type, message) {
     const borderColor = type === 'success' ? '#c3e6cb' : '#f5c6cb';
 
     element.innerHTML = `
-        <div class="result-message ${type}" 
-             style="padding: 20px; margin: 15px 0; border-radius: 10px; background: ${bgColor}; color: ${textColor}; border: 2px solid ${borderColor};
-                    font-size: 16px; line-height: 1.6; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: ${type === 'success' ? 'fadeIn 0.5s ease' : 'shake 0.5s ease'}">
+        <div class="result-message" 
+             style="padding: 20px; margin: 15px 0; border-radius: 10px; 
+                    background: ${bgColor}; color: ${textColor}; 
+                    border: 2px solid ${borderColor};
+                    font-size: 16px; line-height: 1.6;">
             <div style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">
                 ${icon} ${title}
             </div>
@@ -256,7 +274,7 @@ function showResult(element, type, message) {
         setTimeout(() => {
             element.style.display = 'none';
             element.innerHTML = '';
-        }, 8000);
+        }, 5000);
     }
 }
 
@@ -265,8 +283,7 @@ function notifyParentToClose() {
         if (window.parent) {
             window.parent.postMessage({
                 type: 'close_enrollment_modal',
-                action: 'close',
-                timestamp: new Date().toISOString()
+                action: 'close'
             }, '*');
         }
     } catch (error) {
@@ -274,6 +291,7 @@ function notifyParentToClose() {
     }
 }
 
+<<<<<<< HEAD
 window.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'set_course_id') {
         console.log("Received course ID from parent:", event.data.course_id);
@@ -306,3 +324,6 @@ style.textContent = `
 document.head.appendChild(style);
 
 console.log("✅ Enrollment script initialized successfully");
+=======
+console.log("✅ Enrollment script initialized successfully");
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a

@@ -8,7 +8,7 @@ let submit = document.querySelector("#send");
 let result = document.querySelector("#result")
 
 result.style.display = "none";
-// hadil added from here : 
+ 
 window.addEventListener("DOMContentLoaded", checkTeacherStatus);
 
 async function checkTeacherStatus() {
@@ -17,7 +17,7 @@ async function checkTeacherStatus() {
         const data = await res.json();
 
         if (data.status === 'no_request') {
-            // No previous request → normal form
+        
             return;
         }
         if (data.status === 'success') {
@@ -33,7 +33,7 @@ async function checkTeacherStatus() {
                 showMessage("❌ Your previous request was rejected. You may submit a new one.", "red");
             }
         } else {
-            // Not logged in or other error
+           
             showMessage(data.message || "An error occurred. Please try again.", "red");
         }
     } catch (err) {
@@ -55,7 +55,8 @@ function disableForm() {
     submit.disabled = true;
     submit.style.opacity = "0.6";
     submit.style.cursor = "not-allowed";
-    uploadDiv.style.display = "none";// to hide the upload area 
+    uploadDiv.style.display = "none";
+    
 }
 
 
@@ -78,56 +79,19 @@ uploadDiv.addEventListener('click', () => {
     fileInput.click();
 });
 
-// hadil was here !!
-/*submit.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (checkInputs()) {
-        window.location.href = "/html/teach.html";
-    };
-});*/
-/*submit.addEventListener('click', async (e) => {
-    e.preventDefault();
 
-    if (!checkInputs()) return;
 
-    const formData = new FormData();
-    formData.append('primary_skill', skill.value.trim());
-    formData.append('bio', bio.value.trim());
-    formData.append('certificate', fileInput.files[0]);
-
-    try {
-        const response = await fetch('/assets/php/teacher_request_send.php', {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        if (data.status === 'success') {
-            showMessage(data.message, "green");
-            // clearing the form 
-            skill.value = '';
-            bio.value = '';
-            fileInput.value = '';
-            terms.checked = false;
-        } else {
-            showMessage(data.message, "red");
-        }
-    } catch (error) {
-        console.error(error);
-        showMessage('An error occurred. Please try again.', "red");
-    }
-});
-*/
 submit.addEventListener('click', async (e) => {
     e.preventDefault();
 
     if (!checkInputs()) return;
 
-    // DEBUG: Log what we're sending
+
     console.log('Skill:', skill.value.trim());
     console.log('Bio:', bio.value.trim());
     console.log('File:', fileInput.files[0]);
 
-    // Check if file is actually selected
+
     if (!fileInput.files || fileInput.files.length === 0) {
         showMessage('Please select a certificate file', "red");
         return;
@@ -138,7 +102,7 @@ submit.addEventListener('click', async (e) => {
     formData.append('bio', bio.value.trim());
     formData.append('certificate', fileInput.files[0]);
 
-    // DEBUG: Log FormData contents
+    
     for (let pair of formData.entries()) {
         console.log(pair[0] + ': ', pair[1]);
     }
@@ -216,23 +180,20 @@ function checkInputs() {
 
     return true;
 }
-// ============================================================
-// HADIL ADDED: Check status on page load (for rejected users)
-// ============================================================
 
-// This function already exists in your code, but we're adding to it
-// Update the existing checkTeacherStatus function to handle approved users
+
+
 window.addEventListener("DOMContentLoaded", async () => {
     await checkTeacherStatus();
 
-    // HADIL ADDED: Additional check for approved users
+  
     try {
         const res = await fetch('../api/check_teacher_home.php', {
             credentials: 'include'
         });
         const data = await res.json();
 
-        // If user is already a teacher, redirect them
+     
         if (data.status === 'already_teacher' || data.status === 'approved') {
             showMessage("✅ You are already a teacher! Redirecting...", "green");
             setTimeout(() => window.location.href = "/html/teach.html", 1500);
@@ -242,8 +203,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// ============================================================
-// END OF HADIL'S ADDITIONS
-// ============================================================
+
 
 
