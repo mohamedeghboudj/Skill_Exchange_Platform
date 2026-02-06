@@ -1,5 +1,5 @@
 import { handleCourseSubmission } from './backend_addcourse.js';
-// validation for the form of adding course
+
 const CONFIG = {
     COURSE_NAME_MAX: 100,
     DESCRIPTION_MIN: 20,
@@ -11,7 +11,7 @@ const CONFIG = {
     ALLOWED_FILE_MIMES: null,
 };
 
-// Get elements
+
 const courseName = document.querySelector("#courseName");
 const timeToComplete = document.querySelector("#timeToComplete");
 const price = document.querySelector("#price");
