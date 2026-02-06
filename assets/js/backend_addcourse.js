@@ -1,8 +1,8 @@
-// assets/js/backend_addcourse.js
 
-// Handles the course submission
+
+
 function handleCourseSubmission() {
-    // 1. Get form values
+ 
     const courseName = document.querySelector("#courseName").value.trim();
     const timeToComplete = document.querySelector("#timeToComplete").value.trim();
     const price = document.querySelector("#price").value.trim().replace('$','');
@@ -12,7 +12,7 @@ function handleCourseSubmission() {
     const videosList = document.querySelector("#vdFiles").files;
     const assignmentFiles = document.querySelector("#assignment").files;
 
-    // 2. Validation
+    
     if (!courseName || !timeToComplete || !price || !description || categoryText === "select a category") {
         alert("Please fill all required fields and select a category.");
         return;
@@ -28,13 +28,13 @@ function handleCourseSubmission() {
         return;
     }
 
-    // 3. Loading state
+  
     const submitBtn = document.querySelector("#submit");
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = "Creating course...";
 
-    // 4. FormData
+ 
     const formData = new FormData();
     formData.append('course_title', courseName);
     formData.append('duration', timeToComplete);
@@ -42,17 +42,17 @@ function handleCourseSubmission() {
     formData.append('course_description', description);
     formData.append('category', categoryText);
 
-    // 5. Add video files
+   
     for (let i = 0; i < videosList.length; i++) {
         formData.append('videos[]', videosList[i]);
     }
 
-    // 6. Add assignment files
+   
     for (let i = 0; i < assignmentFiles.length; i++) {
         formData.append('assignments[]', assignmentFiles[i]);
     }
 
-    // 7. Send to backend
+  
     fetch('/api/create_course.php', {
         method: 'POST',
         body: formData,
@@ -81,7 +81,7 @@ function handleCourseSubmission() {
     });
 }
 
-// Bind the click event after DOM is loaded
+
 document.addEventListener("DOMContentLoaded", function() {
     const submitBtn = document.getElementById('submit');
     if (submitBtn) {

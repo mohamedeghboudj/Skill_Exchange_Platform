@@ -1,8 +1,5 @@
 
-// const chatToggle = document.querySelector(".chat-toggle");
-// const sidebar = document.querySelector(".sidebar");
-// const closeChat = document.querySelector(".close-chat");
-// const leftArrow=document.getElementById("left-arrow")
+
 
 console.log("js is working");
 
@@ -21,28 +18,16 @@ leftArrow.addEventListener('click', () => window.location.href = "/html/dashboar
 
 
 
-// chatToggle.onclick = () => {
-//   sidebar.classList.add("active");
-// };
-
-// closeChat.onclick = () => {
-//   sidebar.classList.remove("active");
-// };
-// leftArrow.addEventListener('click',()=>{
-//   window.location.href="/html/learn.html";
-// })
-// Configuration
-//const API_BASE_URL = 'http://localhost:8000/assets/php';
 let currentStudentId = null;
 let currentCourseId = null;
 
 
 
-// Initialize page
+
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('[StudentProgress] Page loaded, initializing...');
   try {
-    // Get student ID from session
+ 
     const userResponse = await fetch(`../assets/php/getCurrentUser.php`);
     const userData = await userResponse.json();
 
@@ -55,13 +40,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentStudentId = userData.user.id;
     console.log('[StudentProgress] Student ID:', currentStudentId);
 
-    // Get parameters from URL
+   
     const urlParams = new URLSearchParams(window.location.search);
     currentCourseId = urlParams.get('courseId');
 
     console.log('[StudentProgress] URL param - courseId:', currentCourseId);
 
-    // If missing from URL, try to recover from session
+   
     if (!currentCourseId) {
       console.log('[StudentProgress] courseId missing from URL, trying session recovery...');
       const sessionData = await loadStudentChatInfo();
@@ -77,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Continue loading
+   
     await initializeView();
     console.log('[StudentProgress] Init complete');
 
@@ -87,22 +72,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-/**
- * Common View Initialization
- */
+
 async function initializeView() {
-  // Load all progress data
+ 
   await loadCourseProgress();
   await loadVideoProgress();
   await loadAssignments();
 
-  // Load Sidebar (My Instructors/Courses)
+  
   await loadSidebarInstructors();
 }
 
-/**
- * Load Sidebar with My Instructors/Courses
- */
+
 async function loadSidebarInstructors() {
   const listContainer = document.querySelector('.list-friend');
   if (!listContainer) return;
@@ -112,13 +93,13 @@ async function loadSidebarInstructors() {
     const result = await response.json();
 
     if (result.success && result.instructors.length > 0) {
-      listContainer.innerHTML = ''; // Clear hardcoded items
+      listContainer.innerHTML = ''; 
 
       result.instructors.forEach(instructor => {
         const li = document.createElement('li');
         li.className = 'friend-item';
         if (instructor.course_id == currentCourseId) {
-          li.classList.add('active'); // Highlight current
+          li.classList.add('active'); 
         }
 
         li.innerHTML = `
@@ -133,7 +114,7 @@ async function loadSidebarInstructors() {
                 `;
 
         li.addEventListener('click', () => {
-          // Navigate to this course's progress
+         
           window.location.href = `/html/studentProgress.html?courseId=${instructor.course_id}`;
         });
 
@@ -145,14 +126,14 @@ async function loadSidebarInstructors() {
   }
 }
 
-// Navigate back
+
 if (leftArrow) {
   leftArrow.addEventListener('click', () => {
     window.location.href = "/html/learn.html";
   });
 }
 
-// Load course progress data
+
 async function loadCourseProgress() {
   try {
     const response = await fetch(`../assets/php/student_progress.php?action=course-progress&student_id=${currentStudentId}&course_id=${currentCourseId}`);
@@ -161,30 +142,24 @@ async function loadCourseProgress() {
     if (result.success) {
       const { enrollment, total_videos, assignment_stats } = result.data || result; // Handle potential structure diffs if any
 
-      // Note: The structure returned by getCourseProgressOverview matches the expectations mostly
-      // BUT getCourseProgressOverview returns flat object, not nested 'enrollment'.
-      // Let's check student_progress.php line 75 return.
-      // It returns: success, student_id, course_id, course_title, overall_completion, videos_watched...
-      // Previous JS expected: result.data.enrollment...
-      // I need to adjust JS or PHP. Adjusting JS is safer here.
+     
 
-      const data = result; // The result IS the data in PHP implementation
+      const data = result; 
 
-      // Update header
       const headerTitle = document.querySelector('header h1');
       const userElement = document.querySelector('.user');
 
       if (headerTitle) headerTitle.textContent = data.course_title;
-      // if (userElement) userElement.textContent = enrollment.teacher_name; // teacher_name not returned by PHP currently
+     
 
-      // Update sidebar course info
+     
       const courseTitle = document.querySelector('.course-title');
       const courseSub = document.querySelector('.course-sub');
 
       if (courseTitle) courseTitle.textContent = data.course_title;
-      // if (courseSub) courseSub.textContent = `With ${enrollment.teacher_name}`;
+   
 
-      // Update progress percentage
+  
       const progressPercentage = Math.round(data.overall_completion);
       const progressHeader = document.querySelector('.progress-header span:last-child');
       const progressBar = document.querySelector('.progress-bar div');
@@ -192,11 +167,9 @@ async function loadCourseProgress() {
       if (progressHeader) progressHeader.textContent = `${progressPercentage}% complete`;
       if (progressBar) progressBar.style.width = `${progressPercentage}%`;
 
-      // Update stats
+   
       const statsElement = document.querySelector('.stats');
-      // assignment_stats are NOT returned by getCourseProgressOverview in PHP yet.
-      // I might need to rely on loadAssignments to update this part or update PHP.
-      // For now, let's skip assignment stats in this function if data is missing.
+     
 
       if (statsElement) {
         statsElement.innerHTML = `
@@ -210,7 +183,7 @@ async function loadCourseProgress() {
   }
 }
 
-// Load video progress
+
 async function loadVideoProgress() {
   try {
     const response = await fetch(`../assets/php/student_progress.php?action=video-timeline&course_id=${currentCourseId}&student_id=${currentStudentId}`);
@@ -222,19 +195,16 @@ async function loadVideoProgress() {
 
       stepper.innerHTML = '';
 
-      // PHP returns 'video_steps' array
+      
       const videos = result.video_steps || result.data || [];
 
-      // DYNAMIC GRID: Set grid columns based on video count
+      
       stepper.style.gridTemplateColumns = `repeat(${videos.length}, 1fr)`;
 
       let foundActive = false;
       videos.forEach((video, index) => {
         const stepDiv = document.createElement('div');
-        // Map PHP status to CSS: 
-        // 1. watched -> completed
-        // 2. First unwatched -> active
-        // 3. Rest unwatched -> plain (locked/grey)
+        
 
         let cssClass = 'step';
         if (video.status === 'watched') {
@@ -242,9 +212,9 @@ async function loadVideoProgress() {
         } else if (!foundActive) {
           cssClass += ' active';
           foundActive = true;
-          video.status = 'active'; // Update status for click logic if needed
+          video.status = 'active'; 
         } else {
-          video.status = 'locked'; // Treat as locked for UI consistency
+          video.status = 'locked'; 
         }
 
         stepDiv.className = cssClass;
@@ -253,7 +223,7 @@ async function loadVideoProgress() {
                     <p>${video.video_title}</p>
                 `;
 
-        // Add click event to watch video
+        
         if (video.status !== 'locked') {
           stepDiv.style.cursor = 'pointer';
           stepDiv.addEventListener('click', () => watchVideo(video.video_id));
@@ -268,17 +238,17 @@ async function loadVideoProgress() {
   }
 }
 
-// Load assignments
+
 async function loadAssignments() {
   try {
     const response = await fetch(`../assets/php/student_progress.php?action=get-assignments&student_id=${currentStudentId}&course_id=${currentCourseId}`);
-    const result = await response.json(); // Expect { success: true, data: [...], stats: {...} }
+    const result = await response.json(); 
 
     if (result.success) {
       const container = document.querySelector('.progress-box:last-child');
       if (!container) return;
 
-      // Clear existing rows except the header
+      
       const rows = container.querySelectorAll('.row');
       rows.forEach(row => row.remove());
 
@@ -287,9 +257,8 @@ async function loadAssignments() {
 
       assignments.forEach(assignment => {
         const rowDiv = document.createElement('div');
-        rowDiv.className = `row ${assignment.status} assignment`; // Added 'assignment' class explicitly to be safe
-        rowDiv.dataset.id = assignment.id; // CRITICAL for click handlers
-
+        rowDiv.className = `row ${assignment.status} assignment`; 
+        rowDiv.dataset.id = assignment.id; 
         let scoreDisplay;
         if (assignment.status === 'done') {
           scoreDisplay = `${assignment.score} / ${assignment.max_score}`;
@@ -309,20 +278,10 @@ async function loadAssignments() {
         container.appendChild(rowDiv);
       });
 
-      // Update stats if we skipped it in courseProgress
+     
       const statsElement = document.querySelector('.stats');
       if (statsElement && stats) {
-        // Append to existing content or rewrite? 
-        // PHP getCourseProgressOverview return videos_watched but not assignment stats.
-        // So we should merge.
-        // For simplicity, let's just append or update the Assignment part if possible.
-        // Actually, let's just rewrite the whole stats line if we can match the video stats.
-        // But I don't have video stats here.
-        // Hack: Append to innerHTML? No, that's messy.
-        // Ideally fetch both and update once.
-        // Given the structure, I'll validly assume the user wants to see the stats.
-        // I will look for existing text and replace the Assignments part using Regex? 
-        // Or just leave it for now as it's a minor UI detail compared to submission functionality.
+       
 
         const currentText = statsElement.innerHTML;
         if (!currentText.includes('Assignments:')) {
@@ -330,7 +289,7 @@ async function loadAssignments() {
         }
       }
 
-      // CRITICAL: Attach handlers AFTER creating elements
+     
       attachStudentAssignmentHandlers();
     }
   } catch (error) {
@@ -339,7 +298,7 @@ async function loadAssignments() {
   }
 }
 
-// Watch video (mark as completed)
+
 async function watchVideo(videoId) {
   try {
     const response = await fetch(`${API_BASE_URL}/mark_video_watched.php`, {
@@ -357,7 +316,7 @@ async function watchVideo(videoId) {
     const result = await response.json();
 
     if (result.success) {
-      // Reload progress data
+    
       await loadCourseProgress();
       await loadVideoProgress();
 
@@ -369,7 +328,7 @@ async function watchVideo(videoId) {
   }
 }
 
-// Helper functions
+
 function showError(message) {
   console.error(message);
   alert(message);
@@ -377,7 +336,7 @@ function showError(message) {
 
 function showSuccess(message) {
   console.log(message);
-  // You can implement a toast notification here
+ 
 }
 
 function attachStudentAssignmentHandlers() {
@@ -392,29 +351,29 @@ function attachStudentAssignmentHandlers() {
     const isPending = assignment.classList.contains('pending');
     const isDone = assignment.classList.contains('done');
 
-    // Allow pending assignments even without data-id (though now they should have it)
+    
     if ((assignmentId && isDone) || isPending) {
       assignment.style.cursor = 'pointer';
 
       assignment.addEventListener('click', () => {
         const titleSpan = assignment.querySelector("span:first-child");
         document.getElementById("assignment-title").textContent = titleSpan.textContent;
-        // Store ID for submission
+        
         if (assignmentId) {
           submissionPanel.dataset.assignmentId = assignmentId;
         }
 
-        // Check current state (in case it was just submitted)
+        
         const isCurrentlyDone = assignment.classList.contains('done');
         const isCurrentlyPending = assignment.classList.contains('pending');
 
         if (isCurrentlyDone) {
-          // Show PDF viewer for done assignments
+         
           submissionPdf.style.display = "flex";
           fileUploadArea.style.display = "none";
           submitBox.style.display = "none";
         } else if (isCurrentlyPending) {
-          // Show upload form for pending
+         
           submissionPdf.style.display = "none";
           fileUploadArea.style.display = "block";
           submitBox.style.display = "block";
@@ -430,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Student Progress loaded");
   attachStudentAssignmentHandlers();
 
-  // File upload preview
+  
   const fileInput = document.getElementById("file-input");
   if (fileInput) {
     fileInput.addEventListener("change", function (e) {
@@ -443,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Submit assignment
+  
   const submitBtn = document.getElementById("submit-assignment");
   if (submitBtn) {
     submitBtn.addEventListener("click", async function () {
@@ -453,12 +412,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Identify which assignment is being submitted
+      
       const assignmentTitle = document.getElementById("assignment-title").textContent;
 
-      // We need the ID. The DOM structure for submission-panel doesn't store the ID currently.
-      // We must store it when opening the panel.
-      // In attachStudentAssignmentHandlers, we set title. We should also set a data-attribute on the panel.
+     
+     
       const submissionPanel = document.getElementById("submission-panel");
       const assignmentId = submissionPanel.dataset.assignmentId;
 
@@ -486,10 +444,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (result.success) {
           alert("Assignment submitted successfully!");
 
-          // Reload assignments to update UI
+          
           await loadAssignments();
 
-          // Hide panel
+          
           document.getElementById("submission-panel").style.display = "none";
           fileInput.value = "";
           document.getElementById("file-preview").style.display = "none";
@@ -513,8 +471,7 @@ rate.addEventListener('click', () => {
 
 })
 
-// ========== ADDED CODE FOR DYNAMIC CHAT INFO -----hadil----- ==========
-// Function to get URL parameters
+
 function getUrlParameter(name) {
   name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
   var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -522,10 +479,7 @@ function getUrlParameter(name) {
   return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-// Function to load chat information for student view
-// Remove the getUrlParameter function - no longer needed
 
-// Updated function to load chat information from session
 async function loadStudentChatInfo() {
   try {
     const response = await fetch(
@@ -544,25 +498,25 @@ async function loadStudentChatInfo() {
     if (result.success) {
       const data = result.data;
 
-      // Update course title in header
+    
       const headerTitle = document.querySelector('header h1');
       if (headerTitle) {
         headerTitle.textContent = data.course_title;
       }
 
-      // Update course title in sidebar
+      
       const sidebarCourseTitle = document.querySelector('.sidebar .course-title');
       if (sidebarCourseTitle) {
         sidebarCourseTitle.textContent = data.course_title;
       }
 
-      // Update teacher name in sidebar
+      
       const sidebarCourseSub = document.querySelector('.sidebar .course-sub');
       if (sidebarCourseSub) {
         sidebarCourseSub.textContent = `With ${data.teacher_name}`;
       }
 
-      // Update student name in top right corner
+     
       const userDiv = document.querySelector('.user');
       if (userDiv) {
         userDiv.textContent = data.student_name;
@@ -580,5 +534,3 @@ async function loadStudentChatInfo() {
   }
 }
 
-// DOMContentLoaded listener removed - handled by main initialization
-// ========== END OF ADDED CODE ==========

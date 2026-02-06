@@ -6,13 +6,13 @@ body {
 .overlay {
     position: fixed;
     inset: 0;
-    /* this is to make sure the overlay will stretch to cover all the page form all directions*/
+   
     background: rgba(158, 152, 152, 0.4);
     display: flex;
     align-items: center;
-    /*center vertically*/
+   
     justify-content: center;
-    /* center horizontally */
+   
 }
 
 .window {
@@ -27,9 +27,9 @@ main {
 
     margin-bottom: 15px;
     flex: 2;
-    /* padding: 30px; */
+    
     display: flex;
-    /* align-items: center; */
+   
     flex-direction: column;
     justify-content: space-evenly;
 }

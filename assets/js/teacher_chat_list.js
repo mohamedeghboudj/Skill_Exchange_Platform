@@ -1,6 +1,4 @@
-// ========== DYNAMIC CHAT LIST FOR TEACHERS (Session-Based) ==========
 
-// Show "no students" message
 function showNoStudentsMessage(chatlistSection) {
     const message = document.createElement('div');
     message.className = 'no-students-message';
@@ -12,7 +10,7 @@ function showNoStudentsMessage(chatlistSection) {
     chatlistSection.appendChild(message);
 }
 
-// Create a chat student element
+
 function createChatStudentElement(student, courseId, courseTitle) {
     const chatDiv = document.createElement('div');
     chatDiv.className = 'chat';
@@ -40,7 +38,7 @@ function createChatStudentElement(student, courseId, courseTitle) {
     return chatDiv;
 }
 
-// Create a course group element
+
 function createCourseGroupElement(course) {
     const courseGroupDiv = document.createElement('div');
     courseGroupDiv.className = 'chat-course';
@@ -49,7 +47,7 @@ function createCourseGroupElement(course) {
     courseTitle.textContent = course.course_title;
     courseGroupDiv.appendChild(courseTitle);
 
-    // Add all students for this course
+ 
     course.students.forEach(student => {
         const chatElement = createChatStudentElement(
             student,
@@ -62,7 +60,7 @@ function createCourseGroupElement(course) {
     return courseGroupDiv;
 }
 
-// Function to set active student chat and navigate
+
 async function setActiveStudentChat(courseId, studentId) {
     try {
         const response = await fetch('/api/set_active_chat_teach.php', {
@@ -97,7 +95,7 @@ async function setActiveStudentChat(courseId, studentId) {
     }
 }
 
-// Attach click listeners to chat elements
+
 function attachTeacherChatClickListeners() {
     const chatElements = document.querySelectorAll('.chat');
 
@@ -111,11 +109,11 @@ function attachTeacherChatClickListeners() {
                 return;
             }
 
-            // Call backend to set active chat in session
+         
             const success = await setActiveStudentChat(courseId, studentId);
 
             if (success) {
-                // Navigate to teacher progress page
+                
                 window.location.href = "/html/teacherProgress.html";
             } else {
                 console.error('Failed to set active student chat');
@@ -125,10 +123,10 @@ function attachTeacherChatClickListeners() {
     });
 }
 
-// Load and render teacher's chat list (using session - no teacher_id needed)
+
 async function loadTeacherChatList() {
     try {
-        // Call API without teacher_id - it will use session
+     
         const response = await fetch('/api/teacher_chat.php', {
             method: 'GET',
             credentials: 'include',
@@ -161,11 +159,11 @@ async function loadTeacherChatList() {
                 return;
             }
 
-            // Remove existing static chat courses
+           
             const existingChatCourses = chatlistSection.querySelectorAll('.chat-course');
             existingChatCourses.forEach(courseDiv => courseDiv.remove());
 
-            // Remove "no students" message if it exists
+            
             const noStudentsMsg = chatlistSection.querySelector('.no-students-message');
             if (noStudentsMsg) noStudentsMsg.remove();
 
@@ -174,7 +172,7 @@ async function loadTeacherChatList() {
                 return;
             }
 
-            // Group students by course
+           
             const groupedChats = {};
             result.chats.forEach(chat => {
                 if (!groupedChats[chat.course_title]) {
@@ -192,20 +190,20 @@ async function loadTeacherChatList() {
                 });
             });
 
-            // Add dynamic courses
+          
             Object.values(groupedChats).forEach(course => {
                 const courseGroupElement = createCourseGroupElement(course);
                 chatlistSection.appendChild(courseGroupElement);
             });
 
-            // Attach click listeners to all chat elements
+           
             attachTeacherChatClickListeners();
 
             console.log(`Teacher chat list loaded successfully (${result.chats.length} students)`);
         } else {
             console.error('Failed to load chat list:', result.message);
 
-            // Show error or no students message
+           
             const chatlistSection = document.querySelector('.chatlist');
             if (chatlistSection) {
                 const existingChatCourses = chatlistSection.querySelectorAll('.chat-course');
@@ -218,7 +216,7 @@ async function loadTeacherChatList() {
     }
 }
 
-// Load chat list when page loads
+
 document.addEventListener('DOMContentLoaded', () => {
     loadTeacherChatList();
 });

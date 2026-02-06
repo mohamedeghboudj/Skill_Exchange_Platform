@@ -2,7 +2,7 @@
 // Configuration
 let currentTeacherId = null;
 let currentCourseId = null;
-let currentStudentId = null; // For when viewing specific student details
+let currentStudentId = null;
 
 // DOM Elements
 const leftArrow = document.getElementById("left-arrow");
@@ -39,14 +39,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     currentTeacherId = userData.user.id;
 
-    // Get parameters from URL
+  
     const urlParams = new URLSearchParams(window.location.search);
     currentCourseId = urlParams.get('courseId');
     currentStudentId = urlParams.get('studentId');
 
     console.log('[TeacherProgress] URL params - courseId:', currentCourseId, 'studentId:', currentStudentId);
 
-    // If missing from URL, try to recover from session (chat context)
+   
     if (!currentCourseId) {
       console.log('[TeacherProgress] courseId missing from URL, trying session recovery...');
       const sessionData = await loadTeacherChatInfo();
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Continue loading with identified IDs
+
     await initializeView();
     console.log('[TeacherProgress] Init complete');
 
@@ -73,11 +73,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-/**
- * Common View Initialization
- */
+
 async function initializeView() {
-  // Load appropriate view
+
   if (currentStudentId) {
     console.log('[TeacherProgress] Loading student details...');
     await loadStudentDetails();
@@ -86,13 +84,10 @@ async function initializeView() {
     await loadStudentsProgress();
   }
 
-  // Load Sidebar (Enrolled Students)
+ 
   await loadSidebarStudents();
 }
 
-/**
- * Load Sidebar with Enrolled Students
- */
 async function loadSidebarStudents() {
   const listContainer = document.querySelector('.list-friend');
   if (!listContainer) {
@@ -146,14 +141,13 @@ async function loadSidebarStudents() {
   }
 }
 
-// Navigate back
+
 if (leftArrow) {
   leftArrow.addEventListener('click', () => {
     window.location.href = "/html/teach.html";
   });
 }
 
-// Chat toggle
 if (chatToggle && sidebar && closeChat) {
   chatToggle.onclick = () => {
     sidebar.classList.add("active");
@@ -164,9 +158,7 @@ if (chatToggle && sidebar && closeChat) {
   };
 }
 
-/**
- * Load all students' progress for the course
- */
+
 async function loadStudentsProgress() {
   try {
     console.log('[TeacherProgress] Fetching students-progress...', { courseId: currentCourseId });
@@ -181,18 +173,18 @@ async function loadStudentsProgress() {
       return;
     }
 
-    // Update header with course name
+ 
     const headerTitle = document.querySelector('header h1');
     if (headerTitle) headerTitle.textContent = result.course_title;
 
-    // Update sidebar course info
+  
     const courseTitle = document.querySelector('.course-title');
     if (courseTitle) courseTitle.textContent = result.course_title;
 
     const courseSub = document.querySelector('.course-sub');
     if (courseSub) courseSub.textContent = `${result.total_students || 0} students enrolled`;
 
-    // Display students list in main (replace hardcoded content)
+    
     displayStudentsList(result.students || [], result.course_title);
     console.log('[TeacherProgress] loadStudentsProgress complete');
 
@@ -202,14 +194,12 @@ async function loadStudentsProgress() {
   }
 }
 
-/**
- * Display list of all students with their progress (when no student selected)
- */
+
 function displayStudentsList(students, courseTitle) {
   const main = document.querySelector('main');
   if (!main) return;
 
-  // Replace main with "select a student" view - no hardcoded stats
+  
   main.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24" fill="none" stroke="grey" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-left-icon lucide-move-left" id="left-arrow">
       <path d="M6 8L2 12L6 16"/><path d="M2 12H22"/>
@@ -229,9 +219,7 @@ function displayStudentsList(students, courseTitle) {
   }
 }
 
-/**
- * Load detailed progress for a specific student
- */
+
 async function loadStudentDetails() {
   try {
     console.log('[TeacherProgress] Fetching student-assignments...', { courseId: currentCourseId, studentId: currentStudentId });
@@ -239,7 +227,7 @@ async function loadStudentDetails() {
     const result = await response.json();
 
     console.log('[TeacherProgress] student-assignments API response:', result);
-    // After line 869, add:
+ 
 console.log('[DEBUG] Full API response:', JSON.stringify(result, null, 2));
     if (!result.success) {
       console.warn('[TeacherProgress] student-assignments failed:', result.message);
@@ -248,21 +236,21 @@ console.log('[DEBUG] Full API response:', JSON.stringify(result, null, 2));
     }
     console.log('[TeacherProgress] student-assignments OK, stats:', result.stats, 'videos:', result.videos?.length, 'assignments:', result.assignments?.length);
 
-    // Update header
+  
     const headerTitle = document.querySelector('header h1');
     if (headerTitle) headerTitle.textContent = result.course_title;
 
     const userElement = document.querySelector('.user');
     if (userElement) userElement.textContent = result.student?.student_name || 'Student';
 
-    // Update sidebar
+  
     const courseTitle = document.querySelector('.course-title');
     if (courseTitle) courseTitle.textContent = result.course_title;
 
     const courseSub = document.querySelector('.course-sub');
     if (courseSub) courseSub.textContent = `Student: ${result.student?.student_name || ''}`;
 
-    // Display student progress
+ 
     displayStudentProgress(result);
     console.log('[TeacherProgress] loadStudentDetails complete');
 
@@ -272,9 +260,6 @@ console.log('[DEBUG] Full API response:', JSON.stringify(result, null, 2));
   }
 }
 
-/**
- * Display detailed progress for a specific student
- */
 function displayStudentProgress(data) {
   const main = document.querySelector('main');
   if (!main) {
@@ -353,16 +338,16 @@ function displayStudentProgress(data) {
     </div>
   `;
 
-  // Re-attach left arrow listener
+ 
   const newLeftArrow = document.getElementById("left-arrow");
   if (newLeftArrow) {
     newLeftArrow.addEventListener('click', () => {
-      // Go back to students list
+     
       window.location.href = `/html/teacherProgress.html?courseId=${currentCourseId}`;
     });
   }
 
-  // Display videos
+  
   const videoStepper = document.getElementById('video-stepper');
   if (videoStepper && data.videos.length > 0) {
     data.videos.forEach(video => {
@@ -378,7 +363,7 @@ function displayStudentProgress(data) {
     videoStepper.innerHTML = '<p style="padding: 20px; color: #666;">No videos in this course</p>';
   }
 
-  // Display assignments
+ 
   const assignmentsList = document.getElementById('assignments-list');
   if (assignmentsList && data.assignments.length > 0) {
     data.assignments.forEach(assignment => {
@@ -387,15 +372,15 @@ function displayStudentProgress(data) {
       let statusClass = '';
       let scoreDisplay = '';
 
-      if (assignment.status === 'graded') { // PHP 'graded' means scored
+      if (assignment.status === 'graded') { 
         statusClass = 'done';
         scoreDisplay = `${assignment.score} / ${assignment.max_score}`;
-      } else if (assignment.status === 'submitted') { // PHP 'submitted' means needs grading
+      } else if (assignment.status === 'submitted') { 
         statusClass = 'pending';
         scoreDisplay = 'Needs Grading';
       } else if (assignment.status === 'not_submitted') {
-        // Check if due_date passed? 
-        statusClass = 'missed'; // Default to missed or locked?
+        
+        statusClass = 'missed'; 
         scoreDisplay = 'Not Submitted';
       } else {
         statusClass = 'locked';
@@ -417,44 +402,41 @@ function displayStudentProgress(data) {
     assignmentsList.innerHTML = '<p style="padding: 20px; color: #666;">No assignments in this course</p>';
   }
 
-  // Attach Handlers
+ 
   attachGradingHandlers();
 }
 
-/**
- * Attach Handlers for Grading
- */
+
 function attachGradingHandlers() {
   const assignments = document.querySelectorAll(".assignment");
   const gradingPanel = document.getElementById("grading-panel");
   const saveButton = document.getElementById("save-grade");
   const scoreInput = document.getElementById("score-input");
 
-  // Cleanup previous listeners if any (simple way: clone node? or just be careful)
-  // Since we destroy DOM on load, listeners are gone. 
+  
 
   assignments.forEach(assignment => {
     const submissionId = assignment.dataset.submissionId;
     const assignmentTitle = assignment.querySelector("span").textContent;
-    // Only allow grading if there is a submission (pending or graded)
+   
     if (submissionId && (assignment.classList.contains('pending') || assignment.classList.contains('done'))) {
       assignment.style.cursor = 'pointer';
       assignment.addEventListener('click', async () => {
-        // Fetch full submission details including URL
+       
         document.getElementById("assignment-title").textContent = assignmentTitle;
         gradingPanel.dataset.submissionId = submissionId;
         gradingPanel.style.display = "block";
 
-        // Load details
+       
         try {
           const response = await fetch(`../assets/php/teacher_progress.php?action=submission&submission_id=${submissionId}`);
           const res = await response.json();
           if (res.success) {
-            // Update URL and thumbnail
+           
             const pdfDiv = document.querySelector(".submission-pdf");
             pdfDiv.onclick = () => window.open(res.submission_url, '_blank');
 
-            // Update score input
+           
             scoreInput.value = res.score !== null ? res.score : '';
             scoreInput.max = res.max_score;
           }
@@ -463,8 +445,7 @@ function attachGradingHandlers() {
     }
   });
 
-  // Save Grade Handler
-  // Note: saveButton is created new each time displayStudentProgress runs, so no duplicate listener issue
+ 
   if (saveButton) {
     saveButton.onclick = async () => {
       const submissionId = gradingPanel.dataset.submissionId;
@@ -481,7 +462,7 @@ function attachGradingHandlers() {
 
         const response = await fetch(`../assets/php/teacher_progress.php`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' }, // teacher_progress.php reads php://input json
+          headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify({
             action: 'grade-assignment',
             submission_id: submissionId,
@@ -512,30 +493,30 @@ function attachGradingHandlers() {
 
 
 
-// Helper: Show Error (console only, no alert)
+
 function showError(message) {
   console.error('[TeacherProgress] Error:', message);
 }
 
-// Event for unlock spans in locked assignments
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("JS is running");
-  // attachAssignmentClickHandlers(); // REMOVED: Function was not defined
+ 
 
-  const assignmentsContainer = document.querySelector('.progress-box:last-of-type'); // Assignments section
+  const assignmentsContainer = document.querySelector('.progress-box:last-of-type'); 
   if (assignmentsContainer) {
     assignmentsContainer.addEventListener('click', (e) => {
-      // Check if clicked element text is "unlock" and inside locked row
+    
       if (e.target.textContent.trim() === 'unlock' && e.target.closest('.row.locked')) {
         const row = e.target.closest('.row');
-        const statusSpan = row.querySelector('span:last-child'); // Status span
+        const statusSpan = row.querySelector('span:last-child'); 
 
-        // Swap classes and update status text
+       
         row.classList.remove('locked');
         row.classList.add('pending');
         statusSpan.textContent = 'Pending';
 
-        // Remove the unlock span completely
+        
         e.target.remove();
 
         console.log('Unlocked assignment to pending');
@@ -549,9 +530,7 @@ leftArrow.addEventListener('click', () => {
   window.location.href = "/html/teach.html";
 });
 
-// ========== UPDATED CODE FOR DYNAMIC CHAT INFO (Session-Based) ==========
 
-// Load chat information from session (returns data for recovery)
 async function loadTeacherChatInfo() {
   try {
     const response = await fetch(
@@ -570,7 +549,7 @@ async function loadTeacherChatInfo() {
     if (result.success) {
       const data = result.data;
 
-      // Update UI elements
+      
       const headerTitle = document.querySelector('header h1');
       if (headerTitle) headerTitle.textContent = data.course_title;
 

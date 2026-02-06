@@ -14,7 +14,7 @@
     <script src="/assets/js/main.js" defer></script>
     <script type="module" src="/assets/js/backendcourseinfo.js"></script>
     <script type="module" src="/assets/js/courseInfo.js"></script>
-    <!-- <script src="/js/backend_studentrequest.js"></script> -->
+    <script src="/js/backend_studentrequest.js"></script>
     <script type="module" src="/assets/js/home.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,23 +71,17 @@
         <section class="courseinfo">
             <h1>Course Details</h1>
             <div class="info">
-                <p><strong>Course name</strong><span id="course-name">Web Development</span></p>
-                <p><strong>Teacher</strong><span class="teacher-name">Dr. Carter</span></p><br>
-                <p><strong>Price</strong><span id="price">$49</span></p><br>
-                <p><strong>Duration</strong><span id="duration">6h 30m</span></p>
-                <p id="description">Master the fundamentals of modern web development and learn to build dynamic,
-                    responsive websites from scratch. This course covers everything from HTML, CSS, and JavaScript to
-                    advanced front-end frameworks and back-end integration. You’ll design visually appealing
-                    interfaces, connect them to databases, and deploy your projects online. Whether you’re a
-                    complete beginner or looking to level up your skills, this hands-on program will guide you
-                    through real-world projects, best practices, and the latest tools used by professionals in
-                    the industry.</p>
+                <p><strong>Course name</strong><span id="course-name"></span></p>
+                <p><strong>Teacher</strong><span class="teacher-name"></span></p><br>
+                <p><strong>Price</strong><span id="price"></span></p><br>
+                <p><strong>Duration</strong><span id="duration"></span></p>
+                <p id="description"></p>
                 <button id="send">Send Request</button>
             </div>
             <h3>Instructor</h3>
             <div class="teacher">
                 <div id="teachnav">
-                    <p id="teacher-name">Dr.Mahmoudi</p>
+                    <p id="teacher-name"></p>
                     <img src="" alt="teacher" height="150px" width="150px">
                     <ul class="teacherlinkslg">
                         <li><a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -110,13 +104,7 @@
                     </ul>
                 </div>
                 <div id="teachfooter">
-                    <p>Dr. Mahmoudi Mohammed is a passionate web development instructor with over 8 years of experience
-                        in
-                        front-end and back-end technologies.
-                        he specializes in modern JavaScript frameworks, responsive design, and UI/UX best practices.
-                        Mahmoudi has mentored hundreds of students to launch successful tech careers.
-                        His teaching style blends theory with real-world project experience.
-                        He believes in empowering learners to build innovative and user-centered digital solutions.</p>
+                    <p> </p>
                     <ul class="teacherlinks">
                         <li><a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -175,10 +163,16 @@
             <!-- Videos will be dynamically inserted here  . says hadil -->
         </div>
         <dialog id="popup"
-            style="  width: 520px;height: 110vh;border: none; scrollbar-width: none; border-radius: 15px; padding: 0;background: transparent;">
-            <iframe src="/studentRequest.html" frameborder="0"
-                style="width: 100%; height: 100%; border: none;background: transparent;  "></iframe>
-        </dialog>
+    style="width: 520px; height: 110vh; border: none; border-radius: 15px; padding: 0; background: transparent;">
+    <iframe 
+        id="enrollmentFrame"
+        src="/studentRequest.html"
+        allow="same-origin"
+        sandbox="allow-same-origin allow-forms allow-scripts"
+        name="enrollment-iframe"
+        style="width: 100%; height: 100%; border: none; background: transparent; scrollbar-width: none;">
+    </iframe>
+</dialog>
     </main>
     <footer>
         <div class="footing">
@@ -257,7 +251,174 @@
 
 
     </footer>
-
+<script>
+// Enrollment dialog handling - Add this script
+document.addEventListener('DOMContentLoaded', function() {
+    const sendButton = document.getElementById('send');
+    const popup = document.getElementById('popup');
+    const enrollmentFrame = document.getElementById('enrollmentFrame');
+    
+    if (sendButton && popup) {
+        sendButton.addEventListener('click', function() {
+            // Get course ID
+            const courseId = getCurrentCourseId();
+            console.log('Opening enrollment for course:', courseId);
+            
+            // Update iframe URL with course ID
+            enrollmentFrame.src = `/studentRequest.html?course_id=${courseId}`;
+            
+            // Show dialog
+            popup.showModal();
+            
+            // Setup message listener for iframe
+            setupIframeMessageListener();
+        });
+    }
+    
+    // Get course ID from the page
+    function getCurrentCourseId() {
+        // Try URL parameters first
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('course_id');
+        if (courseId) {
+            console.log('Course ID from URL:', courseId);
+            return courseId;
+        }
+        
+        // Try to get from course info section
+        const courseSection = document.querySelector('.courseinfo');
+        if (courseSection && courseSection.dataset.courseId) {
+            console.log('Course ID from data attribute:', courseSection.dataset.courseId);
+            return courseSection.dataset.courseId;
+        }
+        
+        // Try to extract from page content (adjust as needed)
+        const courseNameElement = document.getElementById('course-name');
+        if (courseNameElement) {
+            // You might need to map course names to IDs here
+            console.log('Course name found:', courseNameElement.textContent);
+        }
+        
+        // Default fallback - CHANGE THIS TO YOUR ACTUAL DEFAULT
+        console.log('Using default course ID: 1');
+        return 1;
+    }
+    
+    // Listen for messages from the iframe
+    function setupIframeMessageListener() {
+        // Remove any existing listener to avoid duplicates
+        window.removeEventListener('message', handleIframeMessage);
+        
+        // Add new listener
+        window.addEventListener('message', handleIframeMessage);
+        
+        console.log('Iframe message listener setup');
+    }
+    
+    function handleIframeMessage(event) {
+        console.log('Message from iframe:', event.data);
+        
+        const popup = document.getElementById('popup');
+        const enrollmentFrame = document.getElementById('enrollmentFrame');
+        
+        if (!popup || !enrollmentFrame) return;
+        
+        switch(event.data.type) {
+            case 'iframe_height':
+                // Adjust iframe height
+                enrollmentFrame.style.height = event.data.height + 'px';
+                break;
+                
+            case 'close_iframe':
+            case 'enrollment_success':
+                // Close the popup
+                popup.close();
+                
+                // Show success message
+                if (event.data.type === 'enrollment_success') {
+                    showEnrollmentSuccess(event.data);
+                }
+                break;
+                
+            case 'iframe_loaded':
+                console.log('Iframe loaded successfully');
+                // Send course ID to iframe
+                const courseId = getCurrentCourseId();
+                enrollmentFrame.contentWindow.postMessage({
+                    type: 'set_course_id',
+                    course_id: courseId
+                }, '*');
+                break;
+                
+            case 'iframe_error':
+                console.error('Iframe error:', event.data.error);
+                break;
+        }
+    }
+    
+    // Show success message when enrollment is complete
+    function showEnrollmentSuccess(data) {
+        // Create success notification
+        const successDiv = document.createElement('div');
+        successDiv.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px; 
+                        background: linear-gradient(135deg, #4CAF50, #45a049);
+                        color: white; padding: 15px 20px; border-radius: 8px; 
+                        z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                        display: flex; align-items: center; animation: slideIn 0.3s ease;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" stroke-width="2" 
+                     stroke-linecap="round" stroke-linejoin="round" 
+                     style="margin-right: 10px;">
+                    <path d="M20 6 9 17l-5-5" />
+                </svg>
+                <div>
+                    <strong>Enrollment Request Submitted!</strong><br>
+                    <small>Request ID: #${data.request_id || 'Pending'}</small>
+                </div>
+            </div>
+        `;
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(successDiv);
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            successDiv.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => successDiv.remove(), 300);
+        }, 5000);
+    }
+    
+    // Close popup when clicking outside
+    popup.addEventListener('click', function(event) {
+        const rect = popup.getBoundingClientRect();
+        const isInDialog = (rect.top <= event.clientY && event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX && event.clientX <= rect.left + rect.width);
+        
+        if (!isInDialog) {
+            popup.close();
+        }
+    });
+    
+    // Close popup with Escape key
+    popup.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            popup.close();
+        }
+    });
+    
+    console.log('Enrollment dialog script loaded');
+});
+</script>
 
 </body>
 

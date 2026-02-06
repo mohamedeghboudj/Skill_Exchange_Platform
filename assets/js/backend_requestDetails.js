@@ -1,22 +1,10 @@
-/**
- * File: /assets/js/backend_requestDetails.js
- * Purpose: Handle displaying request details in popup and processing payments
- * 
- * UPDATED BY: Backend Implementation for Dynamic Student Requests Display
- * 
- * This script loads the selected request details and handles the payment flow
- */
 
-/**
- * Load request details from database
- * Called when popup opens
- */
 
 
 
 async function loadRequestDetails() {
     try {
-        // Get request info from session storage (set when request is clicked)
+      
         const requestId = sessionStorage.getItem('currentRequestId');
         const courseId = sessionStorage.getItem('currentCourseId');
         const status = sessionStorage.getItem('currentRequestStatus');
@@ -28,7 +16,7 @@ async function loadRequestDetails() {
         
         console.log('Loading details for request:', requestId);
         
-        // Fetch full request details
+       
         const response = await fetch(`/api/get_request_details.php?request_id=${requestId}`, {
             method: 'GET',
             credentials: 'include',
@@ -44,7 +32,7 @@ async function loadRequestDetails() {
             return;
         }
         
-        // Display the details in the popup iframe or modal
+    
         displayRequestDetails(result.data);
         
     } catch (error) {
@@ -54,7 +42,7 @@ async function loadRequestDetails() {
 
 /**
  * Display request details in the UI
- * @param {Object} requestData - Full request details
+ * @param {Object} requestData 
  */
 
 
@@ -74,27 +62,22 @@ function displayRequestDetails(requestData) {
     }
 }
 
-/**
- * Handle payment button click
- * Opens payment popup for accepted requests
- */
+
 
 
 function handlePaymentClick(requestId, courseId) {
-    // Store payment info
+    
     sessionStorage.setItem('paymentRequestId', requestId);
     sessionStorage.setItem('paymentCourseId', courseId);
     
-    // Open payment popup
+   
     const paymentPopup = document.getElementById('popup2');
     if (paymentPopup) {
         paymentPopup.showModal();
     }
 }
 
-/**
- * Process payment and create enrollment
- */
+
 
 
 async function processPayment() {
@@ -107,7 +90,7 @@ async function processPayment() {
             return;
         }
         
-        // Call the payment processing API
+       
         const response = await fetch('/api/process_payment.php', {
             method: 'POST',
             credentials: 'include',
@@ -126,21 +109,21 @@ async function processPayment() {
         if (result.success) {
             alert('Payment successful! You are now enrolled in the course.');
             
-            // Close popups
+           
             closePop();
             closePop2();
             
-            // Refresh the requests list
+          
             if (typeof loadStudentRequests === 'function') {
                 loadStudentRequests();
             }
             
-            // Reload enrolled courses
+            
             if (typeof loadEnrolledCourses === 'function') {
                 loadEnrolledCourses();
             }
             
-            // Clear session storage
+           
             sessionStorage.removeItem('paymentRequestId');
             sessionStorage.removeItem('paymentCourseId');
             
@@ -154,9 +137,7 @@ async function processPayment() {
     }
 }
 
-/**
- * Close popup functions (keeping original functionality)
- */
+
 
 
 function closePop() {
@@ -173,12 +154,12 @@ function closePop2() {
     }
 }
 
-// Keep the original click handlers from your friend's code
+
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('popup');
     const popup2 = document.getElementById('popup2');
     
-    // ORIGINAL CODE: Close popup on background click
+  
     if (popup) {
         popup.addEventListener('click', (e) => {
             if (e.target === popup) {
@@ -195,19 +176,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ADDED: Load request details when popup opens
+   
     if (popup) {
         popup.addEventListener('open', loadRequestDetails);
     }
 });
 
-// Export functions for global access
+
 if (typeof window !== 'undefined') {
     window.closePop = closePop;
     window.closePop2 = closePop2;
     window.handlePaymentClick = handlePaymentClick;
     window.processPayment = processPayment;
 }
-// hadil changed this 
+
 
 
