@@ -83,7 +83,7 @@ try {
     $stmt->close();
 
     // 4️⃣ Update request status
-    $new_status = $decision === 'accept' ? 'accepted' : 'declined';
+    $new_status = $decision === 'accept' ? 'approved' : 'rejected';
     $updateQuery = "
         UPDATE ENROLLMENT_REQUEST
         SET status = ?, teacher_decision_date = NOW()
