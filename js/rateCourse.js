@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch('../assets/php/student_progress.php', {
                 method: 'POST',
-                credentials: 'same-origin',   // ensure cookies/session are sent
+                credentials: 'same-origin',   
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'submit-rating',

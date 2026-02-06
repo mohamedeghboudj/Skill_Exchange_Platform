@@ -1,10 +1,8 @@
-// backend_studentrequest.js - FINAL VERSION (IFRAME ONLY)
+// backend_studentrequest.js
 console.log("=== Enrollment Script Loading ===");
 console.log("📍 Running in:", window.location.pathname);
 
-// ============================================================
-// 1. DECIDE WHERE WE'RE RUNNING
-// ============================================================
+// DECIDE WHERE WE'RE RUNNING
 
 // If we're in the parent window (not in iframe), exit early
 if (window === window.parent) {
@@ -14,10 +12,7 @@ if (window === window.parent) {
 
 console.log("✅ Running inside iframe");
 
-// ============================================================
-// 2. MAIN INITIALIZATION - ONLY FOR IFRAME
-// ============================================================
-
+// MAIN INITIALIZATION , ONLY FOR IFRAME
 document.addEventListener("DOMContentLoaded", function() {
     console.log("📄 Iframe DOM loaded");
     setTimeout(() => {
@@ -25,10 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 300);
 });
 
-// ============================================================
-// 3. FORM SETUP FUNCTIONS
-// ============================================================
-
+// FORM SETUP FUNCTIONS
 function initializeEnrollmentForm() {
     console.log("🔧 Initializing enrollment form...");
 
@@ -114,9 +106,9 @@ function setupDropdowns(elements) {
     });
 }
 
-// ============================================================
-// 4. FORM SUBMISSION HANDLER
-// ============================================================
+
+//  FORM SUBMISSION HANDLER
+
 
 async function handleEnrollmentSubmit(elements) {
     console.log("🚀 Starting enrollment submission...");
@@ -155,7 +147,7 @@ async function handleEnrollmentSubmit(elements) {
     `;
 
     try {
-        // API submission (only required fields)
+        // API submission 
         const apiFormData = new FormData();
         apiFormData.append('course_id', formData.course_id);
         apiFormData.append('student_message', formData.student_message);
@@ -219,9 +211,7 @@ async function handleEnrollmentSubmit(elements) {
     }
 }
 
-// ============================================================
-// 5. HELPER FUNCTIONS
-// ============================================================
+// HELPER FUNCTIONS
 
 function getCourseId() {
     let courseId = null;
@@ -238,7 +228,7 @@ function getCourseId() {
         console.log("Cannot access parent localStorage (cross-origin restriction)");
     }
 
-    return 2; // default fallback
+    return 2; 
 }
 
 function showResult(element, type, message) {
@@ -290,9 +280,9 @@ window.addEventListener('message', (event) => {
     }
 });
 
-// ============================================================
-// 6. ADD CSS ANIMATIONS DYNAMICALLY
-// ============================================================
+
+//ADD CSS ANIMATIONS 
+
 
 const style = document.createElement('style');
 style.textContent = `

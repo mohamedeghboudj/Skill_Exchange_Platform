@@ -127,7 +127,7 @@ if (certificateInput && certificatesContainer) {
     });
 }
 
-// Helper function to add certificate to UI
+// Helper function to add certificate 
 function addCertificateToUI(cert) {
     const certificateDiv = document.createElement('div');
     certificateDiv.className = 'certificate-object';
@@ -172,7 +172,7 @@ document.addEventListener('click', function (e) {
                 mydialog.showModal();
             }
 
-            // Send certificate info to iframe after it loads
+            // Send certificate info to iframe 
             if (iframe) {
                 const sendData = () => {
                     console.log('Sending certificate data to iframe:', certificateName);
@@ -183,11 +183,11 @@ document.addEventListener('click', function (e) {
                     }, '*');
                 };
 
-                // If iframe is already loaded
+                
                 if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
                     setTimeout(sendData, 100);
                 } else {
-                    // Wait for iframe to load
+                    
                     iframe.onload = () => {
                         setTimeout(sendData, 100);
                     };
@@ -281,7 +281,7 @@ window.addEventListener('message', async function (event) {
     if ((event.data === 'confirmRemove' || event.data === 'hideCertificate') && currentCertificateToRemove) {
         const certificateId = currentCertificateToRemove.dataset.certificateId;
 
-        // Close modal immediately
+        
         const mydialog = document.getElementById("popup");
         if (mydialog) mydialog.close();
 
@@ -296,7 +296,7 @@ window.addEventListener('message', async function (event) {
 
                 let result = { success: false };
 
-                // Only attempt JSON parse if response is 200
+                
                 if (response.ok) {
                     try {
                         result = await response.json();
@@ -307,22 +307,22 @@ window.addEventListener('message', async function (event) {
                     console.warn("Delete request returned status:", response.status);
                 }
 
-                // Remove certificate from UI anyway
+                
                 currentCertificateToRemove.remove();
                 console.log('Certificate removed from UI');
 
-                // Only alert if backend explicitly fails
+                
                 if (!result.success && result.error) {
                     console.warn('Backend error:', result.error);
                 }
 
             } catch (error) {
                 console.error('Delete request failed:', error);
-                // Still remove from UI
+                
                 currentCertificateToRemove.remove();
             }
         } else {
-            // Blob preview only
+            
             const fileUrl = currentCertificateToRemove.dataset.fileUrl;
             if (fileUrl && fileUrl.startsWith('blob:')) {
                 URL.revokeObjectURL(fileUrl);
@@ -404,7 +404,7 @@ async function loadUserCertificates() {
 
         const result = await response.json();
 
-        // Check if there's an error in the response
+        
         if (result.error) {
             console.log('No certificates or error:', result.error);
             return;
@@ -418,7 +418,7 @@ async function loadUserCertificates() {
             return;
         }
 
-        // Clear existing certificates
+        
         certificatesContainer.innerHTML = '';
 
         if (certificates.length === 0) {
@@ -426,7 +426,7 @@ async function loadUserCertificates() {
             return;
         }
 
-        // Use the helper function to add each certificate
+        
         certificates.forEach(cert => {
             addCertificateToUI(cert);
         });

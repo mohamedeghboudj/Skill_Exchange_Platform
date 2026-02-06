@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Listen for certificate data from parent window
+    
     window.addEventListener('message', function (event) {
         console.log('Message received:', event.data);
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 certificateNameElement.textContent = certificateName;
                 console.log('Certificate name updated to:', certificateName);
 
-                // Recreate Lucide icons after updating text
+                
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
@@ -28,12 +28,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Initial Lucide icons
+    
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 
-    // Get buttons
+    
     let removeBtn = document.getElementById("rv");
     let cancelBtn = document.getElementById("cancel");
 
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             console.log("Remove button clicked");
 
-            // Send messages to parent
+    
             window.parent.postMessage('confirmRemove', '*');
         });
     } else {
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             console.log("Cancel button clicked");
 
-            // Send cancel message to parent
+            
             window.parent.postMessage('cancelRemove', '*');
         });
     } else {

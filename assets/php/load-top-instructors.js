@@ -63,7 +63,7 @@ function createInstructorCard(instructor) {
     const courseCount = instructor.course_count || 0;
     const studentCount = instructor.student_count || 0;
     const profilePic = instructor.profile_picture
-        ? `/uploads/${instructor.profile_picture}`
+        ? `/${instructor.profile_picture}`
         : `/assets/default-instructor.png`;
 
     collector.innerHTML = `
