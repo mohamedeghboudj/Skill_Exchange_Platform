@@ -1,5 +1,5 @@
 <?php
-// api/add_video.php
+// api/add_video.php - FIXED VERSION
 session_start();
 header('Content-Type: application/json');
 
@@ -67,9 +67,9 @@ if (!move_uploaded_file($_FILES['video']['tmp_name'], $file_path)) {
     exit;
 }
 
-// Insert into DB
+// Insert into DB - FIXED LINE: Add leading slash
 $video_title = pathinfo($original_name, PATHINFO_FILENAME);
-$video_url   = 'uploads/videos/' . $file_name;
+$video_url   = '/uploads/videos/' . $file_name;  // CHANGED: Added leading slash
 
 $stmt = $conn->prepare("INSERT INTO VIDEO (course_id, video_title, video_url) VALUES (?, ?, ?)");
 $stmt->bind_param("iss", $course_id, $video_title, $video_url);

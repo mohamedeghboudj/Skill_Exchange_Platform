@@ -1,5 +1,5 @@
 <?php
-// api/add_assignment.php
+// api/add_assignment.php - FIXED VERSION
 session_start();
 header('Content-Type: application/json');
 
@@ -57,9 +57,9 @@ if (!move_uploaded_file($_FILES['assignment']['tmp_name'], $file_path)) {
     exit;
 }
 
-// Insert into DB
+// Insert into DB - FIXED LINE
 $assignment_title = pathinfo($original_name, PATHINFO_FILENAME);
-$assignment_url   = 'uploads/assignments/' . $file_name;
+$assignment_url   = '/uploads/assignments/' . $file_name;  // CHANGED: Added leading slash
 
 $stmt = $conn->prepare("
     INSERT INTO ASSIGNMENT (course_id, assignment_title, assignment_url, assignment_status)

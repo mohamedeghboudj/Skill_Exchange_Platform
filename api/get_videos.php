@@ -1,5 +1,5 @@
 <?php
-// api/get_videos.php - TEACHER VERSION (returns plain array)
+// api/get_videos.php - TEACHER VERSION (FIXED)
 session_start();
 header('Content-Type: application/json');
 
@@ -37,6 +37,13 @@ try {
     
     $videos = [];
     while ($row = $result->fetch_assoc()) {
+        // FIX: Add leading slash to make path absolute from root
+        if (!empty($row['video_url'])) {
+            // If it doesn't start with / or http, add /
+            if ($row['video_url'][0] !== '/' && !str_starts_with($row['video_url'], 'http')) {
+                $row['video_url'] = '/' . $row['video_url'];
+            }
+        }
         $videos[] = $row;
     }
     

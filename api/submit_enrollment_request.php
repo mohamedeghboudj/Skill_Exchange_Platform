@@ -42,8 +42,8 @@ if (strlen($student_message) < 50) {
     exit;
 }
 
-// Check if user exists and get teacher status
-$check_user_sql = "SELECT user_id, full_name, is_teacher FROM USER WHERE user_id = ?";
+// Check if user exists
+$check_user_sql = "SELECT user_id, full_name FROM USER WHERE user_id = ?";
 $check_stmt = $conn->prepare($check_user_sql);
 
 if (!$check_stmt) {
@@ -63,17 +63,6 @@ if ($check_result->num_rows === 0) {
 }
 
 $user_data = $check_result->fetch_assoc();
-
-// Check teacher
-$is_teacher = (int)$user_data['is_teacher'];
-if ($is_teacher === 1) {
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Teachers cannot enroll as students'
-    ]);
-    exit;
-}
-
 $check_stmt->close();
 
 // Student info

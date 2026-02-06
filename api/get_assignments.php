@@ -1,5 +1,5 @@
 <?php
-// api/get_assignments.php - TEACHER VERSION (returns plain array)
+// api/get_assignments.php - FIXED VERSION
 session_start();
 header('Content-Type: application/json');
 
@@ -13,7 +13,8 @@ if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
     exit;
 }
 
-require_once '../assets/php/db.php';
+// FIX: Use correct config file
+require_once '../config/db.php';
 
 $course_id = (int)$_GET['course_id'];
 
@@ -30,6 +31,14 @@ $result = $stmt->get_result();
 $assignments = [];
 
 while ($row = $result->fetch_assoc()) {
+    // FIX: Ensure assignment_url starts with / if it's a local file
+    if (!empty($row['assignment_url'])) {
+        $url = $row['assignment_url'];
+        // Add leading slash for local paths that don't have it
+        if ($url[0] !== '/' && !str_starts_with($url, 'http')) {
+            $row['assignment_url'] = '/' . $url;
+        }
+    }
     $assignments[] = $row;
 }
 
