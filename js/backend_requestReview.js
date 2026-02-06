@@ -73,10 +73,10 @@ class RequestReview {
     // ================= BUTTONS =================
     setupButtons() {
         if (this.acceptBtn)
-            this.acceptBtn.addEventListener('click', () => this.handleDecision('accepted'));
+            this.acceptBtn.addEventListener('click', () => this.handleDecision('accept'));
 
         if (this.declineBtn)
-            this.declineBtn.addEventListener('click', () => this.handleDecision('declined'));
+            this.declineBtn.addEventListener('click', () => this.handleDecision('decline'));
     }
 
     updateButtons() {
