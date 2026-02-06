@@ -7,6 +7,9 @@
  * ADDED BY: Backend Implementation for Dynamic Student Requests Display
  */
 
+
+
+
 require_once '../config/db.php';
 
 session_start();
@@ -36,6 +39,7 @@ try {
     $db = new Database();
     $conn = $db->getConnection();
     
+
     /**
      * Fetch complete request details including:
      * - Request information
@@ -43,6 +47,11 @@ try {
      * - Teacher information
      * - Enrollment status if exists
      */
+
+
+
+   
+    
     $query = "
         SELECT 
             er.request_id,
@@ -144,3 +153,4 @@ try {
     ]);
 }
 ?>
+

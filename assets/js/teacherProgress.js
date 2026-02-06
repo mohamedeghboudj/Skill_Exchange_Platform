@@ -1,5 +1,5 @@
+
 // Configuration
-//const API_BASE_URL = 'http://localhost:8000/assets/php';
 let currentTeacherId = null;
 let currentCourseId = null;
 let currentStudentId = null; // For when viewing specific student details
@@ -102,7 +102,7 @@ async function loadSidebarStudents() {
 
   try {
     console.log('[TeacherProgress] Fetching get_enrolled_students...');
-    const response = await fetch(`${API_BASE_URL}/teacher_progress.php?action=get_enrolled_students`);
+    const response = await fetch(`../assets/php/teacher_progress.php?action=get_enrolled_students`);
     const result = await response.json();
 
     console.log('[TeacherProgress] get_enrolled_students:', result.success ? 'OK' : 'FAIL', result.students?.length ?? 0, 'students');
@@ -170,7 +170,7 @@ if (chatToggle && sidebar && closeChat) {
 async function loadStudentsProgress() {
   try {
     console.log('[TeacherProgress] Fetching students-progress...', { courseId: currentCourseId });
-    const response = await fetch(`${API_BASE_URL}/teacher_progress.php?action=students-progress&course_id=${currentCourseId}`);
+    const response = await fetch(`../assets/php/teacher_progress.php?action=students-progress&course_id=${currentCourseId}`);
     const result = await response.json();
 
     console.log('[TeacherProgress] students-progress API response:', result.success ? 'OK' : 'FAIL', result);
@@ -235,11 +235,12 @@ function displayStudentsList(students, courseTitle) {
 async function loadStudentDetails() {
   try {
     console.log('[TeacherProgress] Fetching student-assignments...', { courseId: currentCourseId, studentId: currentStudentId });
-    const response = await fetch(`${API_BASE_URL}/teacher_progress.php?action=student-assignments&course_id=${currentCourseId}&student_id=${currentStudentId}`);
+    const response = await fetch(`../assets/php/teacher_progress.php?action=student-assignments&course_id=${currentCourseId}&student_id=${currentStudentId}`);
     const result = await response.json();
 
     console.log('[TeacherProgress] student-assignments API response:', result);
-
+    // After line 869, add:
+console.log('[DEBUG] Full API response:', JSON.stringify(result, null, 2));
     if (!result.success) {
       console.warn('[TeacherProgress] student-assignments failed:', result.message);
       showError(result.message || 'Failed to load student details');
@@ -338,7 +339,7 @@ function displayStudentProgress(data) {
                 </div>
                 <div class="pdf-info">
                     <h3>Submission</h3>
-                    <p>Click to view</p> // Filename dynamically loaded
+                    <p>Click to view</p>
                 </div>
             </div>
         </div>
@@ -446,7 +447,7 @@ function attachGradingHandlers() {
 
         // Load details
         try {
-          const response = await fetch(`${API_BASE_URL}/teacher_progress.php?action=submission&submission_id=${submissionId}`);
+          const response = await fetch(`../assets/php/teacher_progress.php?action=submission&submission_id=${submissionId}`);
           const res = await response.json();
           if (res.success) {
             // Update URL and thumbnail
@@ -478,7 +479,7 @@ function attachGradingHandlers() {
         saveButton.disabled = true;
         saveButton.textContent = "Saving...";
 
-        const response = await fetch(`${API_BASE_URL}/teacher_progress.php`, {
+        const response = await fetch(`../assets/php/teacher_progress.php`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }, // teacher_progress.php reads php://input json
           body: JSON.stringify({
@@ -490,7 +491,7 @@ function attachGradingHandlers() {
 
         const res = await response.json();
         if (res.success) {
-          alert("Grade saved!");
+          
           gradingPanel.style.display = "none";
           // Reload
           loadStudentDetails();
