@@ -1,139 +1,83 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const stars = document.querySelectorAll('.star');
-    const starBorders = document.querySelectorAll('.star-border');
-    const courseTitle = document.getElementById('course-title');
-    
+    const borders = document.querySelectorAll('.star-border');
+    const title = document.getElementById('course-title');
+
     let currentRating = 0;
-    let courseId = null;
 
-    // Get course_id from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    courseId = urlParams.get('course_id');
+    const params = new URLSearchParams(window.location.search);
+    const courseId = params.get('course_id');
 
-    // Load course information
-    loadCourseInfo();
+    if (!courseId) {
+        title.textContent = 'No course selected';
+        return;
+    }
 
-    // Star click events
-    stars.forEach((star) => {
-        star.addEventListener('click', function() {
-            const rating = parseInt(this.getAttribute('data-rating'));
-            currentRating = rating;
-            highlightStars(rating);
-            
-            // Submit immediately after selection
-            submitRating();
-        });
+    loadCourse();
 
-        // Hover effects
-        star.addEventListener('mouseenter', function() {
-            const rating = parseInt(this.getAttribute('data-rating'));
-            highlightStars(rating);
+    stars.forEach((star, i) => {
+        star.addEventListener('mouseenter', () => highlight(i + 1));
+        star.addEventListener('click', () => {
+            currentRating = i + 1;
+            highlight(currentRating);
+            submit();
         });
     });
 
-    // Reset to current rating when mouse leaves
-    document.querySelector('.container').addEventListener('mouseleave', function() {
-        highlightStars(currentRating);
-    });
+    document.querySelector('.container')
+        .addEventListener('mouseleave', () => highlight(currentRating));
 
-    // Highlight stars function
-    function highlightStars(rating) {
-        stars.forEach((star, index) => {
-            const starRating = parseInt(star.getAttribute('data-rating'));
-            const border = starBorders[index];
-            
-            if (starRating <= rating) {
-                // Filled star
-                star.style.color = 'white';
-                star.style.stroke = 'white';
-                star.style.fill = 'white';
-                border.style.backgroundColor = '#0a4e9c';
-                border.style.borderColor = '#0a4e9c';
-            } else {
-                // Empty star
-                star.style.color = 'transparent';
-                star.style.stroke = 'white';
-                star.style.fill = 'transparent';
-                border.style.backgroundColor = '#0a4e9c';
-                border.style.borderColor = 'transparent';
-            }
+    function highlight(r) {
+        stars.forEach((s, i) => {
+            s.style.fill = i < r ? 'white' : 'transparent';
+            borders[i].style.borderColor = i < r ? '#0a4e9c' : 'transparent';
         });
     }
 
-    // Load course information and existing rating
-    async function loadCourseInfo() {
-        if (!courseId) {
-            courseTitle.textContent = 'Course not found';
-            return;
-        }
-
+    async function loadCourse() {
         try {
-            // Get course info
-            const response = await fetch(`../api/student.php?action=course-progress&course_id=${courseId}`);
-            const data = await response.json();
+            const res = await fetch(`assets/php/student_progress.php?action=course-progress&course_id=${courseId}`);
+            const data = await res.json();
+            if (data.success) title.textContent = `Rate: ${data.course_title}`;
 
-            if (data.success && data.course_title) {
-                courseTitle.textContent = `Rate: ${data.course_title}`;
+            const r = await fetch(`assets/php/student_progress.php?action=get-rating&course_id=${courseId}`);
+            const d = await r.json();
+            if (d.has_rated) {
+                currentRating = Math.round(d.rating);
+                highlight(currentRating);
             }
-
-            // Check if user already rated this course
-            const ratingResponse = await fetch(`../api/student.php?action=get-rating&course_id=${courseId}`);
-            const ratingData = await ratingResponse.json();
-            
-            if (ratingData.success && ratingData.rating) {
-                // Pre-fill existing rating
-                const existingRating = Math.round(ratingData.rating.rating);
-                currentRating = existingRating;
-                highlightStars(currentRating);
-            }
-        } catch (error) {
-            console.error('Error loading course info:', error);
-            courseTitle.textContent = 'Error loading course';
+        } catch (err) {
+            console.error('Failed to load course:', err);
+            title.textContent = 'Error loading course';
         }
     }
 
-    // Submit rating to backend
-    async function submitRating() {
-        if (currentRating === 0) {
-            return;
-        }
-
-        if (!courseId) {
-            alert('Course ID not found. Please try again.');
-            return;
-        }
-
-        const ratingData = {
-            action: 'submit-rating',
-            course_id: parseInt(courseId),
-            rating: currentRating
-        };
-
+    async function submit() {
         try {
-            const response = await fetch('../api/student.php', {
+            const res = await fetch('../assets/php/student_progress.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(ratingData)
+                credentials: 'same-origin',   // ensure cookies/session are sent
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'submit-rating',
+                    course_id: Number(courseId),
+                    rating: currentRating
+                })
             });
 
-            const data = await response.json();
+            const data = await res.json();
 
             if (data.success) {
-                // Show success message briefly
-                courseTitle.textContent = 'Thank you for rating!';
-                
-                // Redirect after 1.5 seconds
+                title.textContent = 'Thank you for rating!';
                 setTimeout(() => {
-                    window.location.href = `studentProgress.html?course_id=${courseId}`;
-                }, 1500);
+                    window.location.href = `html/studentProgress.html?course_id=${courseId}`;
+                }, 1200);
             } else {
-                alert(data.message || 'Failed to submit rating. Please try again.');
+                alert(data.message || 'Rating failed');
             }
-        } catch (error) {
-            console.error('Error submitting rating:', error);
-            alert('An error occurred. Please try again.');
+        } catch (err) {
+            console.error('Failed to submit rating:', err);
+            alert('Rating failed due to network error');
         }
     }
 });

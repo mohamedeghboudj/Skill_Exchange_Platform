@@ -41,6 +41,21 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(renderCourses)
         .catch(err => console.error("Error loading courses:", err));
 
+    // Helper function to fix profile picture paths
+    function getProfilePicturePath(profilePath) {
+        if (!profilePath || profilePath.trim() === '') {
+            return '/assets/images/person.webp';
+        }
+
+        // If already starts with /, use as-is
+        if (profilePath.startsWith('/')) {
+            return profilePath;
+        }
+
+        // Add leading slash if missing
+        return '/' + profilePath;
+    }
+
     function renderCourses(data) {
         container.innerHTML = "";
 
@@ -52,9 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("noCourses").style.display = "none";
 
         data.forEach(course => {
-            const profilePic = course.teacher_profile && course.teacher_profile.trim() !== ''
-                ? course.teacher_profile
-                : '/assets/images/person.webp';
+            const profilePic = getProfilePicturePath(course.teacher_profile);
             const card = `
             <div class="course" data-category="${course.category}" data-id="${course.id}">
                 <div class="skillicon">
@@ -88,34 +101,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-// Add this new function to attach click listeners
-function attachCourseClickListeners() {
-    // Click on entire course card
-    document.querySelectorAll('.course').forEach(courseCard => {
-        courseCard.addEventListener('click', function(e) {
-            // Don't trigger if clicking the button directly
-            if (e.target.classList.contains('start-btn')) {
-                return;
-            }
-            
-            const courseId = this.dataset.id;
-            if (courseId) {
-                window.location.href = `/pages/courseInfo.html?id=${courseId}`;
-            }
-        });
-    });
+    // Add this new function to attach click listeners
+    function attachCourseClickListeners() {
+        // Click on entire course card
+        document.querySelectorAll('.course').forEach(courseCard => {
+            courseCard.addEventListener('click', function (e) {
+                // Don't trigger if clicking the button directly
+                if (e.target.classList.contains('start-btn')) {
+                    return;
+                }
 
-    // Click on start button
-    document.querySelectorAll('.start-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent triggering the card click
-            const courseId = this.dataset.courseId;
-            if (courseId) {
-                window.location.href = `/pages/courseInfo.html?id=${courseId}`;
-            }
+                const courseId = this.dataset.id;
+                if (courseId) {
+                    window.location.href = `/pages/courseInfo.html?id=${courseId}`;
+                }
+            });
         });
-    });
-}
+
+        // Click on start button
+        document.querySelectorAll('.start-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.stopPropagation(); // Prevent triggering the card click
+                const courseId = this.dataset.courseId;
+                if (courseId) {
+                    window.location.href = `/pages/courseInfo.html?id=${courseId}`;
+                }
+            });
+        });
+    }
 
     category.forEach(catEl => {
         catEl.addEventListener('click', () => {
@@ -303,104 +316,4 @@ function attachCourseClickListeners() {
         }
     });
 
-    // ============================================================
-    // END OF HADIL'S ADDITIONS
-    // ============================================================
-
-
-    /*
-    function renderCourses(data) { //ikram old
-        container.innerHTML = "";
-    
-        if (!data || data.length === 0) {
-            document.getElementById("noCourses").style.display = "block";
-            return;
-    >>>>>>> 0373d23a773a641055390ec67d4fe3a793325996
-        }
-    
-    
-    
-    
-    
-        courses.forEach(course => {
-            course.addEventListener('click', () => {
-                window.location.href = 'courseInfo.html';
-            });
-        });
-        //
-        // hadil has to change starting from here !
-        //--------------------------------------------------------THIS IS NOT WORKING YET -----------------------------------------
-        function handleBecomeTeacherClick() {
-            //  const storedCurrentUser = localStorage.getItem("currentUser");
-    
-            // if (!storedCurrentUser) {
-            //    console.warn("No user logged in");
-            //   return;
-            // }
-    
-            // const currentUser = JSON.parse(storedCurrentUser);
-    
-            // Load the latest users array
-            // const allUsers = fromLocalStorage() || users;
-    
-            // Find the fresh user by ID
-            // const freshUser = allUsers.find(u => u.id === currentUser.id);
-    
-            // if (!freshUser) {
-            //    console.error("User not found in database");
-            //   return;
-            // }
-    
-            // Check teacherProfile properly
-            // if (freshUser.teacherProfile) {
-            // User is a teacher
-            //    window.location.href = "/html/teach.html";
-            window.location.href = "/html/teach.html";
-            //} else {
-            // User is not yet a teacher
-            //     window.location.href = "/pages/teacherrequest.html";
-            // }
-        }
-    
-        // Attach to button
-        document.getElementById("becomeTeacher")
-            .addEventListener("click", handleBecomeTeacherClick);
-    
-    
-        document.getElementById("becomeTeacher").addEventListener("click", handleBecomeTeacherClick);
-        // adding the logic to the nav bar 
-        document.querySelector(".teachnav").addEventListener("click", (e) => {
-            e.preventDefault();
-            handleBecomeTeacherClick();
-    
-        });
-    /*
-        // Fetch and update category counts
-        document.addEventListener("DOMContentLoaded", () => {
-            console.log("✅ DOM ready");
-    
-            const cats = document.querySelectorAll(".category");
-            console.log("Categories found:", cats.length);
-    
-            updateCategoryCounts();
-        });
-    
-        function updateCategoryCounts() {
-            fetch('/assets/php/fetch_category_counts.php')
-                .then(res => res.json())
-                .then(counts => {
-                    console.log("Category counts:", counts);
-    
-                    document.querySelectorAll('.category').forEach(catEl => {
-                        const categoryKey = catEl.dataset.category; // 🔑 BEST PRACTICE
-                        const countEl = catEl.querySelector('p');
-    
-                        const count = counts[categoryKey] ?? 0;
-                        countEl.textContent = `${count} courses`;
-                    });
-                })
-                .catch(err => {
-                    console.error('Failed to load category counts:', err);
-                });
-        }*/
 });

@@ -26,7 +26,7 @@ class CourseLoader {
         try {
             const response = await fetch('/api/get_enrolled_courses.php');
             const data = await response.json();
-            
+
             if (data.success && data.data && data.data.length > 0) {
                 this.displayCourses(data.data);
             } else {
@@ -40,11 +40,11 @@ class CourseLoader {
 
     displayCourses(courses) {
         this.coursesContainer.innerHTML = '';
-        
+
         courses.forEach(course => {
             const courseElement = this.createCourseElement(course);
             this.coursesContainer.appendChild(courseElement);
-            
+
             // Load videos and assignments for this course
             this.loadCourseContent(course.course_id, courseElement);
         });
@@ -54,26 +54,20 @@ class CourseLoader {
         const courseDiv = document.createElement('div');
         courseDiv.className = 'course';
         courseDiv.dataset.courseId = course.course_id;
-        
+
         // Progress bar calculation
         const progressPercent = course.progress_percentage || 0;
-        
+
         courseDiv.innerHTML = `
             <div class="coursename">
                 <h3>${course.course_title}</h3>
-                <div class="course-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progressPercent}%"></div>
-                    </div>
-                    <span class="progress-text">${progressPercent}% Complete</span>
-                </div>
             </div>
             <div class="course-content" id="content-${course.course_id}">
                 <!-- Videos and assignments will be loaded here -->
                 <div class="loading">Loading content...</div>
             </div>
         `;
-        
+
         return courseDiv;
     }
 
@@ -82,14 +76,14 @@ class CourseLoader {
             // Load videos
             const videosResponse = await fetch(`/api/get_videos.php?course_id=${courseId}`);
             const videosData = await videosResponse.json();
-            
+
             // Load assignments
             const assignmentsResponse = await fetch(`/api/get_assignments.php?course_id=${courseId}`);
             const assignmentsData = await assignmentsResponse.json();
-            
+
             // Display content
             this.displayCourseContent(courseId, videosData, assignmentsData, courseElement);
-            
+
         } catch (error) {
             console.error(`Error loading content for course ${courseId}:`, error);
             this.showContentError(courseId, courseElement);
@@ -98,7 +92,7 @@ class CourseLoader {
 
     displayCourseContent(courseId, videosData, assignmentsData, courseElement) {
         const contentContainer = courseElement.querySelector(`#content-${courseId}`);
-        
+
         let videosHTML = '';
         if (videosData.success && videosData.data && videosData.data.length > 0) {
             videosHTML = `
@@ -114,7 +108,7 @@ class CourseLoader {
         } else {
             videosHTML = '<div class="no-videos">No videos available yet</div>';
         }
-        
+
         let assignmentsHTML = '';
         if (assignmentsData.success && assignmentsData.data && assignmentsData.data.length > 0) {
             assignmentsHTML = `
@@ -126,9 +120,9 @@ class CourseLoader {
         } else {
             assignmentsHTML = '<div class="no-assignments">No assignments available yet</div>';
         }
-        
+
         contentContainer.innerHTML = videosHTML + assignmentsHTML;
-        
+
         // Attach video click events
         this.attachVideoClickListeners(courseId);
     }
@@ -139,13 +133,13 @@ class CourseLoader {
             const hrs = Math.floor(seconds / 3600);
             const mins = Math.floor((seconds % 3600) / 60);
             const secs = seconds % 60;
-            
+
             if (hrs > 0) {
                 return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         };
-        
+
         return `
             <div class="video" data-video-id="${video.video_id}" data-video-url="${video.video_url}">
                 <div class="vd-background">
@@ -189,14 +183,14 @@ class CourseLoader {
 
     attachVideoClickListeners(courseId) {
         const videoElements = document.querySelectorAll(`[data-course-id="${courseId}"] .video`);
-        
+
         videoElements.forEach(videoEl => {
             videoEl.addEventListener('click', (e) => {
                 e.preventDefault();
                 const videoId = videoEl.dataset.videoId;
                 const videoUrl = videoEl.dataset.videoUrl;
                 const videoTitle = videoEl.querySelector('.title').textContent;
-                
+
                 this.openVideoPlayer(videoId, videoUrl, videoTitle, courseId);
             });
         });
@@ -205,13 +199,13 @@ class CourseLoader {
     openVideoPlayer(videoId, videoUrl, videoTitle, courseId) {
         // Open video player in new tab or modal
         const videoPlayerUrl = `/html/videoPlayer.html?video_id=${videoId}&course_id=${courseId}&video_url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoTitle)}`;
-        
+
         // Option 1: Open in new tab
         window.open(videoPlayerUrl, '_blank');
-        
+
         // Option 2: Open in modal (if you have modal setup)
         // this.openVideoModal(videoId, videoUrl, videoTitle);
-        
+
         // Update watched status
         this.markVideoAsWatched(videoId, courseId);
     }
@@ -226,7 +220,7 @@ class CourseLoader {
                     course_id: courseId
                 })
             });
-            
+
             // Update UI locally
             const videoElement = document.querySelector(`[data-video-id="${videoId}"] .watched-status`);
             if (videoElement) {
@@ -234,10 +228,10 @@ class CourseLoader {
                 videoElement.classList.add('watched');
                 videoElement.classList.remove('not-watched');
             }
-            
+
             // Update progress
             this.updateCourseProgress(courseId);
-            
+
         } catch (error) {
             console.error('Error marking video as watched:', error);
         }
@@ -247,12 +241,12 @@ class CourseLoader {
         try {
             const response = await fetch(`/api/get_course_progress.php?course_id=${courseId}`);
             const data = await response.json();
-            
+
             if (data.success && data.data) {
                 const progress = data.data;
                 const progressBar = document.querySelector(`[data-course-id="${courseId}"] .progress-fill`);
                 const progressText = document.querySelector(`[data-course-id="${courseId}"] .progress-text`);
-                
+
                 if (progressBar && progressText) {
                     progressBar.style.width = `${progress.progress_percentage}%`;
                     progressText.textContent = `${progress.progress_percentage}% Complete`;
