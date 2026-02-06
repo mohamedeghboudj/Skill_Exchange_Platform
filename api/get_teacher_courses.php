@@ -12,17 +12,13 @@ require_once '../config/db.php';
 
 $teacher_id = $_SESSION['user_id'];
 
+// Select only course_title, enrolled_count, and rating
 $stmt = $conn->prepare("
     SELECT 
-        course_id, 
-        course_title, 
-        course_description, 
-        category, 
-        price, 
-        duration, 
-        rating, 
+        course_id,
+        course_title,
         enrolled_count,
-        teacher_id
+        rating
     FROM COURSE
     WHERE teacher_id = ?
     ORDER BY course_id DESC
@@ -44,6 +40,5 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 
-// Returns plain array
 echo json_encode($courses);
 ?>

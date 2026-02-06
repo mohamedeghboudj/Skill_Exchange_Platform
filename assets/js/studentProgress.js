@@ -32,7 +32,7 @@ leftArrow.addEventListener('click', () => window.location.href = "/html/dashboar
 //   window.location.href="/html/learn.html";
 // })
 // Configuration
-const API_BASE_URL = 'http://localhost:8000/assets/php';
+//const API_BASE_URL = 'http://localhost:8000/assets/php';
 let currentStudentId = null;
 let currentCourseId = null;
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('[StudentProgress] Page loaded, initializing...');
   try {
     // Get student ID from session
-    const userResponse = await fetch(`${API_BASE_URL}/getCurrentUser.php`);
+    const userResponse = await fetch(`../assets/php/getCurrentUser.php`);
     const userData = await userResponse.json();
 
     if (!userData.success) {
@@ -108,7 +108,7 @@ async function loadSidebarInstructors() {
   if (!listContainer) return;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/student_progress.php?action=get_my_instructors`);
+    const response = await fetch(`../assets/php/student_progress.php?action=get_my_instructors`);
     const result = await response.json();
 
     if (result.success && result.instructors.length > 0) {
@@ -155,7 +155,7 @@ if (leftArrow) {
 // Load course progress data
 async function loadCourseProgress() {
   try {
-    const response = await fetch(`${API_BASE_URL}/student_progress.php?action=course-progress&student_id=${currentStudentId}&course_id=${currentCourseId}`);
+    const response = await fetch(`../assets/php/student_progress.php?action=course-progress&student_id=${currentStudentId}&course_id=${currentCourseId}`);
     const result = await response.json();
 
     if (result.success) {
@@ -213,7 +213,7 @@ async function loadCourseProgress() {
 // Load video progress
 async function loadVideoProgress() {
   try {
-    const response = await fetch(`${API_BASE_URL}/student_progress.php?action=video-timeline&course_id=${currentCourseId}&student_id=${currentStudentId}`);
+    const response = await fetch(`../assets/php/student_progress.php?action=video-timeline&course_id=${currentCourseId}&student_id=${currentStudentId}`);
     const result = await response.json();
 
     if (result.success) {
@@ -271,7 +271,7 @@ async function loadVideoProgress() {
 // Load assignments
 async function loadAssignments() {
   try {
-    const response = await fetch(`${API_BASE_URL}/student_progress.php?action=get-assignments&student_id=${currentStudentId}&course_id=${currentCourseId}`);
+    const response = await fetch(`../assets/php/student_progress.php?action=get-assignments&student_id=${currentStudentId}&course_id=${currentCourseId}`);
     const result = await response.json(); // Expect { success: true, data: [...], stats: {...} }
 
     if (result.success) {
@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.disabled = true;
         submitBtn.textContent = "Submitting...";
 
-        const response = await fetch(`${API_BASE_URL}/student_progress.php`, {
+        const response = await fetch(`../assets/php/student_progress.php`, {
           method: 'POST',
           body: formData
         });
