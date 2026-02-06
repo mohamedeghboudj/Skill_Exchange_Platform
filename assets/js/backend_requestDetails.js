@@ -11,6 +11,9 @@
  * Load request details from database
  * Called when popup opens
  */
+
+
+
 async function loadRequestDetails() {
     try {
         // Get request info from session storage (set when request is clicked)
@@ -53,6 +56,8 @@ async function loadRequestDetails() {
  * Display request details in the UI
  * @param {Object} requestData - Full request details
  */
+
+
 function displayRequestDetails(requestData) {
     // This function can send data to the iframe if needed
     // Or you can populate modal content directly
@@ -73,6 +78,8 @@ function displayRequestDetails(requestData) {
  * Handle payment button click
  * Opens payment popup for accepted requests
  */
+
+
 function handlePaymentClick(requestId, courseId) {
     // Store payment info
     sessionStorage.setItem('paymentRequestId', requestId);
@@ -88,6 +95,8 @@ function handlePaymentClick(requestId, courseId) {
 /**
  * Process payment and create enrollment
  */
+
+
 async function processPayment() {
     try {
         const requestId = sessionStorage.getItem('paymentRequestId');
@@ -148,6 +157,8 @@ async function processPayment() {
 /**
  * Close popup functions (keeping original functionality)
  */
+
+
 function closePop() {
     const popup = document.getElementById('popup');
     if (popup) {
@@ -198,3 +209,5 @@ if (typeof window !== 'undefined') {
     window.processPayment = processPayment;
 }
 // hadil changed this 
+
+

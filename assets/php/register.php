@@ -83,6 +83,9 @@ if ($stmt->execute()) {
     $_SESSION['user_id'] = $userId;
     $_SESSION['user_email'] = $email;
     $_SESSION['user_name'] = $name;
+    $_SESSION['full_name'] = $name; // ADDED: for check_session.php consistency
+    $_SESSION['profile_picture'] = '../assets/images/person.webp'; // ADDED: for navbar display
+    $_SESSION['is_teacher'] = 0; // ADDED: for check_session.php consistency
     $_SESSION['user_role'] = 'Student';
     
     http_response_code(201);

@@ -16,7 +16,9 @@
     --border-color: #318ce7;
 
 }
-
+nav #user-navbar{
+    width: 100vw;
+}
 html {
     scroll-behavior: smooth;
 }

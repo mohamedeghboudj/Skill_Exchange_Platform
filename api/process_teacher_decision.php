@@ -1,33 +1,61 @@
 <?php
 // File: /api/process_teacher_decision.php
+
 session_start();
 header('Content-Type: application/json');
 
-require_once '../config/db.php'; // uses $conn MySQLi
+// Log errors to a file instead of outputting HTML
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error.log');
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+// Error handler: convert PHP warnings/notices into JSON response
+set_error_handler(function($severity, $message, $file, $line) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => "PHP Error: $message"]);
+    exit;
+});
+
+// Shutdown handler: catches fatal errors
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => "Shutdown Error: {$error['message']}"]);
+        exit;
+    }
+});
+
+require_once '../config/db.php'; // expects $conn as MySQLi
+
+// Helper function to send JSON and exit
+function send_json($data, $code = 200) {
+    http_response_code($code);
+    echo json_encode($data);
     exit;
 }
 
+// 1️⃣ Authentication check
+if (!isset($_SESSION['user_id'])) {
+    send_json(['success' => false, 'error' => 'Not authenticated'], 401);
+}
+
 $teacher_id = $_SESSION['user_id'];
+
+// 2️⃣ Read input JSON
 $data = json_decode(file_get_contents('php://input'), true);
 
 $request_id = isset($data['request_id']) ? (int)$data['request_id'] : 0;
 $decision = $data['decision'] ?? ''; // 'accept' or 'decline'
-$teacher_message = $data['teacher_message'] ?? '';
 
 if ($request_id <= 0 || !in_array($decision, ['accept', 'decline'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid request data']);
-    exit;
+    send_json(['success' => false, 'error' => 'Invalid request data'], 400);
 }
 
 try {
     $conn->begin_transaction();
 
-    // 1️⃣ Verify teacher owns the course for this pending request
+    // 3️⃣ Verify that request exists and belongs to this teacher, still pending
     $verifyQuery = "
         SELECT er.request_id, c.course_id
         FROM ENROLLMENT_REQUEST er
@@ -38,6 +66,8 @@ try {
         LIMIT 1
     ";
     $stmt = $conn->prepare($verifyQuery);
+    if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+
     $stmt->bind_param("ii", $request_id, $teacher_id);
     $stmt->execute();
     $stmt->store_result();
@@ -45,46 +75,40 @@ try {
     if ($stmt->num_rows === 0) {
         $stmt->close();
         $conn->rollback();
-        http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Request not found or already processed']);
-        exit;
+        send_json(['success' => false, 'error' => 'Request not found or already processed'], 403);
     }
 
     $stmt->bind_result($fetched_request_id, $course_id);
     $stmt->fetch();
     $stmt->close();
 
-    // 2️⃣ Update request status
-    $new_status = $decision === 'accept' ? 'accepted' : 'declined';
-
+    // 4️⃣ Update request status
+    $new_status = $decision === 'accept' ? 'approved' : 'rejected';
     $updateQuery = "
         UPDATE ENROLLMENT_REQUEST
-        SET status = ?, teacher_decision_date = NOW(), teacher_message = ?
+        SET status = ?, teacher_decision_date = NOW()
         WHERE request_id = ?
     ";
     $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("ssi", $new_status, $teacher_message, $request_id);
+    if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+
+    $stmt->bind_param("si", $new_status, $request_id);
     $stmt->execute();
     $stmt->close();
 
-    // 3️⃣ Optional: if declined, you could handle notifications here
-
     $conn->commit();
 
-    echo json_encode([
+    // 5️⃣ Return success JSON
+    send_json([
         'success' => true,
-        'message' => 'Request ' . $decision . 'ed successfully',
+        'message' => "Request $decision" . "ed successfully",
         'request_id' => $request_id,
         'status' => $new_status
     ]);
 
 } catch (Exception $e) {
-    if (isset($conn)) {
-        $conn->rollback();
-    }
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
+    if (isset($conn)) $conn->rollback();
+    send_json(['success' => false, 'error' => "Database error: " . $e->getMessage()], 500);
 }
 
 $conn->close();
-?>

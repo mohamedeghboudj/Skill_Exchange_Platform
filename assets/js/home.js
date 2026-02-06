@@ -83,9 +83,39 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
             container.innerHTML += card;
         });
+        attachCourseClickListeners();
 
     }
 
+
+// Add this new function to attach click listeners
+function attachCourseClickListeners() {
+    // Click on entire course card
+    document.querySelectorAll('.course').forEach(courseCard => {
+        courseCard.addEventListener('click', function(e) {
+            // Don't trigger if clicking the button directly
+            if (e.target.classList.contains('start-btn')) {
+                return;
+            }
+            
+            const courseId = this.dataset.id;
+            if (courseId) {
+                window.location.href = `/pages/courseInfo.html?id=${courseId}`;
+            }
+        });
+    });
+
+    // Click on start button
+    document.querySelectorAll('.start-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent triggering the card click
+            const courseId = this.dataset.courseId;
+            if (courseId) {
+                window.location.href = `/pages/courseInfo.html?id=${courseId}`;
+            }
+        });
+    });
+}
 
     category.forEach(catEl => {
         catEl.addEventListener('click', () => {
