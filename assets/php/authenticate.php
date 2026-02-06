@@ -75,7 +75,9 @@ if ($result->num_rows > 0) {
                 'role' => 'Admin'
             ]
         ]);
-        exit(); // Important: stop execution here
+       
+        // Important: stop execution here
+         exit(); 
     }
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['user_email'] = $user['email'];
@@ -92,7 +94,7 @@ if ($result->num_rows > 0) {
             'user' => [
                 'id' => $user['user_id'],
                 'name' => $user['full_name'],
-                'role' => $user['is_teacher'] ? 'Teacher' : 'Student'
+                'role' => $user['is_teacher'] ? 'Teacher&Student' : 'Student'
             ]
         ]);
     } else {

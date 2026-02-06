@@ -17,9 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Only proceed to authentication if all inputs are valid
         if (validationResult.isValid) {
             const result = await authenticateUser(EmailIn.value, PasswordIn.value);
+
             if (result.success) {
-                if (serverRedirect) {
-                    window.location.href = serverRedirect; // 👈 ADMIN
+                if (result.redirect) {
+
+                    window.location.href = result.redirect; // 👈 ADMIN
                 } else {
                     window.location.href = "/pages/home.html";   // 👈 NORMAL USER
                 }
@@ -32,43 +34,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     async function authenticateUser(email, password) {
-        try {
-            const response = await fetch('assets/php/authenticate.php', {// hadil to see whay it s not working 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password }),
-                credentials: "include" // hadil added this to test the work of the session 
+    try {
+        const response = await fetch('assets/php/authenticate.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+            credentials: "include"
+        });
 
-
-            });
-
-            // Check if response is OK before parsing JSON
-            if (!response.ok) {
-                console.error(`HTTP Error: ${response.status}`);
-                return { success: false };
-            }
-
-            const data = await response.json();
-
-            if (data.success) {
-                console.log("User authenticated successfully via PHP sessions");
-                if (data.redirect) {
-                    window.location.href = data.redirect; // ADMIN
-                    return { success: true }; // stop further processing
-                }
-
-                return { success: true };
-            } else {
-                console.log("Authentication failed:", data.message);
-                return { success: false };
-            }
-        } catch (error) {
-            console.error("Authentication error:", error);
+        if (!response.ok) {
+            console.error(`HTTP Error: ${response.status}`);
             return { success: false };
         }
+
+        const data = await response.json();
+        console.log("AUTH RESPONSE:", data);
+
+        if (data.success) {
+            return {
+                success: true,
+                redirect: data.redirect || null
+            };
+        }
+
+        return { success: false };
+    } catch (error) {
+        console.error("Authentication error:", error);
+        return { success: false };
     }
+}
 
     function setErrorFor(input, message, errorElement) {
         errorElement.innerText = message;

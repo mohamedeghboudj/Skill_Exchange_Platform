@@ -22,7 +22,7 @@ try {
 
     $user_id = $_SESSION['user_id'];
 
-    // First, check if user is already a teacher in USER table
+    // check if user is already a teacher in USER table
     $check_user = "SELECT is_teacher FROM USER WHERE user_id = ?";
     $stmt = mysqli_prepare($conn, $check_user);
     mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -53,7 +53,7 @@ try {
     $request = mysqli_fetch_assoc($result2);
 
     if (!$request) {
-        // No request exists - redirect to teacher request form
+        // redirect to teacher request form
         echo json_encode([
             'status' => 'no_request',
             'message' => 'No teacher request found',
@@ -65,7 +65,7 @@ try {
     // Handle based on request status
     switch ($request['teacher_status']) {
         case 'pending':
-            // Request is pending - show message and redirect to request page
+            // Request is pending 
             echo json_encode([
                 'status' => 'pending',
                 'message' => 'Your teacher request is under review',
@@ -74,7 +74,7 @@ try {
             break;
         
         case 'approved':
-            // Request approved - update user table and redirect to teach page
+            // Request approved 
             $update_user = "UPDATE USER SET is_teacher = 1 WHERE user_id = ?";
             $stmt3 = mysqli_prepare($conn, $update_user);
             mysqli_stmt_bind_param($stmt3, "i", $user_id);
@@ -88,7 +88,7 @@ try {
             break;
         
         case 'rejected':
-            // Request rejected - allow new submission
+            // Request rejected 
             echo json_encode([
                 'status' => 'rejected',
                 'message' => 'Your previous request was rejected. You can submit a new one.',

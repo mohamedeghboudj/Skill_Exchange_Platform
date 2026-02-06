@@ -5,7 +5,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// 1. Check login
+// Check login
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Not logged in']);
@@ -16,7 +16,7 @@ $teacher_id = $_SESSION['user_id'];
 
 require_once '../config/db.php';
 
-// 2. Verify teacher
+// Verify teacher
 $stmt = $conn->prepare("SELECT is_teacher FROM USER WHERE user_id=?");
 $stmt->bind_param("i",$teacher_id);
 $stmt->execute();
@@ -29,7 +29,7 @@ if (!$is_teacher) {
     exit;
 }
 
-// 3. Validate required fields
+// Validate required fields
 $fields = ['course_title','duration','price','course_description','category'];
 foreach($fields as $f){
     if(empty($_POST[$f])){
@@ -39,7 +39,7 @@ foreach($fields as $f){
     }
 }
 
-// 4. Type validation
+// Type validation
 $duration = (int)$_POST['duration'];
 $price = (float)$_POST['price'];
 if($duration<=0 || $price<0){
@@ -51,14 +51,14 @@ if($duration<=0 || $price<0){
 try {
     $conn->begin_transaction();
 
-    // 5. Insert course
+    // Insert course
     $stmt = $conn->prepare("INSERT INTO COURSE (course_title,duration,price,teacher_id,course_description,category,rating,enrolled_count) VALUES (?,?,?,?,?,?,0,0)");
     $stmt->bind_param("sidiss", $_POST['course_title'],$duration,$price,$teacher_id,$_POST['course_description'],$_POST['category']);
     if(!$stmt->execute()) throw new Exception($stmt->error);
     $course_id = $conn->insert_id;
     $stmt->close();
 
-    // 6. Handle videos
+    //  Handle videos
     $video_ids = [];
     if(isset($_FILES['videos'])){
         $upload_dir = '../uploads/videos/';
@@ -85,7 +85,7 @@ try {
         $videoStmt->close();
     }
 
-    // 7. Handle assignments
+    // Handle assignments
     $assignment_ids = [];
     if(isset($_FILES['assignments'])){
         $upload_dir = '../uploads/assignments/';

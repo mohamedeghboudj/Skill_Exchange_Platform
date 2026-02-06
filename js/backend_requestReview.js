@@ -1,4 +1,4 @@
-// File: /assets/js/requestReview.js
+
 
 class RequestReview {
     constructor() {
@@ -21,7 +21,7 @@ class RequestReview {
         this.setupButtons();
     }
 
-    // ================= LOAD REQUEST =================
+    // LOAD REQUEST 
     loadRequestData() {
         try {
             const urlParam = new URLSearchParams(window.location.search).get('request');
@@ -46,7 +46,7 @@ class RequestReview {
         this.populateData();
     }
 
-    // ================= POPULATE UI =================
+    // POPULATE UI
     populateData() {
         if (!this.requestData) return;
 
@@ -70,7 +70,7 @@ class RequestReview {
         this.updateButtons();
     }
 
-    // ================= BUTTONS =================
+    // BUTTONS
     setupButtons() {
         if (this.acceptBtn)
             this.acceptBtn.addEventListener('click', () => this.handleDecision('approved'));
@@ -104,7 +104,7 @@ class RequestReview {
         }
     }
 
-    // ================= DECISION =================
+    // DECISION
     async handleDecision(decision) {
         if (!this.requestData) {
             return this.showNotification('No request loaded', 'error');
@@ -132,7 +132,7 @@ class RequestReview {
                 throw new Error(result.error || 'Server error');
             }
 
-            // ✅ IMPORTANT: update correct field
+            // update correct field
             this.requestData.request_status = result.status;
 
             this.showNotification(`Request ${decision} successfully`, 'success');
@@ -154,7 +154,7 @@ class RequestReview {
         }
     }
 
-    // ================= STATUS MESSAGE =================
+    // STATUS MESSAGE
     showStatus(status) {
         const container = document.querySelector('.information') || document.body;
 
@@ -179,7 +179,7 @@ class RequestReview {
         container.appendChild(div);
     }
 
-    // ================= NOTIFICATION =================
+    // NOTIFICATION
     showNotification(message, type = 'info') {
         const n = document.createElement('div');
         n.textContent = message;

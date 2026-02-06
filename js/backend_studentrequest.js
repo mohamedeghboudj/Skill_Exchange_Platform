@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+// backend_studentrequest.js
+console.log("=== Enrollment Script Loading ===");
+console.log("📍 Running in:", window.location.pathname);
+
+// DECIDE WHERE WE'RE RUNNING
+
+// If we're in the parent window (not in iframe), exit early
+=======
 // backend_studentrequest.js - FINAL VERSION (IFRAME ONLY)
 // ONLY sends: course_id and student_message (as per PHP API requirements)
 console.log("=== Enrollment Script Loading ===");
@@ -6,6 +15,7 @@ console.log("📍 Running in:", window.location.pathname);
 // ============================================================
 // 1. EXIT IF NOT IN IFRAME
 // ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 if (window === window.parent) {
     console.log("⚠️ Script loaded in parent window - exiting (should only run in iframe)");
     return;
@@ -13,9 +23,13 @@ if (window === window.parent) {
 
 console.log("✅ Running inside iframe");
 
+<<<<<<< HEAD
+// MAIN INITIALIZATION , ONLY FOR IFRAME
+=======
 // ============================================================
 // 2. MAIN INITIALIZATION
 // ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 document.addEventListener("DOMContentLoaded", function() {
     console.log("📄 Iframe DOM loaded");
     setTimeout(() => {
@@ -23,9 +37,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 300);
 });
 
+<<<<<<< HEAD
+// FORM SETUP FUNCTIONS
+=======
 // ============================================================
 // 3. FORM SETUP - MINIMAL
 // ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 function initializeEnrollmentForm() {
     console.log("🔧 Initializing enrollment form...");
 
@@ -57,9 +75,59 @@ function initializeEnrollmentForm() {
     console.log("🎉 Enrollment form setup complete!");
 }
 
+<<<<<<< HEAD
+function setupDropdowns(elements) {
+    // Level dropdown
+    if (elements.levelSelect && elements.levelList && elements.defaultLevel) {
+        elements.levelSelect.addEventListener("click", (e) => {
+            e.stopPropagation();
+            elements.levelList.classList.toggle("show");
+        });
+        elements.levelList.querySelectorAll("li").forEach(li => {
+            li.addEventListener("click", () => {
+                elements.defaultLevel.textContent = li.textContent;
+                elements.levelList.classList.remove("show");
+                console.log("Level selected:", li.textContent);
+            });
+        });
+    }
+
+    // Days dropdown with checkboxes
+    if (elements.daysSelect && elements.daysList && elements.defaultDays) {
+        elements.daysSelect.addEventListener("click", (e) => {
+            e.stopPropagation();
+            elements.daysList.classList.toggle("show");
+        });
+
+        document.querySelectorAll('.Day').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const selectedDays = Array.from(document.querySelectorAll('.Day:checked'))
+                    .map(cb => cb.value);
+                elements.defaultDays.textContent = selectedDays.length > 0 ? selectedDays.join(', ') : "Select available days";
+                console.log("Days selected:", selectedDays);
+            });
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        if (elements.levelList && !elements.levelSelect.contains(e.target) && !elements.levelList.contains(e.target)) {
+            elements.levelList.classList.remove("show");
+        }
+        if (elements.daysList && !elements.daysSelect.contains(e.target) && !elements.daysList.contains(e.target)) {
+            elements.daysList.classList.remove("show");
+        }
+    });
+}
+
+
+//  FORM SUBMISSION HANDLER
+
+
+=======
 // ============================================================
 // 4. FORM SUBMISSION - ONLY WHAT PHP EXPECTS
 // ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 async function handleEnrollmentSubmit(elements) {
     console.log("🚀 Starting enrollment submission...");
 
@@ -89,7 +157,11 @@ async function handleEnrollmentSubmit(elements) {
     `;
 
     try {
+<<<<<<< HEAD
+        // API submission 
+=======
         // Create FormData with EXACTLY the 2 fields PHP expects
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
         const apiFormData = new FormData();
         apiFormData.append('course_id', courseId);          // Field 1: course_id (int)
         apiFormData.append('student_message', studentMessage); // Field 2: student_message (string)
@@ -150,9 +222,14 @@ async function handleEnrollmentSubmit(elements) {
     }
 }
 
+<<<<<<< HEAD
+// HELPER FUNCTIONS
+
+=======
 // ============================================================
 // 5. HELPER FUNCTIONS
 // ============================================================
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 function getCourseId() {
     // Try URL parameters first
     const urlParams = new URLSearchParams(window.location.search);
@@ -162,8 +239,12 @@ function getCourseId() {
         return parseInt(courseIdFromUrl);
     }
 
+<<<<<<< HEAD
+    return 2; 
+=======
     // Default fallback
     return 2;
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a
 }
 
 function showResult(element, type, message) {
@@ -210,4 +291,39 @@ function notifyParentToClose() {
     }
 }
 
+<<<<<<< HEAD
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'set_course_id') {
+        console.log("Received course ID from parent:", event.data.course_id);
+    }
+});
+
+
+//ADD CSS ANIMATIONS 
+
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    #submissionResult {
+        min-height: 80px;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+    }
+`;
+document.head.appendChild(style);
+
 console.log("✅ Enrollment script initialized successfully");
+=======
+console.log("✅ Enrollment script initialized successfully");
+>>>>>>> abff23c3a5cfc8a021d31661f6920fe78939494a

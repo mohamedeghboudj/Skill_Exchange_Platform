@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 
-require_once '../config/db.php'; // this file already creates $conn
+require_once '../config/db.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);
@@ -65,7 +65,7 @@ try {
     echo json_encode([
         'success' => false,
         'error' => 'Server error'
-        // don't expose raw DB errors in production
+       
     ]);
 }
 
