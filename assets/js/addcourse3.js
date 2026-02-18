@@ -3,9 +3,9 @@ const CONFIG = {
   DESCRIPTION_MIN: 20,
   DESCRIPTION_MAX: 2000,
   PRICE_MIN: 0,
-  FILE_MAX_BYTES: 2 * 1024 * 1024 * 1024, // 200 MB 
+  FILE_MAX_BYTES: 2 * 1024 * 1024 * 1024, 
   ALLOWED_VIDEO_MIMES: ['video/mp4', 'video/webm', 'video/mov'],
-  ALLOWED_FILE_MIMES: null, // null = allow anything (on server tu peux restreindre)
+  ALLOWED_FILE_MIMES: null, 
 };
 const isEmptyStr = s => typeof s === 'string' && s.trim().length > 0;
 validateCourseName = name => {
@@ -72,7 +72,7 @@ const validateFiles = (filesList, { atLeastOneVideo = true } = {}) => {
      if (CONFIG.ALLOWED_FILE_MIMES && !CONFIG.ALLOWED_FILE_MIMES.includes(f.type)) {
     errors.push(`Le fichier "${f.name}" a un type non autorisé (${f.type}).`);}
   }
-  // si CONFIG.ALLOWED_FILE_MIMES non null, valider les autres fichiers auss
+
 
 }
   
@@ -84,7 +84,7 @@ if (atLeastOneVideo && videoCount === 0) {
 
 return errors;
 
-// Course Form Validation
+
 class CourseFormValidator {
   constructor(formId) {
     this.form = document.getElementById(formId);
@@ -93,10 +93,10 @@ class CourseFormValidator {
   }
 
   init() {
-    // Add event listeners
+  
     this.form.addEventListener('submit', (e) => this.handleSubmit(e));
 
-    // Real-time validation on blur
+    
     const inputs = this.form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
       input.addEventListener('blur', () => this.validateField(input));
@@ -172,7 +172,7 @@ class CourseFormValidator {
       return false;
     }
 
-    // Remove currency symbols and whitespace
+    
     const cleanValue = value.replace(/[$,\s]/g, '');
 
     if (isNaN(cleanValue) || cleanValue === '') {
@@ -230,13 +230,13 @@ class CourseFormValidator {
   }
 
   showFieldError(field, message) {
-    // Remove existing error
+ 
     this.clearFieldError(field);
 
-    // Add error styling
+   
     field.classList.add('error');
 
-    // Create error message element
+  
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
     errorDiv.textContent = message;
@@ -244,7 +244,7 @@ class CourseFormValidator {
     errorDiv.style.fontSize = '0.875rem';
     errorDiv.style.marginTop = '0.25rem';
 
-    // Insert error after field
+   
     field.parentNode.insertBefore(errorDiv, field.nextSibling);
   }
 
@@ -274,29 +274,28 @@ class CourseFormValidator {
   handleSubmit(e) {
     e.preventDefault();
 
-    // Clear all previous errors
+   
     const errorMessages = this.form.querySelectorAll('.error-message');
     errorMessages.forEach(msg => msg.remove());
 
     const fields = this.form.querySelectorAll('input, select, textarea');
     fields.forEach(field => field.classList.remove('error'));
 
-    // Validate all fields
+    
     if (this.validateAll()) {
-      // Form is valid, you can submit
+     
       console.log('Form is valid! Submitting...');
 
-      // Get form data
+      
       const formData = new FormData(this.form);
       const data = Object.fromEntries(formData);
       console.log('Form Data:', data);
 
-      // Here you would typically send the data to your server
-      // this.form.submit(); // or use fetch/axios
+   
 
       alert('Course created successfully!');
     } else {
-      // Scroll to first error
+     
       const firstError = this.form.querySelector('.error');
       if (firstError) {
         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -307,12 +306,12 @@ class CourseFormValidator {
     }
   }
 
-  // Public method to get current errors
+  
   getErrors() {
     return this.errors;
   }
 
-  // Public method to reset form
+  
   reset() {
     this.form.reset();
     this.errors = {};
@@ -323,12 +322,11 @@ class CourseFormValidator {
   }
 }
 
-// Usage:
-// Initialize the validator when DOM is ready
+
 document.addEventListener('DOMContentLoaded', () => {
   const validator = new CourseFormValidator('courseForm');
 
-  // Optional: Add custom styling for error state
+
   const style = document.createElement('style');
   style.textContent = `
     .error {
@@ -343,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.head.appendChild(style);
 });
 
-// Export for use in modules
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = CourseFormValidator;
 }
