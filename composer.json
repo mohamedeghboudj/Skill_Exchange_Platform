@@ -1,6 +1,6 @@
 {
-    "name": "beyondz/hawwas",
-    "description": "BeyonDz Travel Platform",
+    "name": "Skill_Exchange_Platform",
+    "description": "Hello world",
     "type": "project",
     "require": {
         "php": ">=8.1",
