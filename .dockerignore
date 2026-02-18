@@ -1,0 +1,14 @@
+.git
+.gitignore
+.env
+.env.*
+node_modules/
+backend-laravel/vendor/
+backend-laravel/node_modules/
+backend/sessions/sess_*
+storage/logs/*.log
+*.log
+.DS_Store
+.idea/
+.vscode/
+README.md

@@ -1,10 +1,32 @@
-# XAMPP system files
-/dashboard/
-/xampp/
-/*.log
-*.pdf
-*.pdfmarks
+# Environment files
+.env
+.env.*
+.env.local
 
-# OS noise
+# Database config (local overrides only)
+BOOKING/api/db.local.php
+
+# Dependencies
+node_modules/
+vendor/
+backend-laravel/vendor/
+backend-laravel/node_modules/
+
+# Session files (keep the directory via .gitkeep)
+backend/sessions/sess_*
+
+# OS / Editor files
 .DS_Store
 Thumbs.db
+.vscode/settings.json
+.idea/
+
+# Build artifacts
+*.log
+dist/
+build/
+
+# Storage logs (keep directory)
+storage/logs/*.log
+backend-laravel/storage/logs/*.log
+
