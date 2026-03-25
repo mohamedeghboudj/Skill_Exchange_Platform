@@ -1,7 +1,7 @@
 FROM php:8.2-cli
 
-# Install PDO MySQL extension
-RUN docker-php-ext-install pdo pdo_mysql
+# Install MySQL extensions used by the project
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Set working directory
 WORKDIR /app
@@ -9,13 +9,18 @@ WORKDIR /app
 # Copy all project files
 COPY . /app
 
-# Create sessions directory (writable)
-RUN mkdir -p /app/backend/sessions && chmod 777 /app/backend/sessions
-RUN mkdir -p /app/storage/logs && chmod 777 /app/storage/logs
-RUN mkdir -p /app/storage/profile_pictures && chmod 777 /app/storage/profile_pictures
+# Prepare writable runtime directories
+RUN chmod +x /app/start.sh \
+	&& mkdir -p /tmp/php-sessions \
+	&& mkdir -p /app/uploads/assignments \
+	&& mkdir -p /app/uploads/certificates \
+	&& mkdir -p /app/uploads/profile_pictures \
+	&& mkdir -p /app/uploads/submissions \
+	&& mkdir -p /app/uploads/videos \
+	&& chmod -R 775 /tmp/php-sessions /app/uploads
 
-# Expose port (Railway injects $PORT, default 8000)
-EXPOSE ${PORT:-8000}
+# Expose default app port (Railway will set $PORT at runtime)
+EXPOSE 8000
 
-# Start PHP built-in server
-CMD php -S 0.0.0.0:${PORT:-8000} router.php
+# Start app
+CMD ["sh", "/app/start.sh"]
