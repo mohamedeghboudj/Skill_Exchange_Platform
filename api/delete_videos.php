@@ -1,21 +1,25 @@
 <?php
 // api/delete_videos.php
 session_start();
-require_once '../config/api_helpers.php';
-require_once '../config/db.php';
+header('Content-Type: application/json');
 
-// Set CORS headers
-setCorsHeaders();
-setJsonHeader();
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Not logged in']);
+    exit;
+}
 
-// Check authentication
-$teacher_id = requireAuth();
+require_once '../assets/php/db.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (empty($data['video_ids']) || !is_array($data['video_ids'])) {
-    sendError('Missing or invalid video_ids array', 400);
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Missing or invalid video_ids array']);
+    exit;
 }
+
+$teacher_id = $_SESSION['user_id'];
 $video_ids  = array_map('intval', $data['video_ids']);
 
 try {
@@ -43,16 +47,12 @@ try {
     $stmt->close();
 
     $conn->commit();
-    $conn->close();
 
-    sendSuccess(['deleted' => $deleted], "Successfully deleted $deleted video(s)");
+    echo json_encode(['success' => true, 'deleted' => $deleted]);
 
 } catch (Exception $e) {
-    if (isset($conn)) {
-        $conn->rollback();
-        $conn->close();
-    }
-    logError($e->getMessage(), 'delete_videos.php');
-    sendError('Failed to delete videos', 500);
+    $conn->rollback();
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
 ?>

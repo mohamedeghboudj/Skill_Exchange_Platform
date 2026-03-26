@@ -3,7 +3,14 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 header("Content-Type: application/json");
-require_once "db.php";
+require_once "config.php";
+
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+
+if ($conn->connect_error) {
+    echo json_encode(["error" => $conn->connect_error]);
+    exit;
+}
 
 // Fetch pending teacher requests with user information
 $sql = "SELECT 

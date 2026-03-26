@@ -1,25 +1,24 @@
 <?php
-// api/get_videos.php - Get course videos
+// api/get_videos.php - TEACHER VERSION (FIXED)
 session_start();
-require_once '../config/api_helpers.php';
-require_once '../config/db.php';
+header('Content-Type: application/json');
 
-// Set CORS headers
-setCorsHeaders();
-setJsonHeader();
-
-// Check authentication
-requireAuth();
-
-// Validate course_id parameter
-if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
-    sendError('Missing or invalid course_id parameter', 400);
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode([]);
+    exit;
 }
+
+if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
+    echo json_encode([]);
+    exit;
+}
+
+require_once '../config/db.php';
 
 $course_id = (int)$_GET['course_id'];
 
 try {
-    // Get video information
+    // Simple query for teach page - just get basic video info
     $stmt = $conn->prepare("
         SELECT video_id, video_title, video_url 
         FROM VIDEO 
@@ -28,7 +27,8 @@ try {
     ");
     
     if (!$stmt) {
-        handleDbError($conn);
+        echo json_encode([]);
+        exit;
     }
     
     $stmt->bind_param("i", $course_id);
@@ -37,8 +37,9 @@ try {
     
     $videos = [];
     while ($row = $result->fetch_assoc()) {
-        // Normalize video URL path
+        // FIX: Add leading slash to make path absolute from root
         if (!empty($row['video_url'])) {
+            // If it doesn't start with / or http, add /
             if ($row['video_url'][0] !== '/' && !str_starts_with($row['video_url'], 'http')) {
                 $row['video_url'] = '/' . $row['video_url'];
             }
@@ -47,13 +48,11 @@ try {
     }
     
     $stmt->close();
-    $conn->close();
     
-    sendSuccess($videos, 'Videos retrieved successfully');
+    // Return plain array for consistency with get_assignments.php
+    echo json_encode($videos);
     
 } catch (Exception $e) {
-    logError($e->getMessage(), 'get_videos.php');
-    if (isset($conn)) $conn->close();
-    sendError('Failed to retrieve videos', 500);
+    echo json_encode([]);
 }
 ?>

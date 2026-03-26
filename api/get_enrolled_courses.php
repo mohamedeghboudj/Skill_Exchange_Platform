@@ -1,15 +1,17 @@
 <?php
-// api/get_enrolled_courses.php - Get student's enrolled courses with progress
+// api/get_enrolled_courses.php - OOP MySQLi version
 session_start();
-require_once '../config/api_helpers.php';
+header('Content-Type: application/json');
+
 require_once '../config/db.php';
 
-// Set CORS headers
-setCorsHeaders();
-setJsonHeader();
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+    exit;
+}
 
-// Check authentication
-$student_id = requireAuth();
+$student_id = $_SESSION['user_id'];
 
 try {
     $sql = "
@@ -39,7 +41,7 @@ try {
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
-        handleDbError($conn);
+        throw new Exception("Prepare failed: " . $conn->error);
     }
 
     $stmt->bind_param("i", $student_id);
@@ -54,11 +56,16 @@ try {
     $stmt->close();
     $conn->close();
 
-    sendSuccess($courses, 'Enrolled courses retrieved successfully');
+    echo json_encode([
+        'success' => true,
+        'data' => $courses
+    ]);
 
 } catch (Exception $e) {
-    logError($e->getMessage(), 'get_enrolled_courses.php');
-    if (isset($conn)) $conn->close();
-    sendError('Failed to retrieve enrolled courses', 500);
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Server error: ' . $e->getMessage()
+    ]);
 }
 ?>

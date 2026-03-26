@@ -9,12 +9,12 @@ const closeChat = document.querySelector(".close-chat");
 
 const leftArrow = document.getElementById("left-arrow");
 const rate = document.getElementById("rateCourse");
-const markVideoWatchedEndpoint = '/assets/php/mark_video_watched.php';
 
 
 
 chatToggle.onclick = () => sidebar.classList.add("active");
 closeChat.onclick = () => sidebar.classList.remove("active");
+leftArrow.addEventListener('click', () => window.location.href = "/html/dashboard.html");
 
 
 
@@ -301,9 +301,8 @@ async function loadAssignments() {
 
 async function watchVideo(videoId) {
   try {
-    const response = await fetch(markVideoWatchedEndpoint, {
+    const response = await fetch(`${API_BASE_URL}/mark_video_watched.php`, {
       method: 'POST',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },

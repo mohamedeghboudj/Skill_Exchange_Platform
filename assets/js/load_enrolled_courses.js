@@ -12,9 +12,7 @@ class CourseLoader {
 
     async loadCurrentUser() {
         try {
-            const response = await fetch('/assets/php/getCurrentUser.php', {
-                credentials: 'include'
-            });
+            const response = await fetch('/assets/php/getCurrentUser.php');
             const data = await response.json();
             if (data.success && data.user) {
                 this.currentUser = data.user;
@@ -83,11 +81,8 @@ class CourseLoader {
             const assignmentsResponse = await fetch(`/api/get_assignments.php?course_id=${courseId}`);
             const assignmentsData = await assignmentsResponse.json();
 
-            const videos = Array.isArray(videosData) ? videosData : (videosData.data || []);
-            const assignments = Array.isArray(assignmentsData) ? assignmentsData : (assignmentsData.data || []);
-
             // Display content
-            this.displayCourseContent(courseId, videos, assignments, courseElement);
+            this.displayCourseContent(courseId, videosData, assignmentsData, courseElement);
 
         } catch (error) {
             console.error(`Error loading content for course ${courseId}:`, error);
@@ -95,18 +90,18 @@ class CourseLoader {
         }
     }
 
-    displayCourseContent(courseId, videos, assignments, courseElement) {
+    displayCourseContent(courseId, videosData, assignmentsData, courseElement) {
         const contentContainer = courseElement.querySelector(`#content-${courseId}`);
 
         let videosHTML = '';
-        if (videos.length > 0) {
+        if (videosData.success && videosData.data && videosData.data.length > 0) {
             videosHTML = `
                 <div class="videos">
                     <div class="vdHead">
                         <p>Course videos</p>
                     </div>
                     <div class="vdcards">
-                        ${videos.map(video => this.createVideoCard(video)).join('')}
+                        ${videosData.data.map(video => this.createVideoCard(video)).join('')}
                     </div>
                 </div>
             `;
@@ -115,11 +110,11 @@ class CourseLoader {
         }
 
         let assignmentsHTML = '';
-        if (assignments.length > 0) {
+        if (assignmentsData.success && assignmentsData.data && assignmentsData.data.length > 0) {
             assignmentsHTML = `
                 <div class="assignments">
                     <p>Assignments</p>
-                    ${assignments.map(assignment => this.createAssignmentCard(assignment)).join('')}
+                    ${assignmentsData.data.map(assignment => this.createAssignmentCard(assignment)).join('')}
                 </div>
             `;
         } else {
@@ -133,10 +128,6 @@ class CourseLoader {
     }
 
     createVideoCard(video) {
-        const title = video.video_title || video.title || 'Untitled video';
-        const thumbnailUrl = video.thumbnail_url || '/assets/images/video.png';
-        const isWatched = Boolean(Number(video.is_watched ?? 0));
-
         // Format duration from seconds to MM:SS or HH:MM:SS
         const formatDuration = (seconds) => {
             const hrs = Math.floor(seconds / 3600);
@@ -152,7 +143,7 @@ class CourseLoader {
         return `
             <div class="video" data-video-id="${video.video_id}" data-video-url="${video.video_url}">
                 <div class="vd-background">
-                    <img src="${thumbnailUrl}" alt="${title}">
+                    <img src="${video.thumbnail_url || '../assets/images/video.png'}" alt="${video.title}">
                     <div class="play-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
                             <polygon points="5,3 19,12 5,21"></polygon>
@@ -160,10 +151,10 @@ class CourseLoader {
                     </div>
                 </div>
                 <div class="vd-info">
-                    <div class="title">${title}</div>
+                    <div class="title">${video.title}</div>
                     <div class="duration">${formatDuration(video.duration || 0)}</div>
-                    <div class="watched-status ${isWatched ? 'watched' : 'not-watched'}">
-                        ${isWatched ? '✓ Watched' : 'Not watched'}
+                    <div class="watched-status ${video.is_watched ? 'watched' : 'not-watched'}">
+                        ${video.is_watched ? '✓ Watched' : 'Not watched'}
                     </div>
                 </div>
             </div>
@@ -207,7 +198,7 @@ class CourseLoader {
 
     openVideoPlayer(videoId, videoUrl, videoTitle, courseId) {
         // Open video player in new tab or modal
-        const videoPlayerUrl = `/pages/videoPlayer.html?video_id=${videoId}&course_id=${courseId}&video_url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoTitle)}`;
+        const videoPlayerUrl = `/html/videoPlayer.html?video_id=${videoId}&course_id=${courseId}&video_url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoTitle)}`;
 
         // Option 1: Open in new tab
         window.open(videoPlayerUrl, '_blank');
@@ -220,17 +211,11 @@ class CourseLoader {
     }
 
     async markVideoAsWatched(videoId, courseId) {
-        if (!this.currentUser?.id) {
-            return;
-        }
-
         try {
-            await fetch('/assets/php/mark_video_watched.php', {
+            await fetch('/api/mark_video_watched.php', {
                 method: 'POST',
-                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    student_id: this.currentUser.id,
                     video_id: videoId,
                     course_id: courseId
                 })
@@ -253,18 +238,12 @@ class CourseLoader {
     }
 
     async updateCourseProgress(courseId) {
-        if (!this.currentUser?.id) {
-            return;
-        }
-
         try {
-            const response = await fetch(`/assets/php/get_course_progress.php?student_id=${this.currentUser.id}&course_id=${courseId}`, {
-                credentials: 'include'
-            });
+            const response = await fetch(`/api/get_course_progress.php?course_id=${courseId}`);
             const data = await response.json();
 
             if (data.success && data.data) {
-                const progress = data.data.enrollment || {};
+                const progress = data.data;
                 const progressBar = document.querySelector(`[data-course-id="${courseId}"] .progress-fill`);
                 const progressText = document.querySelector(`[data-course-id="${courseId}"] .progress-text`);
 

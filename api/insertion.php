@@ -2,9 +2,9 @@
 // Include database connection
 require_once '../config/db.php';
 
-// Hash function for passwords - using password_hash for security
+// Hash function for passwords
 function hashPassword($password) {
-    return password_hash($password, PASSWORD_DEFAULT);
+    return hash('sha256', $password);
 }
 
 try {

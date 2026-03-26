@@ -1,52 +1,49 @@
 <?php
+// api/get_assignments.php - FIXED VERSION
 session_start();
-require_once '../config/api_helpers.php';
-require_once '../config/db.php';
+header('Content-Type: application/json');
 
-setCorsHeaders();
-setJsonHeader();
-requireAuth();
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode([]);
+    exit;
+}
 
 if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
-    sendError('Missing or invalid course_id parameter', 400);
+    echo json_encode([]);
+    exit;
 }
+
+// FIX: Use correct config file
+require_once '../config/db.php';
 
 $course_id = (int)$_GET['course_id'];
 
-try {
-    $stmt = $conn->prepare("
-        SELECT assignment_id, assignment_title, assignment_url, assignment_status
-        FROM ASSIGNMENT
-        WHERE course_id = ?
-        ORDER BY assignment_id ASC
-    ");
+$stmt = $conn->prepare("
+    SELECT assignment_id, assignment_title, assignment_url, assignment_status
+    FROM ASSIGNMENT
+    WHERE course_id = ?
+    ORDER BY assignment_id ASC
+");
+$stmt->bind_param("i", $course_id);
+$stmt->execute();
 
-    if (!$stmt) {
-        handleDbError($conn);
-    }
+$result = $stmt->get_result();
+$assignments = [];
 
-    $stmt->bind_param("i", $course_id);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    $assignments = [];
-
-    while ($row = $result->fetch_assoc()) {
-        if (!empty($row['assignment_url']) && $row['assignment_url'][0] !== '/' && !str_starts_with($row['assignment_url'], 'http')) {
-            $row['assignment_url'] = '/' . $row['assignment_url'];
+while ($row = $result->fetch_assoc()) {
+    // FIX: Ensure assignment_url starts with / if it's a local file
+    if (!empty($row['assignment_url'])) {
+        $url = $row['assignment_url'];
+        // Add leading slash for local paths that don't have it
+        if ($url[0] !== '/' && !str_starts_with($url, 'http')) {
+            $row['assignment_url'] = '/' . $url;
         }
-        $assignments[] = $row;
     }
-
-    $stmt->close();
-    $conn->close();
-
-    sendSuccess($assignments, 'Assignments retrieved successfully');
-} catch (Exception $e) {
-    logError($e->getMessage(), 'get_assignments.php');
-    if (isset($conn)) {
-        $conn->close();
-    }
-    sendError('Failed to retrieve assignments', 500);
+    $assignments[] = $row;
 }
+
+$stmt->close();
+
+// Returns plain array - CORRECT FORMAT
+echo json_encode($assignments);
 ?>

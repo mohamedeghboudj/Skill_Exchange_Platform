@@ -1,26 +1,51 @@
 <?php
 session_start();
-require_once '../config/api_helpers.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Check login
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Not logged in']);
+    exit;
+}
+
+$teacher_id = $_SESSION['user_id'];
+
 require_once '../config/db.php';
 
-// Set CORS headers
-setCorsHeaders();
-setJsonHeader();
-
-// Check authentication
-$teacher_id = requireAuth();
-
-// Verify teacher status
-requireTeacher($conn, $teacher_id);
+// Verify teacher
+$stmt = $conn->prepare("SELECT is_teacher FROM USER WHERE user_id=?");
+$stmt->bind_param("i",$teacher_id);
+$stmt->execute();
+$stmt->bind_result($is_teacher);
+$stmt->fetch();
+$stmt->close();
+if (!$is_teacher) {
+    http_response_code(403);
+    echo json_encode(['success'=>false,'error'=>'Only teachers can create courses']);
+    exit;
+}
 
 // Validate required fields
-validateRequiredFields(['course_title','duration','price','course_description','category']);
+$fields = ['course_title','duration','price','course_description','category'];
+foreach($fields as $f){
+    if(empty($_POST[$f])){
+        http_response_code(400);
+        echo json_encode(['success'=>false,'error'=>"Missing field: $f"]);
+        exit;
+    }
+}
 
 // Type validation
 $duration = (int)$_POST['duration'];
 $price = (float)$_POST['price'];
 if($duration<=0 || $price<0){
-    sendError("Invalid duration or price", 400);
+    http_response_code(400);
+    echo json_encode(['success'=>false,'error'=>"Invalid duration or price"]);
+    exit;
 }
 
 try {
@@ -88,18 +113,11 @@ try {
     }
 
     $conn->commit();
-    $conn->close();
-    sendSuccess([
-        'course_id' => $course_id,
-        'video_ids' => $video_ids,
-        'assignment_ids' => $assignment_ids
-    ], 'Course created successfully', 201);
+    echo json_encode(['success'=>true,'course_id'=>$course_id,'video_ids'=>$video_ids,'assignment_ids'=>$assignment_ids]);
 
 } catch(Exception $e){
-    if(isset($conn)) {
-        $conn->rollback();
-        $conn->close();
-    }
-    logError($e->getMessage(), 'create_course.php');
-    sendError('Failed to create course', 500);
+    if(isset($conn)) $conn->rollback();
+    http_response_code(500);
+    echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
 }
+$conn->close();
