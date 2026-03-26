@@ -5,14 +5,7 @@ error_reporting(E_ALL);
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 
-require_once "config.php";
-
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-
-if ($conn->connect_error) {
-    echo json_encode(["error" => "Connection failed: " . $conn->connect_error]);
-    exit;
-}
+require_once "db.php";
 
 try {
     // Get total users

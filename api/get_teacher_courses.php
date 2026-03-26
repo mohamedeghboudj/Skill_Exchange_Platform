@@ -1,44 +1,53 @@
 <?php
-// api/get_courses.php - TEACHER'S COURSES
+// api/get_teacher_courses.php - TEACHER'S COURSES
 session_start();
-header('Content-Type: application/json');
-
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode([]);
-    exit;
-}
-
+require_once '../config/api_helpers.php';
 require_once '../config/db.php';
 
-$teacher_id = $_SESSION['user_id'];
+// Set CORS headers
+setCorsHeaders();
+setJsonHeader();
 
-// Select only course_title, enrolled_count, and rating
-$stmt = $conn->prepare("
-    SELECT 
-        course_id,
-        course_title,
-        enrolled_count,
-        rating
-    FROM COURSE
-    WHERE teacher_id = ?
-    ORDER BY course_id DESC
-");
+// Check authentication
+$teacher_id = requireAuth();
 
-if (!$stmt) {
-    echo json_encode([]);
-    exit;
+try {
+    // Select course information
+    $stmt = $conn->prepare("
+        SELECT 
+            course_id,
+            course_title,
+            enrolled_count,
+            rating,
+            category,
+            price,
+            duration
+        FROM COURSE
+        WHERE teacher_id = ?
+        ORDER BY course_id DESC
+    ");
+
+    if (!$stmt) {
+        handleDbError($conn);
+    }
+
+    $stmt->bind_param("i", $teacher_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $courses = [];
+    while ($row = $result->fetch_assoc()) {
+        $courses[] = $row;
+    }
+
+    $stmt->close();
+    $conn->close();
+
+    sendSuccess($courses, 'Courses retrieved successfully');
+
+} catch (Exception $e) {
+    logError($e->getMessage(), 'get_teacher_courses.php');
+    if (isset($conn)) $conn->close();
+    sendError('Failed to retrieve courses', 500);
 }
-
-$stmt->bind_param("i", $teacher_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$courses = [];
-while ($row = $result->fetch_assoc()) {
-    $courses[] = $row;
-}
-
-$stmt->close();
-
-echo json_encode($courses);
 ?>

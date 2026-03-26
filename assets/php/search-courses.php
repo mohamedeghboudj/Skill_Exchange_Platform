@@ -3,19 +3,7 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 header("Content-Type: application/json");
-require_once "config.php";
-
-$conn = new mysqli(
-    DB_HOST,
-    DB_USER,
-    DB_PASS,
-    DB_NAME,
-    DB_PORT
-);
-
-if ($conn->connect_error) {
-    die(json_encode(["error" => $conn->connect_error]));
-}
+require_once "db.php";
 
 $search = trim($_GET['q'] ?? '');
 

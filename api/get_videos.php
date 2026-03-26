@@ -1,24 +1,25 @@
 <?php
-// api/get_videos.php - TEACHER VERSION (FIXED)
+// api/get_videos.php - Get course videos
 session_start();
-header('Content-Type: application/json');
-
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode([]);
-    exit;
-}
-
-if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
-    echo json_encode([]);
-    exit;
-}
-
+require_once '../config/api_helpers.php';
 require_once '../config/db.php';
+
+// Set CORS headers
+setCorsHeaders();
+setJsonHeader();
+
+// Check authentication
+requireAuth();
+
+// Validate course_id parameter
+if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
+    sendError('Missing or invalid course_id parameter', 400);
+}
 
 $course_id = (int)$_GET['course_id'];
 
 try {
-    // Simple query for teach page - just get basic video info
+    // Get video information
     $stmt = $conn->prepare("
         SELECT video_id, video_title, video_url 
         FROM VIDEO 
@@ -27,8 +28,7 @@ try {
     ");
     
     if (!$stmt) {
-        echo json_encode([]);
-        exit;
+        handleDbError($conn);
     }
     
     $stmt->bind_param("i", $course_id);
@@ -37,9 +37,8 @@ try {
     
     $videos = [];
     while ($row = $result->fetch_assoc()) {
-        // FIX: Add leading slash to make path absolute from root
+        // Normalize video URL path
         if (!empty($row['video_url'])) {
-            // If it doesn't start with / or http, add /
             if ($row['video_url'][0] !== '/' && !str_starts_with($row['video_url'], 'http')) {
                 $row['video_url'] = '/' . $row['video_url'];
             }
@@ -48,11 +47,13 @@ try {
     }
     
     $stmt->close();
+    $conn->close();
     
-    // Return plain array for consistency with get_assignments.php
-    echo json_encode($videos);
+    sendSuccess($videos, 'Videos retrieved successfully');
     
 } catch (Exception $e) {
-    echo json_encode([]);
+    logError($e->getMessage(), 'get_videos.php');
+    if (isset($conn)) $conn->close();
+    sendError('Failed to retrieve videos', 500);
 }
 ?>

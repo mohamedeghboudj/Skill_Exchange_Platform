@@ -1,53 +1,32 @@
 <?php
 session_start();
+require_once '../config/api_helpers.php';
 require_once '../config/db.php';
 
-header('Content-Type: application/json');
+// Set CORS headers
+setCorsHeaders();
+setJsonHeader();
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Not authenticated']);
-    exit;
-}
-
-$user_id = $_SESSION['user_id'];
-
-// DEBUG: Log who's trying to submit
-error_log("=== Enrollment Request Attempt ===");
-error_log("User ID: " . $user_id);
-error_log("Session data: " . print_r($_SESSION, true));
+// Check authentication
+$user_id = requireAuth();
 
 // Get POST data
 $course_id = isset($_POST['course_id']) ? intval($_POST['course_id']) : 0;
 $student_message = isset($_POST['student_message']) ? trim($_POST['student_message']) : '';
 
-// DEBUG: Log form data
-error_log("Course ID: " . $course_id);
-error_log("Message length: " . strlen($student_message));
-
 // Validate required fields
 if ($course_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Invalid course']);
-    exit;
+    sendError('Invalid course ID', 400);
 }
 
 if (empty($student_message)) {
-    echo json_encode(['success' => false, 'message' => 'Please provide a message']);
-    exit;
+    sendError('Please provide a message', 400);
 }
 
 // Validate message length (50 chars minimum)
 if (strlen($student_message) < 50) {
-    echo json_encode(['success' => false, 'message' => 'Message must be at least 50 characters']);
-    exit;
+    sendError('Message must be at least 50 characters', 400);
 }
-
-// Check if user exists
-$check_user_sql = "SELECT user_id, full_name FROM USER WHERE user_id = ?";
-$check_stmt = $conn->prepare($check_user_sql);
-
-if (!$check_stmt) {
-    error_log("Prepare failed: " . $conn->error);
     echo json_encode(['success' => false, 'message' => 'Database error']);
     exit;
 }

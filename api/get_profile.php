@@ -1,24 +1,17 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1); // disabling error reporting 
-
 session_start();
+require_once '../config/api_helpers.php';
 require_once '../config/db.php';
 
-if (ob_get_level()) ob_end_clean();
+// Set CORS headers
+setCorsHeaders();
+setJsonHeader();
 
-
-if (!isset($_SESSION['user_id'])) {
-    header('Content-Type: application/json', true, 401);
-    echo json_encode(['error' => 'Not logged in']);
-    exit;
-}
-
-$user_id = $_SESSION['user_id'];
+// Check authentication
+$user_id = requireAuth();
 
 try {
-
-$sql = "SELECT 
+    $sql = "SELECT 
             user_id, 
             email, 
             full_name, 
@@ -34,11 +27,10 @@ $sql = "SELECT
         FROM USER
         WHERE user_id = ?";
 
-
     $stmt = mysqli_prepare($conn, $sql);
 
     if (!$stmt) {
-        throw new Exception('Query preparation failed');
+        handleDbError($conn);
     }
 
     mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -47,19 +39,18 @@ $sql = "SELECT
 
     if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
-        header('Content-Type: application/json');
-        echo json_encode($user, JSON_UNESCAPED_UNICODE);
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+        sendSuccess($user, 'Profile retrieved successfully');
     } else {
-        header('Content-Type: application/json', true, 404);
-        echo json_encode(['error' => 'User not found']);
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+        sendError('User not found', 404);
     }
 
-    mysqli_stmt_close($stmt);
 } catch (Exception $e) {
-    header('Content-Type: application/json', true, 500);
-    echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);
+    logError($e->getMessage(), 'get_profile.php');
+    if (isset($conn)) mysqli_close($conn);
+    sendError('Server error', 500);
 }
-
-mysqli_close($conn);
-exit;
 ?>

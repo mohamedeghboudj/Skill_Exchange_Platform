@@ -5,18 +5,11 @@ error_reporting(E_ALL);
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 
-require_once "config.php";
+require_once "db.php";
 
 // Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["success" => false, "message" => "Invalid request method"]);
-    exit;
-}
-
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-
-if ($conn->connect_error) {
-    echo json_encode(["success" => false, "message" => $conn->connect_error]);
     exit;
 }
 
